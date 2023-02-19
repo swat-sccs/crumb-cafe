@@ -1,0 +1,20 @@
+version: '3.4'
+
+services:
+  rsdv2:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - .:/usr/src/app
+    environment:
+      NODE_ENV: development
+      DOMAIN: http://127.0.0.1:3000/
+    ports:
+      - 3000:3000
+      - 9229:9229
+      - 5555:5555
+    command: sh -c "npm install --silent && npm run dev "
+
+  db:
+    image: mongo:latest

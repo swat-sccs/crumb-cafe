@@ -1,0 +1,13 @@
+version: '3.4'
+
+services:
+  rsdv2:
+    image: rsdv2
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    environment:
+      NODE_ENV: production
+      DOMAIN: http://rsd.swarthmore.edu/
+    ports:
+      - 3000:3000
