@@ -9,7 +9,7 @@ Install [Docker](https://docs.docker.com/engine/install/).
 
 For development:
 ```
-docker-compose -f docker-compose.debug.yml up --build
+docker compose -f docker-compose.debug.yml up --build
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -24,7 +24,7 @@ This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-opti
 
 For production:
 ```
-docker-compose up -d
+docker compose up -d
 ```
 
 ## Learn More
