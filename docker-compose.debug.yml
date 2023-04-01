@@ -1,7 +1,7 @@
 version: '3.4'
 
 services:
-  rsdv2:
+  crumb:
     build:
       context: .
       dockerfile: ./Dockerfile.dev
@@ -10,6 +10,8 @@ services:
     environment:
       NODE_ENV: development
       DOMAIN: http://127.0.0.1:3000/
+      MONGODB_URI: mongodb://db:27017
+      MONGODB_DB: crumb
     ports:
       - 3000:3000
       - 9229:9229
