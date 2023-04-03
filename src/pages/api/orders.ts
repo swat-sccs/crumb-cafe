@@ -11,18 +11,20 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const orders = OrderModel;
 
     const order = new OrderModel({
-      customerName: "customer",
+      customerName: 'customer',
       customerNumber: 123,
       status: 'new',
-      updates: [{
-        newStatus: 'new',
-        user: 'foo',
-        timestamp: Date.now(),
-      }]
+      updates: [
+        {
+          newStatus: 'new',
+          user: 'foo',
+          timestamp: Date.now(),
+        },
+      ],
     });
 
     await order.save();
-    
+
     const allOrders = await orders.find({});
 
     res.status(200).json({ orders: allOrders });

@@ -8,4 +8,3 @@ declare global {
     conn: Mongoose | null;
   };
 }
-
