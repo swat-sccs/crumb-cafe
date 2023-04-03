@@ -1,29 +1,26 @@
-import { models, model, Schema, Model } from 'mongoose';
+import { models, model, Schema, Model, InferSchemaType } from 'mongoose';
 
-export enum Status {
-    New = "new",
-    InProgress = "in_progress",
-    Completed = "completed"
-}
+export type OrderStatus = "new" | "in_progress" | "completed";
 
-export interface Order {
-  orderedTime: Date,
-  customerName: String,
-  customerNumber: number,
-  updates: [
-    {
-      timestamp: Date,
-      newStatus: Status,
-      user: String
-    }
-  ]
-}
-
-const OrderSchema: Schema = new Schema({
-  orderedTime: {
+const OrderUpdateSchema = new Schema({
+  timestamp: {
     type: Date,
     required: true
   },
+  newStatus: {
+    type: String,
+    enum: ["new", "in_progress", "completed"],
+    required: true
+  },
+  user: {
+    type: String,
+    required: true
+  }
+}, { timestamps: true })
+
+export type OrderUpdate = InferSchemaType<typeof OrderUpdateSchema>;
+
+const OrderSchema = new Schema({
   customerName: {
     type: String,
     required: true,
@@ -32,26 +29,21 @@ const OrderSchema: Schema = new Schema({
     type: Number,
     required: true,
   },
+  status: {
+    type: String,
+    enum: ["new", "in_progress", "completed"],
+    required: true
+  },
   updates: {
-    type: [{
-        timestamp: {
-            type: Date,
-            required: true
-        },
-        newStatus: {
-            type: String,
-            enum: Object.values(Status),
-            required: true
-        },
-        user: {
-            type: String,
-            required: true
-        }
-    }],
+    type: [OrderUpdateSchema],
     required: true
   }
-});
+},
+  {
+    timestamps: true // see https://masteringjs.io/tutorials/mongoose/timestamps
+  });
 
+export type Order = InferSchemaType<typeof OrderSchema>;
 
 const OrderModel = (models.Order as Model<Order>) || model<Order>('Order', OrderSchema);
 

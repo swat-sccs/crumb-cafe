@@ -1,9 +1,10 @@
 import dbConnect from '@/util/mongodb';
-import OrderModel, { Status } from '@/models/order.model';
+import OrderModel from '@/models/order.model';
 import { NextApiRequest, NextApiResponse } from 'next';
 
 // ----------------------------------------------------------------------
 
+// hacky order function that adds a new database entry every time it's called
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     dbConnect();
@@ -12,13 +13,14 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const order = new OrderModel({
       customerName: "customer",
       customerNumber: 123,
-      orderedTime: Date.now(),
+      status: 'new',
       updates: [{
-        newStatus: Status.New,
-        user: "foo",
+        newStatus: 'new',
+        user: 'foo',
         timestamp: Date.now(),
       }]
-    })
+    });
+
     await order.save();
     
     const allOrders = await orders.find({});
