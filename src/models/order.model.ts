@@ -1,7 +1,5 @@
 import { models, model, Schema, Model, InferSchemaType } from 'mongoose';
 
-export type OrderStatus = "new" | "in_progress" | "completed";
-
 const OrderUpdateSchema = new Schema({
   timestamp: {
     type: Date,
@@ -20,6 +18,23 @@ const OrderUpdateSchema = new Schema({
 
 export type OrderUpdate = InferSchemaType<typeof OrderUpdateSchema>;
 
+const CustomDishOptionsSchema = new Schema({
+  friendlyName: {
+    type: String,
+    required: true
+  },
+  description: {
+    type: String,
+    required: true
+  },
+  price: {
+    type: Number,
+    required: true
+  }
+})
+
+export type CustomDishOptions = InferSchemaType<typeof CustomDishOptionsSchema>;
+
 const OrderSchema = new Schema({
   customerName: {
     type: String,
@@ -34,10 +49,29 @@ const OrderSchema = new Schema({
     enum: ["new", "in_progress", "completed"],
     required: true
   },
-  updates: {
-    type: [OrderUpdateSchema],
+  dish: {
+    // see https://mongoosejs.com/docs/populate.html
+    // see https://mongoosejs.com/docs/typescript/populate.html
+    type: String, // should be the ID of a dish, or 'custom' which will be a reserved word
+    ref: 'Dish',
     required: true
-  }
+  },
+  // map customization ID to an array of one or more customization option IDs
+  // for multi-quantity options just repeat the ID a couple times
+  options: {
+    type: Map,
+    of: [String],
+    required: true
+  },
+  notes: {
+    type: String,
+    required: false
+  },
+  customDishOptions: {
+    type: CustomDishOptionsSchema,
+    required: false
+  },
+  updates: [OrderUpdateSchema]
 },
   {
     timestamps: true // see https://masteringjs.io/tutorials/mongoose/timestamps
