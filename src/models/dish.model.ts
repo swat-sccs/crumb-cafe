@@ -83,6 +83,23 @@ const DishSchema = new Schema(
       type: Number,
       required: true,
     },
+    categories: {
+      // e.g. food, drink, special
+      type: [String],
+      required: true,
+    },
+    isOrderable: {
+      // is displayed on point-of-sale
+      type: Boolean,
+      required: true,
+      default: true,
+    },
+    isArchived: {
+      // is displayed in admin screen's dish management page
+      type: Boolean,
+      required: true,
+      default: false,
+    },
     options: [DishOptionGroupSchema],
     // if any of these are out-of-stock, we mark it out of stock
     dependencies: {
@@ -101,6 +118,6 @@ const DishSchema = new Schema(
 
 export type Dish = InferSchemaType<typeof DishSchema>;
 
-const DishModel = (models.Order as Model<Dish>) || model<Dish>('Dish', DishSchema);
+const DishModel = (models.Dish as Model<Dish>) || model<Dish>('Dish', DishSchema);
 
 export default DishModel;
