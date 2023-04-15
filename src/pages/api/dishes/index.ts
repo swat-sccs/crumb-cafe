@@ -38,8 +38,6 @@ class DishesHandler {
       delete query.categories; // otherwise we don't return dishes that have categories set
     }
 
-    console.log(query);
-
     return await dishes.find(query, { options: false, dependencies: false }).exec();
   }
 }
