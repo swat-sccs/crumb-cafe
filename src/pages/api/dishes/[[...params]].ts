@@ -3,7 +3,7 @@ import dbConnect from '@/util/mongodb';
 import { ToBoolean } from '@/util/toBoolean';
 import { Transform } from 'class-transformer';
 import { IsArray, IsOptional } from 'class-validator';
-import { createHandler, Get, Query, ValidationPipe } from 'next-api-decorators';
+import { createHandler, Get, NotFoundException, Param, Query, ValidationPipe } from 'next-api-decorators';
 
 /**
  * Query parameters for filtering responses
@@ -23,8 +23,8 @@ export class DishSearchRequest {
 }
 
 class DishesHandler {
-  @Get()
-  async exportDishes(@Query(ValidationPipe) query: DishSearchRequest) {
+  @Get('/')
+  async listDishes(@Query(ValidationPipe) query: DishSearchRequest) {
     dbConnect();
 
     const dishes = DishModel;
@@ -39,6 +39,19 @@ class DishesHandler {
     }
 
     return await dishes.find(query, { options: false, dependencies: false }).exec();
+  }
+
+  @Get('/:id')
+  async getDish(@Param('id') id: string) {
+    dbConnect();
+
+    const dish = await DishModel.findById(id).exec();
+
+    if (dish) {
+      return dish;
+    } else {
+      throw new NotFoundException();
+    }
   }
 }
 
