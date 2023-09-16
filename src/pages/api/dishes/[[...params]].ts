@@ -3,7 +3,14 @@ import dbConnect from '@/util/mongodb';
 import { ToBoolean } from '@/util/toBoolean';
 import { Transform } from 'class-transformer';
 import { IsArray, IsOptional } from 'class-validator';
-import { createHandler, Get, NotFoundException, Param, Query, ValidationPipe } from 'next-api-decorators';
+import {
+  createHandler,
+  Get,
+  NotFoundException,
+  Param,
+  Query,
+  ValidationPipe,
+} from 'next-api-decorators';
 
 /**
  * Query parameters for filtering responses
