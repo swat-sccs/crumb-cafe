@@ -6,10 +6,10 @@ This is a WIP point-of-sale system for the Crumb Cafe.
 
 Install [Docker](https://docs.docker.com/engine/install/).
 
-For development:
+For development (includes local database):
 
 ```
-docker compose -f docker-compose.debug.yml up --build
+bin/dev.sh up --build
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
@@ -30,7 +30,7 @@ automatically optimize and load Inter, a custom Google Font.
 For production:
 
 ```
-docker compose up -d
+bin/run-prod.sh
 ```
 
 ## Learn More
