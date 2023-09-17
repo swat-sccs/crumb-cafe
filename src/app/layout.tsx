@@ -1,4 +1,4 @@
-import './globals.css';
+import ThemeRegistry from './ThemeRegistry';
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
@@ -8,7 +8,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         head.tsx. Find out more at https://beta.nextjs.org/docs/api-reference/file-conventions/head
       */}
       <head />
-      <body>{children}</body>
+      <body>
+        <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+      </body>
     </html>
   );
 }
