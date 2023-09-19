@@ -21,6 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
           timestamp: Date.now(),
         },
       ],
+      options: [],
+      dish: "custom"
     });
 
     await order.save();
