@@ -36,16 +36,16 @@ export default function App() {
     //     console.log(dish);
     // }, [dish]);
 
-    const buttonHandler = () => {
-        console.log("button clicked");
-        if (dish == "loaded quesadilla"){
-            setDish("vanilla milkshake");
-        } else {
-            setDish("loaded quesadilla");
-        }
-        setFlag(!flag);
+    // const buttonHandler = () => {
+    //     console.log("button clicked");
+    //     if (dish == "loaded quesadilla"){
+    //         setDish("vanilla milkshake");
+    //     } else {
+    //         setDish("loaded quesadilla");
+    //     }
+    //     setFlag(!flag);
 
-    }
+    // }
 
 
     async function logUser() {
@@ -75,7 +75,7 @@ export default function App() {
                         <ThemeProvider theme={theme}>
                             <Typography variant="h2">Hello {user} ~</Typography>
                             <Typography variant="body1">Here&apos;s a screen for the Point of Service.</Typography>
-                            <Button sx={{ m: 0 }} size="large" color = "info" onClick={buttonHandler}>Reload</Button>
+                            <Button sx={{ m: 0 }} size="large" color = "info" onClick={/*buttonHandler*/ () => {}}>Reload</Button>
                             <Button sx={{ m: 1.5 }} size="large" variant='contained' color={flag ? "primary" : "secondary"}>{dish}</Button>
                         </ThemeProvider>
 
