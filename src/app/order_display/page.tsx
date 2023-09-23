@@ -1,20 +1,24 @@
-import Image from 'next/image';
-import { Inter } from "next/font/google";
-import styles from './page.module.css';
+import { Box, Card, Container, Typography } from '@mui/material';
+import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 
-const inter = Inter({ subsets: ['latin'] });
 
 export default function Home() {
   return (
-
-  <div className="absolute top-0 right-0 bottom-0 left-0 h-full w-full overflow-hidden bg-[hsla(0,0%,0%,0.75)] bg-fixed">
-    <div className="flex h-full items-top justify-center">
-      <div className="px-6 text-top text-white md:px-12">
-        <h1 className="mt-2 mb-16 text-5xl font-bold tracking-tight md:text-6xl xl:text-7xl"> 
-        Crumb Cafe Order Display
-        </h1>
-      </div>
-    </div>
-  </div>
+    <Container>
+      <Box>
+        <Card elevation={2} sx={{ m: 2, p: 1 }}>
+          <Typography variant="h3">Current Orders</Typography>
+          <Typography variant="body1">Here&apos;s a landing page for the Crumb Cafe.</Typography>
+        </Card>
+        <Grid container spacing={2}>
+          <Grid xs={6}>
+            <Card> 
+              <Typography variant="h4">Tina</Typography>
+            </Card>
+          </Grid>
+        </Grid>
+      </Box>
+    </Container>
   );
 }
+
