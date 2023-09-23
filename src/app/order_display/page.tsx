@@ -128,3 +128,4 @@ export default function Home() {
 // what to do with long names & too many orders (makes page have to scroll)
 //how to change border color of each order name tag
 //split page in half for completed & pending orders
+// How to implement card content function for less code
