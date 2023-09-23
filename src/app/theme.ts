@@ -3,9 +3,18 @@ import { Raleway } from 'next/font/google';
 
 const raleway = Raleway({ subsets: ['latin', 'latin-ext'] });
 
+declare module '@mui/material/styles' {
+  interface PaletteColor {
+    success?: string;
+  }
+}
+
 const theme = createTheme({
   palette: {
     mode: 'light',
+    success: {
+      main: "#C2EC7E"
+    },
     primary: {
       main: '#31425f',
     },
