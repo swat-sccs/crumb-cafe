@@ -16,12 +16,12 @@ const lotOfStuffs: { order_number: string; name: string }[] = Array.from({ lengt
 
 function StuffCard({ order_number, name }: { order_number: string; name: string }) {
   return (
-    <Card sx={{ m: 2, p: 0, borderRadius: '16px', borderColor: 'black', border: 1 }}>
+    <Card sx={{ m: 2, borderRadius: '16px', borderColor: 'black', border: 1 }}>
       <Typography
         variant="h5"
         bgcolor={'green'}
         color={'white'}
-        sx={{ width: '100%', p: 0, m: 0, borderStartEndRadius: '16px' }}
+        sx={{ width: '100%', borderStartEndRadius: '16px' }}
         textAlign={'center'}
       >
         {' '}
