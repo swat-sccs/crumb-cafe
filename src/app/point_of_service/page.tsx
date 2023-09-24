@@ -3,16 +3,53 @@
 //Learn more: https://nextjs.org/docs/getting-started/react-essentials
 
 
-import { Box, Card, Container, Typography, Button } from '@mui/material';
+import { Box, Card, CardHeader, Container, Typography, Button, Grid } from '@mui/material';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { orange, cyan, blueGrey } from '@mui/material/colors';
 import React, { useState, useEffect } from 'react';
-
 
 export default function App() {
     const [user, setUser] = useState('izzy');
     const [dish, setDish] = useState(["loaded quesadilla"]);
     const [flag, setFlag] = useState(true); //true is food, false is drink
+
+    var dict = {
+        "0001": { "id": "0001", "name": "Simple Quesadilla"},
+        "0002": { "id": "0002", "name": "Loaded Quesadilla"},
+        "0003": { "id": "0003", "name": "Avo-Goat-O" },
+        "0004": { "id": "0004", "name": "Avocado Toast" },
+        "0005": { "id": "0005", "name": "Grilled Cheese" },
+        "0006": { "id": "0006", "name": "Caprese" },
+        "0007": { "id": "0007", "name": "Chips and Guac" },
+        "0008": { "id": "0008", "name": "Chips and Salsa" },
+        "0009": { "id": "0009", "name": "Cheese Fries" },
+        "0010": { "id": "0010", "name": "Pancakes" },
+        "0011": { "id": "0011", "name": "French Toast" },
+        "0012": { "id": "0012", "name": "Nachos" },
+        "0013": { "id": "0013", "name": "Dumplings" },
+    };
+
+    const renderFoodButtons = () => {
+        let buttons = [];
+
+        for (var prop in dict) {
+            //buttons.push(<div className={styles.box} key={i}>{i}</div>);
+            buttons.push(<Button sx={{ m: 1 }} size="large" >{dict[prop].name}</Button>);
+            //console.log(dict[prop].name);
+
+        }
+
+        return buttons;
+    };
+
+    const FoodButtonComponent = () => {
+        return (
+            <React.Fragment>
+                {renderFoodButtons()}
+            </React.Fragment>
+        )
+    }
+
 
     //dont do this
     const theme = createTheme({
@@ -69,7 +106,6 @@ export default function App() {
     return (
         <>
             <Container>
-
                 <Box>
                     <Card elevation={6} sx={{ m: 2, p: 4 }}>
                         <ThemeProvider theme={theme}>
@@ -78,8 +114,72 @@ export default function App() {
                             <Button sx={{ m: 0 }} size="large" color = "info" onClick={/*buttonHandler*/ () => {}}>Reload</Button>
                             <Button sx={{ m: 1.5 }} size="large" variant='contained' color={flag ? "primary" : "secondary"}>{dish}</Button>
                         </ThemeProvider>
-
                     </Card>
+                </Box>
+                <Box>
+                    <Grid container spacing={12} rowSpacing={10} columnSpacing={{ xs: 5, sm: 2, md: 2 }}>
+                        <Grid item xs={6}>
+                            <Card sx={{ m: 2, p: 2 }}>
+                                <CardHeader 
+                                    subheader="item qty price"
+                                />
+                                calculator
+                                subtotal
+                            </Card>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Grid container spacing={1}>
+                                <Grid item xs={6}>
+                                    <Card sx={{ m: 1, p: 1 }}>
+                                        <Typography variant="h6" textAlign="center">FOOD</Typography>
+                                    </Card>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Card sx={{ m: 1, p: 1 }}>
+                                        <Typography variant="h6" textAlign="center">DRINK</Typography>
+                                    </Card>
+                                </Grid>
+                            </Grid>
+                            <FoodButtonComponent></FoodButtonComponent>
+                        </Grid>
+                        
+                    </Grid>
+                </Box>
+                <Box>
+                    <Grid container spacing={1}>
+                        <Grid item xs={6}>
+                            <Grid container spacing={1}>
+                                <Grid item xs={6}>
+                                    <Card sx={{ m: 2, p: 1 }}>
+                                        <Typography variant="h6" textAlign="center">Cancel Order</Typography>
+                                    </Card>
+                                </Grid>
+                                <Grid item xs={6}>
+                                    <Card sx={{ m: 2, p: 1 }}>
+                                        <Typography variant="h6" textAlign="center">Confirm Order</Typography>
+                                    </Card>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                        <Grid item xs={6}>
+                            <Grid container spacing={1}>
+                                <Grid item xs={4}>
+                                    <Card sx={{ m: 2, p: 1 }}>
+                                        <Typography variant="Button" textAlign="center">Delete This Item</Typography>
+                                    </Card>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Card sx={{ m: 2, p: 1 }}>
+                                        <Typography variant="Button" textAlign="center">Custom Item</Typography>
+                                    </Card>
+                                </Grid>
+                                <Grid item xs={4}>
+                                    <Card sx={{ m: 2, p: 1 }}>
+                                        <Typography variant="Button" textAlign="center">Confirm This Item</Typography>                                    </Card>
+                                </Grid>
+                            </Grid>
+                        </Grid>
+                    </Grid>
                 </Box>
             </Container>
         </>
