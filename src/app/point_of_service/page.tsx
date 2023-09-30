@@ -3,7 +3,10 @@
 //Learn more: https://nextjs.org/docs/getting-started/react-essentials
 
 
-import { Box, Card, CardHeader, Container, Typography, Button, Grid } from '@mui/material';
+import { Box, Card, CardHeader, Container, Typography, Button, Grid, AppBar } from '@mui/material';
+import Toolbar from '@mui/material/Toolbar';
+import IconButton from '@mui/material/IconButton';
+import MenuIcon from '@mui/icons-material/Menu';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { orange, cyan, blueGrey } from '@mui/material/colors';
 import React, { useState, useEffect } from 'react';
@@ -13,32 +16,29 @@ export default function App() {
     const [dish, setDish] = useState(["loaded quesadilla"]);
     const [flag, setFlag] = useState(true); //true is food, false is drink
 
-    var dict = {
-        "0001": { "id": "0001", "name": "Simple Quesadilla"},
-        "0002": { "id": "0002", "name": "Loaded Quesadilla"},
-        "0003": { "id": "0003", "name": "Avo-Goat-O" },
-        "0004": { "id": "0004", "name": "Avocado Toast" },
-        "0005": { "id": "0005", "name": "Grilled Cheese" },
-        "0006": { "id": "0006", "name": "Caprese" },
-        "0007": { "id": "0007", "name": "Chips and Guac" },
-        "0008": { "id": "0008", "name": "Chips and Salsa" },
-        "0009": { "id": "0009", "name": "Cheese Fries" },
-        "0010": { "id": "0010", "name": "Pancakes" },
-        "0011": { "id": "0011", "name": "French Toast" },
-        "0012": { "id": "0012", "name": "Nachos" },
-        "0013": { "id": "0013", "name": "Dumplings" },
+    var dict: any = {
+        1: { "id": 1, "name": "Simple Quesadilla"},
+        2: { "id": 2, "name": "Loaded Quesadilla!"},
+        3: { "id": 3, "name": "Avo-Goat-O" },
+        4: { "id": 4, "name": "Avocado Toast" },
+        5: { "id": 5, "name": "Grilled Cheese" },
+        6: { "id": 6, "name": "Caprese" },
+        7: { "id": 7, "name": "Chips and Guac" },
+        8: { "id": 8, "name": "Chips and Salsa" },
+        9: { "id": 9, "name": "Cheese Fries" },
+        10: { "id": 10, "name": "Pancakes" },
+        11: { "id": 11, "name": "French Toast" },
+        12: { "id": 12, "name": "Nachos" },
+        13: { "id": 13, "name": "Dumplings" },
     };
 
     const renderFoodButtons = () => {
         let buttons = [];
 
         for (var prop in dict) {
-            //buttons.push(<div className={styles.box} key={i}>{i}</div>);
             buttons.push(<Button sx={{ m: 1 }} size="large" >{dict[prop].name}</Button>);
             //console.log(dict[prop].name);
-
         }
-
         return buttons;
     };
 
@@ -98,7 +98,7 @@ export default function App() {
         //const response = await fetch("http://localhost:3000/api/dishes/[[...params]]");
         //const dishes = await response.json();
         //console.log(dish);
-        console.log('dish ' + dish);
+        //console.log('dish ' + dish);
         //setUser(dishes);
         //console.log(dishes);
     }
@@ -106,20 +106,39 @@ export default function App() {
     return (
         <>
             <Container>
-                <Box>
+                
+                {/* <Box>
                     <Card elevation={6} sx={{ m: 2, p: 4 }}>
                         <ThemeProvider theme={theme}>
                             <Typography variant="h2">Hello {user} ~</Typography>
                             <Typography variant="body1">Here&apos;s a screen for the Point of Service.</Typography>
-                            <Button sx={{ m: 0 }} size="large" color = "info" onClick={/*buttonHandler*/ () => {}}>Reload</Button>
+                            <Button sx={{ m: 0 }} size="large" color="info" onClick=buttonHandler () => { }>Reload</Button>
                             <Button sx={{ m: 1.5 }} size="large" variant='contained' color={flag ? "primary" : "secondary"}>{dish}</Button>
                         </ThemeProvider>
                     </Card>
-                </Box>
+                </Box> */}
+
                 <Box>
+                    <AppBar position="static">
+                        <Toolbar>
+                            <IconButton
+                                size="large"
+                                edge="start"
+                                color="inherit"
+                                aria-label="menu"
+                                sx={{ mr: 2 }}
+                            >
+                                <MenuIcon />
+                            </IconButton>
+                        <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
+                            Order 021
+                        </Typography>
+                        <Button color="inherit">Login</Button>
+                        </Toolbar>
+                    </AppBar>
                     <Grid container spacing={12} rowSpacing={10} columnSpacing={{ xs: 5, sm: 2, md: 2 }}>
                         <Grid item xs={6}>
-                            <Card sx={{ m: 2, p: 2 }}>
+                            <Card sx={{ m: 1, p: 1 }}>
                                 <CardHeader 
                                     subheader="item qty price"
                                 />
@@ -165,17 +184,17 @@ export default function App() {
                             <Grid container spacing={1}>
                                 <Grid item xs={4}>
                                     <Card sx={{ m: 2, p: 1 }}>
-                                        <Typography variant="Button" textAlign="center">Delete This Item</Typography>
+                                        <Typography textAlign="center">Delete This Item</Typography>
                                     </Card>
                                 </Grid>
                                 <Grid item xs={4}>
                                     <Card sx={{ m: 2, p: 1 }}>
-                                        <Typography variant="Button" textAlign="center">Custom Item</Typography>
+                                        <Typography textAlign="center">Custom Item</Typography>
                                     </Card>
                                 </Grid>
                                 <Grid item xs={4}>
                                     <Card sx={{ m: 2, p: 1 }}>
-                                        <Typography variant="Button" textAlign="center">Confirm This Item</Typography>                                    </Card>
+                                        <Typography textAlign="center">Confirm This Item</Typography>                                    </Card>
                                 </Grid>
                             </Grid>
                         </Grid>
