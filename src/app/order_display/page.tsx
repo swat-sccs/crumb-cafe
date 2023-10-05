@@ -4,42 +4,6 @@ import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import CardContent from '@mui/material/CardContent';
 import styles from '../page.module.css';
 
-
-//stuff card functions that we will need for the kitchen order display
-// const stuffs: { order_number: string; name: string }[] = [
-//   { order_number: '1', name: 'Tina Chen' },
-//   { order_number: '2', name: 'Helen Yin' },
-//   { order_number: '3', name: 'Summit' },
-// ];
-
-// // testing for lot of orders: stuffs repeated 10 times
-// const lotOfStuffs: { order_number: string; name: string }[] = Array.from({ length: 10 }, () => [
-//   ...stuffs,
-// ]).flat();
-
-// function StuffCard({ order_number, name }: { order_number: string; name: string }) {
-//   return (
-//     <Card sx={{ m: 2, borderRadius: '16px', borderColor: 'black', border: 1 }}>
-//       <Typography
-//         variant="h5"
-//         bgcolor={'green'}
-//         color={'white'}
-//         sx={{ width: '100%', borderStartEndRadius: '16px' }}
-//         textAlign={'center'}
-//       >
-//         {' '}
-//         {name}{' '}
-//       </Typography>
-//       <CardContent>
-//         <Typography variant="h5" textAlign={'center'}>
-//           {' '}
-//           {order_number}{' '}
-//         </Typography>
-//       </CardContent>
-//     </Card>
-//   );
-// }
-
 //if we want to use a table to display orders that are ready:
 // function createData(
 //   order_number: number,
@@ -91,9 +55,9 @@ export default function Home() {
             Crumb Cafe Orders
           </Typography>
         </Card>
-        <Grid container spacing={2}>
-          <Grid xs={12}>
-            <Card sx={{ m: 2, p: 1 }}>
+        <Grid container spacing={2} justifyContent="center">
+          <Grid xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
+            <Card sx={{ m: 2, p: 1, width: 300 }}>
               <Typography variant="h4" textAlign="center">
                 Ready
               </Typography>
@@ -104,21 +68,6 @@ export default function Home() {
             Order #1: Tina
           </Typography>
         </Card>
-          {/* <Grid xs={12}>
-            <BasicTable />
-          </Grid> */}
-          {/* <Grid xs={6}>
-            <Card sx={{ m: 2, p: 1 }}>
-              <Typography variant="h4" textAlign="center">
-                Pending...
-              </Typography>
-            </Card>
-          </Grid> */}
-          {/* {lotOfStuffs.map((stuff) => (
-            <Grid xs={3}>
-              <StuffCard name={stuff.name} order_number={stuff.order_number} />
-            </Grid>
-          ))} */}
         </Grid>
       </Box>
     </Container>
