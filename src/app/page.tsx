@@ -1,19 +1,59 @@
-import { Box, Card, Container, Button, Typography } from '@mui/material';
+'use client';
+
+import { AlignHorizontalCenter } from '@mui/icons-material';
+import { Box, Card, Button, Typography, Grid } from '@mui/material';
+import Particles from './components/particles';
+import { useRouter } from 'next/navigation';
 
 export default function Home() {
+  const router = useRouter();
   return (
-    <Container>
-      <Box>
-        <Card elevation={2} sx={{ m: 10, p: 10 }}>
-          <Typography variant="h3">Welcome!</Typography>
-          <Typography variant="h2" style={{ fontWeight: 'bold' }}>The Crumb Cafe Homepage</Typography>
+    <div>
+      <Grid
+        sx={{ backgroundColor: '', marginTop: '20%' }}
+        container
+        spacing={1}
+        direction="row"
+        justifyContent="center"
+        alignItems="center"
+      >
+        <Grid container spacing={1} direction="column" justifyContent="center" alignItems="center">
+          <Typography variant="h3" style={{ color: 'white' }}>
+            Welcome!
+          </Typography>
+          <Typography variant="h2" style={{ fontWeight: 'bold', color: 'white' }}>
+            The Crumb Cafe Homepage
+          </Typography>
 
-          <Button variant="contained" size="large" sx={{ m: 1, p: 2, width: '130px' }}>Admin Page</Button>
-          <Button variant="contained" size="large" sx={{ m: 1, p: 2, width: '130px' }}>POS</Button>
-          <Button variant="contained" size="large" sx={{ m: 1, p: 2, width: '130px' }}>Kitchen</Button>
-          
-        </Card>
-      </Box>
-    </Container>
+          <Grid container spacing={1} direction="row" justifyContent="center" alignItems="center">
+            <Button
+              variant="contained"
+              size="large"
+              sx={{ m: 1, p: 2, width: '130px' }}
+              onClick={() => router.push('/admin/dash')}
+            >
+              Admin Page
+            </Button>
+            <Button
+              variant="contained"
+              size="large"
+              sx={{ m: 1, p: 2, width: '130px' }}
+              onClick={() => router.push('/point_of_service')}
+            >
+              POS
+            </Button>
+            <Button
+              variant="contained"
+              size="large"
+              sx={{ m: 1, p: 2, width: '130px' }}
+              onClick={() => router.push('/order_display')}
+            >
+              Kitchen
+            </Button>
+          </Grid>
+        </Grid>
+      </Grid>
+      <Particles id="tsparticles" />
+    </div>
   );
 }

@@ -11,9 +11,9 @@ declare module '@mui/material/styles' {
 
 const theme = createTheme({
   palette: {
-    mode: 'light',
+    mode: 'dark',
     success: {
-      main: "#C2EC7E"
+      main: '#C2EC7E',
     },
     primary: {
       main: '#31425f',
@@ -38,13 +38,13 @@ const theme = createTheme({
     MuiButtonBase: {
       defaultProps: {
         disableRipple: true,
-      }
+      },
     },
     MuiButton: {
-        defaultProps: {
-            variant: "contained"
-        }
-    }
+      defaultProps: {
+        variant: 'contained',
+      },
+    },
   },
 });
 
