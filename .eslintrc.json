@@ -1,4 +1,9 @@
 {
   "plugins": ["@typescript-eslint"],
-  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"]
+  "extends": ["next/core-web-vitals", "plugin:@typescript-eslint/recommended", "prettier"],
+  "rules": {
+    "no-var": "warn",
+    "prefer-const": "warn",
+    "react/jsx-key": "warn"
+  }
 }
