@@ -2,7 +2,7 @@
 
 import { AlignHorizontalCenter } from '@mui/icons-material';
 import { Box, Card, Button, Typography, Grid } from '@mui/material';
-import Particles from './components/particles';
+import CrumbParticles from './components/particles';
 import { useRouter } from 'next/navigation';
 
 export default function Home() {
@@ -53,7 +53,7 @@ export default function Home() {
           </Grid>
         </Grid>
       </Grid>
-      <Particles id="tsparticles" />
+      <CrumbParticles />
     </div>
   );
 }

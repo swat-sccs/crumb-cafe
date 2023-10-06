@@ -5,7 +5,7 @@ import Particles from 'react-particles';
 import { loadFull } from 'tsparticles'; // if you are going to use `loadFull`, install the
 import Options from './particles.json';
 
-const App = () => {
+const CrumbParticles = () => {
   const particlesInit = useCallback(async (engine: Engine) => {
     console.log(engine);
 
@@ -28,3 +28,5 @@ const App = () => {
     />
   );
 };
+
+export default CrumbParticles;
