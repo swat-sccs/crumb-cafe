@@ -1,11 +1,7 @@
-import { models, model, Schema, Model, InferSchemaType } from 'mongoose';
+import { models, model, Schema, InferSchemaType } from 'mongoose';
 
 const OrderUpdateSchema = new Schema(
   {
-    timestamp: {
-      type: Date,
-      required: true,
-    },
     newStatus: {
       type: String,
       enum: ['new', 'in_progress', 'completed'],
@@ -79,11 +75,43 @@ const OrderSchema = new Schema(
   },
   {
     timestamps: true, // see https://masteringjs.io/tutorials/mongoose/timestamps
+    query: {
+      byCustomerName(customerName: string) {
+        return this.where('customerName').equals(customerName);
+      },
+      byStatus(status: string) {
+        return this.where('status').equals(status);
+      },
+      createdBefore(timestamp: Date) {
+        return this.lt('createdAt', timestamp);
+      },
+      createdAfter(timestamp: Date) {
+        return this.gt('createdAt', timestamp);
+      },
+      updatedBefore(timestamp: Date) {
+        return this.lt('updatedAt', timestamp);
+      },
+      updatedAfter(timestamp: Date) {
+        return this.gt('updatedAt', timestamp);
+      },
+    },
   },
 );
 
 export type Order = InferSchemaType<typeof OrderSchema>;
 
-const OrderModel = (models.Order as Model<Order>) || model<Order>('Order', OrderSchema);
+// absolutely disgusting typescript wizardry to make it so that mongoose query functions
+// show up properly. Some types aren't exposed properly so we define a wrapper class that
+// will quasi-expose them. See https://stackoverflow.com/a/64919133/13644774.
+// I don't entirely understand this either
+class ModelWrapper<T extends Schema> {
+  wrapped(s: string, e: T) {
+    return model<T>(s, e);
+  }
+}
+
+type OrderModelType = ReturnType<ModelWrapper<typeof OrderSchema>['wrapped']>;
+
+const OrderModel: OrderModelType = (models.Order as OrderModelType) || model('Order', OrderSchema);
 
 export default OrderModel;

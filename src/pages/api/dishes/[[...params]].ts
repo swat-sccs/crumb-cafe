@@ -1,5 +1,5 @@
 import DishModel from '@/models/dish.model';
-import dbConnect from '@/util/mongodb';
+import dbConnect from '@/app/lib/mongodb';
 import { ToBoolean } from '@/util/toBoolean';
 import { Transform } from 'class-transformer';
 import { IsArray, IsOptional } from 'class-validator';
