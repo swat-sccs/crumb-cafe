@@ -113,6 +113,29 @@ const DishSchema = new Schema(
   },
   {
     timestamps: true, // see https://masteringjs.io/tutorials/mongoose/timestamps
+    query: {
+      byOrderable(isOrderable: boolean) {
+        return this.where('isOrderable').equals(isOrderable);
+      },
+      byFriendlyName(friendlyName: string) {
+        return this.where('friendlyName').equals(friendlyName);
+      },
+      byCategories(categories: string[]) {
+        return this.where('categories').in(categories);
+      },
+      createdBefore(timestamp: Date) {
+        return this.lt('createdAt', timestamp);
+      },
+      createdAfter(timestamp: Date) {
+        return this.gt('createdAt', timestamp);
+      },
+      updatedBefore(timestamp: Date) {
+        return this.lt('updatedAt', timestamp);
+      },
+      updatedAfter(timestamp: Date) {
+        return this.gt('updatedAt', timestamp);
+      },
+    },
   },
 );
 
@@ -130,6 +153,6 @@ class ModelWrapper<T extends Schema> {
 
 type DishModelType = ReturnType<ModelWrapper<typeof DishSchema>['wrapped']>;
 
-const DishModel: DishModelType = (models.Order as DishModelType) || model('Dish', DishSchema);
+const DishModel: DishModelType = (models.Dish as DishModelType) || model('Dish', DishSchema);
 
 export default DishModel;
