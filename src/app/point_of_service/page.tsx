@@ -50,7 +50,90 @@ export default function App() {
         )
     }
 
+    const renderCancelOrderComponent = () => {
+        return (<Button sx={{ 
+            m: 1,
+            width: '47%',
+            height: 60,
+            lineHeight: 1.4,
+        }} size="large" >CANCEL<br />ORDER</Button>)
+    }
 
+    const CancelOrderComponent = () => {
+        return (
+            <React.Fragment>
+                {renderCancelOrderComponent()}
+            </React.Fragment>
+        )
+    }
+
+    const renderConfirmOrderComponent = () => {
+        return (<Button sx={{ 
+            m: 1,
+            width: '47%',
+            height: 60,
+            lineHeight: 1.4,
+        }} size="large" >CONFIRM<br />ORDER</Button>)
+    }
+
+    const ConfirmOrderComponent = () => {
+        return (
+            <React.Fragment>
+                {renderConfirmOrderComponent()}
+            </React.Fragment>
+        )
+    }
+
+    const renderDeleteItemComponent = () => {
+        return (<Button sx={{ 
+            m: 1,
+            width: '30%',
+            height: 60,
+            fontSize: 12,
+        }} size="large" >Delete This Item</Button>)
+    }
+
+    const DeleteItemComponent = () => {
+        return (
+            <React.Fragment>
+                {renderDeleteItemComponent()}
+            </React.Fragment>
+        )
+    }
+
+    const renderCustomItemComponent = () => {
+        return (<Button sx={{ 
+            m: 1,
+            width: '30%',
+            fontSize: 12,
+            height: 60,
+        }} size="large" >Custom Item</Button>)
+    }
+
+    const CustomItemComponent = () => {
+        return (
+            <React.Fragment>
+                {renderCustomItemComponent()}
+            </React.Fragment>
+        )
+    }
+    const renderConfirmItemComponent = () => {
+        return (<Button sx={{ 
+            m: 1,
+            width: '30%',
+            fontSize: 12,
+            height: 60,
+
+        }} size="large" >Confirm This Item</Button>)
+    }
+
+    const ConfirmItemComponent = () => {
+        return (
+            <React.Fragment>
+                {renderConfirmItemComponent()}
+            </React.Fragment>
+        )
+    }
     //dont do this
     const theme = createTheme({
         palette: {
@@ -167,22 +250,33 @@ export default function App() {
                 <Box>
                     <Grid container spacing={1}>
                         <Grid item xs={6}>
+                            <CancelOrderComponent></CancelOrderComponent>
+                            <ConfirmOrderComponent></ConfirmOrderComponent>
+                            {/*<Grid item xs={6}>
                             <Grid container spacing={1}>
-                                <Grid item xs={6}>
+                                
+                                
+                                    
                                     <Card sx={{ m: 2, p: 1 }}>
                                         <Typography variant="h6" textAlign="center">Cancel Order</Typography>
                                     </Card>
-                                </Grid>
+                                </Grid>*/}
+                                
+                                {/*
                                 <Grid item xs={6}>
                                     <Card sx={{ m: 2, p: 1 }}>
                                         <Typography variant="h6" textAlign="center">Confirm Order</Typography>
                                     </Card>
                                 </Grid>
-                            </Grid>
+                            </Grid>*/}
                         </Grid>
                         <Grid item xs={6}>
-                            <Grid container spacing={1}>
-                                <Grid item xs={4}>
+                            <DeleteItemComponent></DeleteItemComponent>
+                            <CustomItemComponent></CustomItemComponent>
+                            <ConfirmItemComponent></ConfirmItemComponent>
+                            {/*<<Grid container spacing={1}>
+                                
+                                Grid item xs={4}>
                                     <Card sx={{ m: 2, p: 1 }}>
                                         <Typography textAlign="center">Delete This Item</Typography>
                                     </Card>
@@ -196,7 +290,8 @@ export default function App() {
                                     <Card sx={{ m: 2, p: 1 }}>
                                         <Typography textAlign="center">Confirm This Item</Typography>                                    </Card>
                                 </Grid>
-                            </Grid>
+                            
+                            </Grid>*/}
                         </Grid>
                     </Grid>
                 </Box>
