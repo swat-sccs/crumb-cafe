@@ -118,6 +118,18 @@ const DishSchema = new Schema(
 
 export type Dish = InferSchemaType<typeof DishSchema>;
 
-const DishModel = (models.Dish as Model<Dish>) || model<Dish>('Dish', DishSchema);
+// absolutely disgusting typescript wizardry to make it so that mongoose query functions
+// show up properly. Some types aren't exposed properly so we define a wrapper class that
+// will quasi-expose them. See https://stackoverflow.com/a/64919133/13644774.
+// I don't entirely understand this either
+class ModelWrapper<T extends Schema> {
+  wrapped(s: string, e: T) {
+    return model<T>(s, e);
+  }
+}
+
+type DishModelType = ReturnType<ModelWrapper<typeof DishSchema>['wrapped']>;
+
+const DishModel: DishModelType = (models.Order as DishModelType) || model('Dish', DishSchema);
 
 export default DishModel;
