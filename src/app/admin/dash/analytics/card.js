@@ -1,28 +1,58 @@
 // Admin Analytics
-import Card from '@mui/material/Card';
-import CardActions from '@mui/material/CardActions';
-import CardContent from '@mui/material/CardContent';
-import Typography from '@mui/material/Typography';
+import { Typography, CardContent, Card, CardActions } from '@mui/material';
 import styles from './page.module.css';
-import TrendingUpIcon from '@mui/icons-material/TrendingUp';
-import TrendingDownIcon from '@mui/icons-material/TrendingDown';
+import { TrendingUp, TrendingDown } from '@mui/icons-material';
+import { useTheme } from '@mui/material/styles';
 
 export default function BasicCard({ title, data, up }) {
-  return (
-    <Card className={styles.info} sx={{ borderRadius: 4, width: 240 }}>
-      <CardContent>
-        <Typography sx={{ fontSize: 16 }} color="text.secondary" gutterBottom>
-          {title}
-        </Typography>
+  const theme = useTheme();
 
-        <Typography sx={{ fontSize: 25, fontWeight: 'bold' }}>{data}</Typography>
-        <Typography sx={{ marginTop: 1 }} variant="body2">
-          <TrendingUpIcon sx={{ color: 'green' }}></TrendingUpIcon>
-          vs Last Month
-        </Typography>
-      </CardContent>
+  if (up == 'true') {
+    return (
+      <Card
+        className={styles.info}
+        sx={{ borderRadius: 4, width: 240 }}
+        style={{ backgroundColor: theme.palette.primary.dark }}
+      >
+        <CardContent>
+          <Typography sx={{ fontSize: 24 }} color="text.secondary" gutterBottom align="center">
+            {title}
+          </Typography>
 
-      <CardActions>{/* <Button size="small">Learn More</Button>  */}</CardActions>
-    </Card>
-  );
+          <Typography sx={{ fontSize: 24, fontWeight: 'bold' }} align="center">
+            {data}
+          </Typography>
+          <Typography sx={{ marginTop: 1 }} variant="body2" align="center">
+            <TrendingDown sx={{ color: 'red' }} if={up == true}></TrendingDown> vs Last Month
+          </Typography>
+        </CardContent>
+
+        <CardActions>{/* <Button size="small">Learn More</Button>  */}</CardActions>
+      </Card>
+    );
+  } else {
+    return (
+      <Card
+        className={styles.info}
+        sx={{ borderRadius: 4, width: 240 }}
+        style={{ backgroundColor: theme.palette.primary.dark }}
+      >
+        <CardContent>
+          <Typography sx={{ fontSize: 24 }} color="text.secondary" gutterBottom align="center">
+            {title}
+          </Typography>
+
+          <Typography sx={{ fontSize: 24, fontWeight: 'bold' }} align="center">
+            {data}
+          </Typography>
+          <Typography sx={{ marginTop: 1 }} variant="body2" align="center">
+            <TrendingUp sx={{ color: 'green' }} if={up == true}></TrendingUp>
+            vs Last Month
+          </Typography>
+        </CardContent>
+
+        <CardActions>{/* <Button size="small">Learn More</Button>  */}</CardActions>
+      </Card>
+    );
+  }
 }

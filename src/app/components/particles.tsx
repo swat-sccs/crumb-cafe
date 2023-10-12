@@ -1,6 +1,5 @@
 import { useCallback } from 'react';
 import type { Container, Engine } from 'tsparticles-engine';
-
 import Particles from 'react-particles';
 import { loadFull } from 'tsparticles'; // if you are going to use `loadFull`, install the
 import Options from './particles.json';

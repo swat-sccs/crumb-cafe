@@ -1,14 +1,11 @@
 // Admin Analytics
 'use client';
-import Card from '@mui/material/Card';
-import Grid from '@mui/material/Grid';
-import Container from '@mui/material/Container';
+import { Grid, Container, Typography, Avatar, Card, CardContent } from '@mui/material';
 import styles from './page.module.css';
-import Stack from '@mui/material/Stack';
-import Box from '@mui/material/Box';
 import { LineChart } from '@mui/x-charts/LineChart';
 import BasicCard from './card.js';
-import { PieChart, pieArcLabelClasses } from '@mui/x-charts/PieChart';
+import { PieChart, pieArcLabelClasses, pieArcClasses } from '@mui/x-charts/PieChart';
+import { useTheme } from '@mui/material/styles';
 
 const data2 = [
   { label: 'Quesadilla', value: 2400 },
@@ -20,15 +17,70 @@ const data2 = [
 ];
 
 export default function Analytics() {
+  const theme = useTheme();
   return (
-    <Container className={styles.main}>
-      <Container className={styles.topBar}>
+    <Container className={styles.topBar} sx={{ backgroundColor: '', width: '100vw' }}>
+      <Grid container direction="row" justifyContent="space-between">
+        <Typography
+          variant="h3"
+          style={{ color: 'white', marginTop: '', marginLeft: '2%' }}
+          align="left"
+        >
+          Analytics
+        </Typography>
+
+        <Avatar sx={{ bgcolor: theme.palette.primary.light }}>A</Avatar>
+      </Grid>
+
+      <Grid sx={{ backgroundColor: '' }} container>
+        <Grid container direction="row" justifyContent="flex-start" alignItems="center">
+          <PieChart
+            series={[
+              {
+                data: data2,
+                paddingAngle: 3,
+                arcLabel: (item) => `${item.value}`,
+                highlightScope: { faded: 'global', highlighted: 'item' },
+                cx: 150,
+                cy: 220,
+                innerRadius: 100,
+                outerRadius: 200,
+                cornerRadius: 10,
+              },
+            ]}
+            sx={{
+              [`& .${pieArcLabelClasses.root}`]: {
+                fill: 'white',
+                fontWeight: 'bold',
+                fontSize: 20,
+              },
+              [`& .${pieArcClasses.faded}`]: {
+                fill: 'gray',
+              },
+            }}
+            height={450}
+            width={300}
+            legend={{ hidden: true }}
+          />
+
+          <LineChart
+            xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+            series={[
+              {
+                data: [2, 5.5, 2, 8.5, 1.5, 10],
+              },
+            ]}
+            width={500}
+            height={300}
+          />
+        </Grid>
+
         <Grid
-          sx={{ backgroundColor: '' }}
           container
-          spacing={2}
           direction="row"
-          justifyContent="space-between"
+          justifyContent="space-evenly"
+          alignItems="flex-start"
+          sx={{ marginTop: '5%' }}
         >
           <Grid item>
             <BasicCard title="Total Sales" data="$3.21" up="true"></BasicCard>
@@ -46,54 +98,23 @@ export default function Analytics() {
             <BasicCard title="Daily Sales" data="$53k" up="true"></BasicCard>
           </Grid>
         </Grid>
-
-        <Grid
-          sx={{ backgroundColor: '', marginTop: 5 }}
-          container
-          direction="row"
-          justifyContent="space-between"
-          alignItems="center"
-          spacing={10}
-        >
-          <Grid item>
-            <PieChart
-              series={[
-                {
-                  data: data2,
-                  paddingAngle: 3,
-                  arcLabel: (item) => `${item.value}`,
-                  cx: 210,
-                  cy: 220,
-                  innerRadius: 150,
-                  outerRadius: 200,
-                  cornerRadius: 10,
-                },
-              ]}
-              sx={{
-                [`& .${pieArcLabelClasses.root}`]: {
-                  fill: 'white',
-                  fontWeight: 'bold',
-                },
-              }}
-              height={450}
-              width={560}
-            />
-          </Grid>
-
-          <Grid item>
-            <LineChart
-              xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-              series={[
-                {
-                  data: [2, 5.5, 2, 8.5, 1.5, 5],
-                },
-              ]}
-              width={500}
-              height={300}
-            />
-          </Grid>
-        </Grid>
-      </Container>
+      </Grid>
     </Container>
   );
 }
+
+/*
+LineChart
+          xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
+          series={[
+            {
+              data: [2, 5.5, 2, 8.5, 1.5, 5],
+            },
+          ]}
+          width={300}
+          height={300}
+        />
+
+
+
+*/

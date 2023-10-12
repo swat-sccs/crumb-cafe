@@ -1,0 +1,13 @@
+.menu {
+  transition: max-width 0.1s ease-in-out;
+  max-width: 90%;
+}
+
+.navtext {
+  font-size: 0;
+}
+
+.navtext:hover {
+  transition: font-size 0.1s ease-in-out;
+  font-size: 20;
+}

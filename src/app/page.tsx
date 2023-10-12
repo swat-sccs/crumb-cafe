@@ -1,7 +1,5 @@
 'use client';
-
-import { AlignHorizontalCenter } from '@mui/icons-material';
-import { Box, Card, Button, Typography, Grid } from '@mui/material';
+import { Button, Typography, Grid } from '@mui/material';
 import CrumbParticles from './components/particles';
 import { useRouter } from 'next/navigation';
 
@@ -10,47 +8,46 @@ export default function Home() {
   return (
     <div>
       <Grid
-        sx={{ backgroundColor: '', marginTop: '20%' }}
         container
-        spacing={1}
-        direction="row"
+        direction="column"
         justifyContent="center"
         alignItems="center"
+        sx={{ backgroundColor: '', height: '100vh', width: '100vw' }}
       >
-        <Grid container spacing={1} direction="column" justifyContent="center" alignItems="center">
-          <Typography variant="h3" style={{ color: 'white' }}>
+        <Grid item>
+          <Typography variant="h3" style={{ color: 'white' }} align="center">
             Welcome!
           </Typography>
           <Typography variant="h2" style={{ fontWeight: 'bold', color: 'white' }}>
             The Crumb Cafe Homepage
           </Typography>
+        </Grid>
 
-          <Grid container spacing={1} direction="row" justifyContent="center" alignItems="center">
-            <Button
-              variant="contained"
-              size="large"
-              sx={{ m: 1, p: 2, width: '130px' }}
-              onClick={() => router.push('/admin/dash')}
-            >
-              Admin Page
-            </Button>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{ m: 1, p: 2, width: '130px' }}
-              onClick={() => router.push('/point_of_service')}
-            >
-              POS
-            </Button>
-            <Button
-              variant="contained"
-              size="large"
-              sx={{ m: 1, p: 2, width: '130px' }}
-              onClick={() => router.push('/order_display')}
-            >
-              Kitchen
-            </Button>
-          </Grid>
+        <Grid item>
+          <Button
+            variant="contained"
+            size="large"
+            sx={{ m: 1, p: 2, width: '130px' }}
+            onClick={() => router.push('/admin/dash')}
+          >
+            Admin Page
+          </Button>
+          <Button
+            variant="contained"
+            size="large"
+            sx={{ m: 1, p: 2, width: '130px' }}
+            onClick={() => router.push('/point_of_service')}
+          >
+            POS
+          </Button>
+          <Button
+            variant="contained"
+            size="large"
+            sx={{ m: 1, p: 2, width: '130px' }}
+            onClick={() => router.push('/order_display')}
+          >
+            Kitchen
+          </Button>
         </Grid>
       </Grid>
       <CrumbParticles />
