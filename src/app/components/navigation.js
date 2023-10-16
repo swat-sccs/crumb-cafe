@@ -1,14 +1,25 @@
 //Side Bar
-import { Card, Grid, ListItemButton, ListItem, Typography, CardContent } from '@mui/material';
+'use client';
+import { Card, Grid, ListItemButton, ListItem, Typography, Link } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Menu, Insights, Settings, CalendarMonth, Home, Person } from '@mui/icons-material';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
+import { useState } from 'react';
+
 import styles from './navigation.module.css';
 
 export default function Navigation() {
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const router = useRouter();
+  const pathname = usePathname();
+
+  const [hi, setRoute] = useState('/');
+
+  function handleChange(path) {
+    //router.push(path);
+    setRoute(path);
+  }
 
   return (
     <Card
@@ -29,22 +40,27 @@ export default function Navigation() {
         alignItems="center"
         sx={{ minHeight: 500 }}
       >
-        <ListItemButton divider onClick={() => router.push('/')} sx={{ width: '100%' }}>
+        <ListItemButton divider sx={{ width: '100%' }} onClick={() => router.push('/')}>
           <Grid container justifyContent="center">
             <Menu fontSize="large"></Menu>
-            <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
+            <Typography
+              sx={{ fontSize: 20 }}
+              color="text.secondary"
+              align="center"
+              onClick={() => router.push('/admin/dash')}
+            >
               Back
             </Typography>
           </Grid>
         </ListItemButton>
 
         <ListItem divider sx={{ minHeight: 100 }}>
-          {'Logo? '}
+          {'Logo?'}
+          {hi}
         </ListItem>
 
-        <ListItemButton divider onClick={() => router.push('/admin/dash')} sx={{ width: '100%' }}>
+        <ListItemButton divider sx={{ width: '100%' }} onClick={() => router.push('/admin/dash')}>
           <Home fontSize="large"></Home>
-
           <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
             Home
           </Typography>

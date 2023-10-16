@@ -1,36 +1,27 @@
 // Admin Analytics
 'use client';
-import { Grid, Container, Typography, Avatar, Card, CardContent } from '@mui/material';
+import { Grid, Container, Typography, Avatar } from '@mui/material';
 import styles from './page.module.css';
 import { LineChart } from '@mui/x-charts/LineChart';
 import BasicCard from './card.js';
+import LabelAvatar from '../../../components/labelAvatar.js';
 import { PieChart, pieArcLabelClasses, pieArcClasses } from '@mui/x-charts/PieChart';
 import { useTheme } from '@mui/material/styles';
 
 const data2 = [
-  { label: 'Quesadilla', value: 2400 },
-  { label: 'Burger and Fries', value: 4567 },
-  { label: 'Oreo Milk Shake', value: 1398 },
-  { label: 'Chicken Tendies', value: 9800 },
-  { label: 'Dino Nuggies', value: 3908 },
-  { label: 'JUICE', value: 4800 },
+  { label: 'Quesadilla', value: 200 },
+  { label: 'Burger and Fries', value: 100 },
+  { label: 'Oreo Milk Shake', value: 50 },
+  { label: 'Chicken Tendies', value: 100 },
+  { label: 'Dino Nuggies', value: 30 },
+  { label: 'JUICE', value: 20 },
 ];
 
 export default function Analytics() {
   const theme = useTheme();
   return (
     <Container className={styles.topBar} sx={{ backgroundColor: '', width: '100vw' }}>
-      <Grid container direction="row" justifyContent="space-between">
-        <Typography
-          variant="h3"
-          style={{ color: 'white', marginTop: '', marginLeft: '2%' }}
-          align="left"
-        >
-          Analytics
-        </Typography>
-
-        <Avatar sx={{ bgcolor: theme.palette.primary.light }}>A</Avatar>
-      </Grid>
+      <LabelAvatar title="Analytics" />
 
       <Grid sx={{ backgroundColor: '' }} container>
         <Grid container direction="row" justifyContent="flex-start" alignItems="center">
@@ -83,38 +74,22 @@ export default function Analytics() {
           sx={{ marginTop: '5%' }}
         >
           <Grid item>
-            <BasicCard title="Total Sales" data="$3.21" up="true"></BasicCard>
+            <BasicCard title="Total Sales" data="$3.21" up={true}></BasicCard>
           </Grid>
 
           <Grid item>
-            <BasicCard title="Current Sales" data="$500.00" up="false"></BasicCard>
+            <BasicCard title="Current Sales" data="$500.00" up={false}></BasicCard>
           </Grid>
 
           <Grid item>
-            <BasicCard title="Total Orders" data="500" up="true"></BasicCard>
+            <BasicCard title="Total Orders" data="500" up={true}></BasicCard>
           </Grid>
 
           <Grid item>
-            <BasicCard title="Daily Sales" data="$53k" up="true"></BasicCard>
+            <BasicCard title="Daily Sales" data="$53k" up={true}></BasicCard>
           </Grid>
         </Grid>
       </Grid>
     </Container>
   );
 }
-
-/*
-LineChart
-          xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-          series={[
-            {
-              data: [2, 5.5, 2, 8.5, 1.5, 5],
-            },
-          ]}
-          width={300}
-          height={300}
-        />
-
-
-
-*/

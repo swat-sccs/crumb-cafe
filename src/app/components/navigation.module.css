@@ -11,3 +11,12 @@
   transition: font-size 0.1s ease-in-out;
   font-size: 20;
 }
+
+.linkThing {
+  background-color: white;
+  color: white;
+}
+
+.active {
+  color: white;
+}

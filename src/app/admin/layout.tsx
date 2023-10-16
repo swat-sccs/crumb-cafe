@@ -1,6 +1,6 @@
 //Side Bar
 'use client';
-import { Grid, Typography } from '@mui/material';
+import { Grid } from '@mui/material';
 import Navigation from '../components/navigation';
 export default function sideBar({ children }: { children: React.ReactNode }) {
   return (

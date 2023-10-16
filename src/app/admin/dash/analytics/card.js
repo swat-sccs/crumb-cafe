@@ -7,7 +7,7 @@ import { useTheme } from '@mui/material/styles';
 export default function BasicCard({ title, data, up }) {
   const theme = useTheme();
 
-  if (up == 'true') {
+  if (up) {
     return (
       <Card
         className={styles.info}
