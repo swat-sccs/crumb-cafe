@@ -10,6 +10,8 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { orange, cyan, blueGrey } from '@mui/material/colors';
 import React, { useState, useEffect } from 'react';
+import { LegendToggle } from '@mui/icons-material';
+import { AnyKeys } from 'mongoose';
 
 export default function App() {
     const [user, setUser] = useState('izzy');
@@ -32,11 +34,35 @@ export default function App() {
         13: { "id": 13, "name": "Dumplings" },
     };
 
+    const [items, setItems] = useState([
+        {"name": "Simple Quesadilla", "qty": 0, "price": "$5.00"},
+        {"name": "Loaded Quesadilla!", "qty": 0, "price": "$5.00"},
+        {"name": "Avo-Goat-O", "qty": 0, "price": "$5.00"},
+        {"name": "Avocado Toast", "qty": 0, "price": "$5.00"},
+        {"name": "Grilled Cheese", "qty": 0, "price": "$5.00"},
+        {"name": "Caprese", "qty": 0, "price": "$5.00"},
+        {"name": "Chips and Guac", "qty": 0, "price": "$5.00"},
+        {"name": "Chips and Salsa", "qty": 0, "price": "$5.00"},
+        {"name": "Cheese Fries", "qty": 0, "price": "$5.00"},
+        {"name": "Pancakes", "qty": 0, "price": "$5.00"},
+        {"name": "French Toast", "qty": 0, "price": "$5.00"},
+        {"name": "Nachos", "qty": 0, "price": "$5.00"},
+        {"name": "Dumplings", "qty": 0, "price": "$5.00"},
+    ]);
+    const addItems = (item: any) => {
+        items[item-1].qty += 1; 
+        setItems([...items]);
+    }
+
     const renderFoodButtons = () => {
         let buttons = [];
-
         for (var prop in dict) {
-            buttons.push(<Button sx={{ m: 1 }} size="large" >{dict[prop].name}</Button>);
+            let currentDish = prop;
+            buttons.push(
+            <Button 
+                sx={{ m: 1 }} size="large" onClick={() => addItems(currentDish)}> 
+                {dict[prop].name}
+                </Button>);
             //console.log(dict[prop].name);
         }
         return buttons;
@@ -48,7 +74,7 @@ export default function App() {
                 {renderFoodButtons()}
             </React.Fragment>
         )
-    }
+    };
 
     const renderCancelOrderComponent = () => {
         return (<Button sx={{ 
@@ -57,7 +83,7 @@ export default function App() {
             height: 60,
             lineHeight: 1.4,
         }} size="large" >CANCEL<br />ORDER</Button>)
-    }
+    };
 
     const CancelOrderComponent = () => {
         return (
@@ -65,7 +91,7 @@ export default function App() {
                 {renderCancelOrderComponent()}
             </React.Fragment>
         )
-    }
+    };
 
     const renderConfirmOrderComponent = () => {
         return (<Button sx={{ 
@@ -74,7 +100,7 @@ export default function App() {
             height: 60,
             lineHeight: 1.4,
         }} size="large" >CONFIRM<br />ORDER</Button>)
-    }
+    };
 
     const ConfirmOrderComponent = () => {
         return (
@@ -82,7 +108,7 @@ export default function App() {
                 {renderConfirmOrderComponent()}
             </React.Fragment>
         )
-    }
+    };
 
     const renderDeleteItemComponent = () => {
         return (<Button sx={{ 
@@ -91,7 +117,7 @@ export default function App() {
             height: 60,
             fontSize: 12,
         }} size="large" >Delete This Item</Button>)
-    }
+    };
 
     const DeleteItemComponent = () => {
         return (
@@ -99,7 +125,7 @@ export default function App() {
                 {renderDeleteItemComponent()}
             </React.Fragment>
         )
-    }
+    };
 
     const renderCustomItemComponent = () => {
         return (<Button sx={{ 
@@ -108,7 +134,7 @@ export default function App() {
             fontSize: 12,
             height: 60,
         }} size="large" >Custom Item</Button>)
-    }
+    };
 
     const CustomItemComponent = () => {
         return (
@@ -116,7 +142,7 @@ export default function App() {
                 {renderCustomItemComponent()}
             </React.Fragment>
         )
-    }
+    };
     const renderConfirmItemComponent = () => {
         return (<Button sx={{ 
             m: 1,
@@ -125,7 +151,7 @@ export default function App() {
             height: 60,
 
         }} size="large" >Confirm This Item</Button>)
-    }
+    };
 
     const ConfirmItemComponent = () => {
         return (
@@ -133,7 +159,7 @@ export default function App() {
                 {renderConfirmItemComponent()}
             </React.Fragment>
         )
-    }
+    };
     //dont do this
     const theme = createTheme({
         palette: {
@@ -142,7 +168,89 @@ export default function App() {
             info: blueGrey,
         },
     });
+    
+    //adds to current order side
+    const CurrentOrderItemsComponent = () => {
+        return (
+            <React.Fragment>
+                {renderCurrentItems()}
+            </React.Fragment>
+        )
+    };
 
+    const renderCurrentItems = () => {
+        let selectedItems = [];
+        for (const prop of items) {
+            if (prop.qty > 0) {
+                selectedItems.push(prop);
+            }
+        }
+        return (
+            selectedItems.map((item:any) =>
+            <>
+            <div style={{textAlign:"left"}}>
+                {item.name}
+            </div>
+            <hr />
+            </>
+            )
+        );
+    };
+
+    const CurrentOrderQtyComponent = () => {
+        return (
+            <React.Fragment>
+                {renderCurrentQty()}
+            </React.Fragment>
+        )
+    };
+
+    const renderCurrentQty = () => {
+        let selectedItems = [];
+        for (const prop of items) {
+            if (prop.qty > 0) {
+                selectedItems.push(prop);
+            }
+        }
+        return (
+            selectedItems.map((item:any) =>
+            <>
+            <div style={{textAlign:"center"}}>
+                {item.qty}
+            </div>
+            <hr />
+            </>
+            )
+        );
+    };
+
+    const CurrentOrderPriceComponent = () => {
+        return (
+            <React.Fragment>
+                {renderCurrentPrice()}
+            </React.Fragment>
+        )
+    };
+
+    const renderCurrentPrice = () => {
+        let selectedItems = [];
+        for (const prop of items) {
+            if (prop.qty > 0) {
+                selectedItems.push(prop);
+            }
+        }
+        return (
+            selectedItems.map((item:any) =>
+                <>
+                <div style={{textAlign:"right"}}>
+                    {item.price}
+                </div>
+                <hr />
+                </>
+            )
+        );
+    };
+    
 
     useEffect(() => { //runs after first and every render
         console.log("page loaded");
@@ -220,15 +328,24 @@ export default function App() {
                         </Toolbar>
                     </AppBar>
                     <Grid container spacing={12} rowSpacing={10} columnSpacing={{ xs: 5, sm: 2, md: 2 }}>
-                        <Grid item xs={6}>
-                            <Card sx={{ m: 1, p: 1 }}>
-                                <CardHeader 
-                                    subheader="item qty price"
-                                />
-                                calculator
-                                subtotal
-                            </Card>
+                        <Grid item sm={6}>
+                            <Grid container spacing={1}>
+                                <Grid item sm={8}>
+                                    <Typography variant="h6" textAlign="left">Item</Typography>
+                                    <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
+                                </Grid>
+                                <Grid item sm={2}>
+                                    <Typography variant="h6" textAlign="center">Qty</Typography>
+                                    <CurrentOrderQtyComponent></CurrentOrderQtyComponent>
+                                </Grid>
+                                <Grid item sm={2}>
+                                    <Typography variant="h6" textAlign="right">Price</Typography>
+                                    <CurrentOrderPriceComponent></CurrentOrderPriceComponent>
+                                </Grid>
+                            </Grid>
+                            
                         </Grid>
+        
                         <Grid item xs={6}>
                             <Grid container spacing={1}>
                                 <Grid item xs={6}>
