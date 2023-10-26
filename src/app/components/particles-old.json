@@ -2,7 +2,7 @@
   "autoPlay": true,
   "background": {
     "color": {
-      "value": "#000000"
+      "value": "#121212"
     },
     "image": "",
     "position": "",
@@ -58,7 +58,7 @@
     },
     "modes": {
       "trail": {
-        "delay": 1,
+        "delay": 0,
         "pauseOnStop": false,
         "quantity": 1
       },
@@ -76,13 +76,7 @@
       "bubble": {
         "distance": 200,
         "duration": 0.4,
-        "mix": false,
-        "divs": {
-          "distance": 200,
-          "duration": 0.4,
-          "mix": false,
-          "selectors": []
-        }
+        "mix": false
       },
       "connect": {
         "distance": 80,
@@ -113,16 +107,7 @@
         "factor": 100,
         "speed": 1,
         "maxSpeed": 50,
-        "easing": "ease-out-quad",
-        "divs": {
-          "distance": 200,
-          "duration": 0.4,
-          "factor": 100,
-          "speed": 1,
-          "maxSpeed": 50,
-          "easing": "ease-out-quad",
-          "selectors": []
-        }
+        "easing": "ease-out-quad"
       },
       "slow": {
         "factor": 3,
@@ -188,7 +173,7 @@
         }
       },
       "enable": false,
-      "maxSpeed": 50,
+      "maxSpeed": 500,
       "mode": "bounce",
       "overlap": {
         "enable": true,
@@ -196,13 +181,13 @@
       }
     },
     "color": {
-      "value": "#fff",
+      "value": "#FF0000",
       "animation": {
         "h": {
           "count": 0,
-          "enable": false,
+          "enable": true,
           "offset": 0,
-          "speed": 20,
+          "speed": 10,
           "delay": 0,
           "decay": 0,
           "sync": true
@@ -227,51 +212,18 @@
         }
       }
     },
-    "groups": {
-      "z5000": {
-        "number": {
-          "value": 70
-        },
-        "zIndex": {
-          "value": 50
-        }
-      },
-      "z7500": {
-        "number": {
-          "value": 30
-        },
-        "zIndex": {
-          "value": 75
-        }
-      },
-      "z2500": {
-        "number": {
-          "value": 50
-        },
-        "zIndex": {
-          "value": 25
-        }
-      },
-      "z1000": {
-        "number": {
-          "value": 40
-        },
-        "zIndex": {
-          "value": 10
-        }
-      }
-    },
+    "groups": {},
     "move": {
       "angle": {
         "offset": 0,
-        "value": 10
+        "value": 90
       },
       "attract": {
         "distance": 200,
-        "enable": false,
+        "enable": true,
         "rotate": {
-          "x": 600,
-          "y": 1200
+          "x": 2000,
+          "y": 2000
         }
       },
       "center": {
@@ -282,7 +234,7 @@
       },
       "decay": 0,
       "distance": {},
-      "direction": "right",
+      "direction": "none",
       "drift": 0,
       "enable": true,
       "gravity": {
@@ -292,7 +244,7 @@
         "maxSpeed": 50
       },
       "path": {
-        "clamp": true,
+        "clamp": false,
         "delay": {
           "random": {
             "enable": false,
@@ -300,40 +252,49 @@
           },
           "value": 0
         },
-        "enable": false,
-        "options": {}
+        "enable": true,
+        "options": {
+          "sides": 6,
+          "turnSteps": 30,
+          "angle": 30
+        },
+        "generator": "polygonPathGenerator"
       },
       "outModes": {
-        "default": "out",
-        "bottom": "out",
-        "left": "out",
-        "right": "out",
-        "top": "out"
+        "default": "destroy",
+        "bottom": "destroy",
+        "left": "destroy",
+        "right": "destroy",
+        "top": "destroy"
       },
       "random": false,
       "size": false,
       "speed": 5,
       "spin": {
-        "acceleration": 0,
+        "acceleration": 1,
         "enable": false
       },
       "straight": false,
       "trail": {
-        "enable": false,
-        "length": 10,
-        "fill": {}
+        "enable": true,
+        "length": 30,
+        "fill": {
+          "color": {
+            "value": "#000"
+          }
+        }
       },
       "vibrate": false,
       "warp": false
     },
     "number": {
       "density": {
-        "enable": false,
+        "enable": true,
         "width": 1920,
         "height": 1080
       },
       "limit": 0,
-      "value": 200
+      "value": 0
     },
     "opacity": {
       "random": {
@@ -344,14 +305,13 @@
       "animation": {
         "count": 0,
         "enable": false,
-        "speed": 3,
+        "speed": 2,
         "decay": 0,
         "delay": 0,
         "sync": false,
         "mode": "auto",
         "startValue": "random",
-        "destroy": "none",
-        "minimumValue": 0.1
+        "destroy": "none"
       }
     },
     "reduceDuplicates": false,
@@ -377,7 +337,7 @@
         "enable": false,
         "minimumValue": 1
       },
-      "value": 3,
+      "value": 2,
       "animation": {
         "count": 0,
         "enable": false,
@@ -398,8 +358,8 @@
         "enable": false,
         "minimumValue": 0
       },
-      "value": 5,
-      "opacityRate": 0.5,
+      "value": 0,
+      "opacityRate": 1,
       "sizeRate": 1,
       "velocityRate": 1
     },
@@ -534,13 +494,13 @@
     "links": {
       "blink": false,
       "color": {
-        "value": "#ffffff"
+        "value": "#fff"
       },
       "consent": false,
       "distance": 100,
       "enable": false,
       "frequency": 1,
-      "opacity": 0.4,
+      "opacity": 1,
       "shadow": {
         "blur": 5,
         "color": {
@@ -583,7 +543,7 @@
     },
     "rate": {
       "quantity": 1,
-      "delay": 7
+      "delay": 0.25
     },
     "shape": "square",
     "startCount": 0,
@@ -592,46 +552,11 @@
       "height": 0,
       "width": 0
     },
-    "particles": {
-      "shape": {
-        "type": "images",
-        "options": {
-          "images": {
-            "src": "https://particles.js.org/images/cyan_amongus.png",
-            "width": 500,
-            "height": 634
-          }
-        }
-      },
-      "size": {
-        "value": 40
-      },
-      "move": {
-        "speed": 10,
-        "outModes": {
-          "default": "none",
-          "right": "destroy"
-        },
-        "straight": true
-      },
-      "zIndex": {
-        "value": 0
-      },
-      "rotate": {
-        "value": {
-          "min": 0,
-          "max": 360
-        },
-        "animation": {
-          "enable": true,
-          "speed": 10,
-          "sync": true
-        }
-      }
-    },
+    "direction": "none",
+    "particles": {},
     "position": {
-      "x": -5,
-      "y": 55
+      "x": 50,
+      "y": 50
     }
   },
   "motion": {

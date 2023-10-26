@@ -1,25 +1,91 @@
 //Side Bar
 'use client';
-import { Card, Grid, ListItemButton, ListItem, Typography, Link } from '@mui/material';
+import * as React from 'react';
+
+import { Card, Container, ListItemButton, ListItem, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 import { Menu, Insights, Settings, CalendarMonth, Home, Person } from '@mui/icons-material';
 import { useRouter, usePathname } from 'next/navigation';
-import { useState } from 'react';
+import PropTypes from 'prop-types';
+import Tabs from '@mui/material/Tabs';
+import Tab from '@mui/material/Tab';
+import { MemoryRouter, Route, Routes, Link, matchPath, useLocation } from 'react-router-dom';
+import { StaticRouter } from 'react-router-dom/server';
 
 import styles from './navigation.module.css';
+
+function Router(props) {
+  const { children } = props;
+  if (typeof window === 'undefined') {
+    return <StaticRouter location="/">{children}</StaticRouter>;
+  }
+
+  return (
+    <MemoryRouter initialEntries={['/']} initialIndex={0}>
+      {children}
+    </MemoryRouter>
+  );
+}
+
+Router.propTypes = {
+  children: PropTypes.node,
+};
+
+function useRouteMatch(patterns) {
+  const { pathname } = useLocation();
+
+  for (let i = 0; i < patterns.length; i += 1) {
+    const pattern = patterns[i];
+    const possibleMatch = matchPath(pattern, pathname);
+    if (possibleMatch !== null) {
+      return possibleMatch;
+    }
+  }
+
+  return null;
+}
+
+function MyTabs() {
+  // You need to provide the routes in descendant order.
+  // This means that if you have nested routes like:
+  // users, users/new, users/edit.
+  // Then the order should be ['users/add', 'users/edit', 'users'].
+  // Settings Staff Calendar Analytics Home Back
+  const routeMatch = useRouteMatch([
+    '/dash/admin/settings',
+    '/dash/admin/staff',
+    '/dash/admin/calendar',
+    '/dash/admin/analytics',
+    '/dash/admin',
+    '/',
+  ]);
+  const currentTab = routeMatch?.pattern?.path;
+
+  return (
+    <Tabs value={currentTab} orientation={'vertical'}>
+      <Tab label="Back" value="/" to="/" component={Link} />
+      <Tab label="Home" value="/dash/admin" to="/dash/admin" component={Link} />
+      <Tab label="Analytics" value="/dash/analytics" to="/dash/admin/analytics" component={Link} />
+    </Tabs>
+  );
+}
+
+function CurrentRoute() {
+  const location = useLocation();
+
+  return (
+    <Typography variant="body2" sx={{ pb: 2 }} color="text.secondary">
+      Current route: {location.pathname}
+    </Typography>
+  );
+}
 
 export default function Navigation() {
   const theme = useTheme();
   const primary = theme.palette.primary.main;
   const router = useRouter();
-  const pathname = usePathname();
-
-  const [hi, setRoute] = useState('/');
-
-  function handleChange(path) {
-    //router.push(path);
-    setRoute(path);
-  }
+  const path = usePathname();
+  console.log(path);
 
   return (
     <Card
@@ -33,79 +99,14 @@ export default function Navigation() {
         marginTop: '35%',
       }}
     >
-      <Grid
-        container
-        direction="column"
-        justifyContent="space-evenly"
-        alignItems="center"
-        sx={{ minHeight: 500 }}
-      >
-        <ListItemButton divider sx={{ width: '100%' }} onClick={() => router.push('/')}>
-          <Grid container justifyContent="center">
-            <Menu fontSize="large"></Menu>
-            <Typography
-              sx={{ fontSize: 20 }}
-              color="text.secondary"
-              align="center"
-              onClick={() => router.push('/admin/dash')}
-            >
-              Back
-            </Typography>
-          </Grid>
-        </ListItemButton>
-
-        <ListItem divider sx={{ minHeight: 100 }}>
-          {'Logo?'}
-          {hi}
-        </ListItem>
-
-        <ListItemButton divider sx={{ width: '100%' }} onClick={() => router.push('/admin/dash')}>
-          <Home fontSize="large"></Home>
-          <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-            Home
-          </Typography>
-        </ListItemButton>
-
-        <ListItemButton
-          divider
-          onClick={() => router.push('/admin/dash/analytics')}
-          sx={{ width: '100%' }}
-        >
-          <Insights fontSize="large"></Insights>
-          <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-            Analytics
-          </Typography>
-        </ListItemButton>
-
-        <ListItemButton
-          divider
-          onClick={() => router.push('/admin/dash/calendar')}
-          sx={{ width: '100%' }}
-        >
-          <CalendarMonth fontSize="large"></CalendarMonth>
-          <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-            Calendar
-          </Typography>
-        </ListItemButton>
-
-        <ListItemButton
-          divider
-          onClick={() => router.push('/admin/dash/staff')}
-          sx={{ width: '100%' }}
-        >
-          <Person fontSize="large"></Person>
-          <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-            Staff
-          </Typography>
-        </ListItemButton>
-
-        <ListItemButton sx={{ width: '100%' }}>
-          <Settings fontSize="large"></Settings>
-          <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-            Settings
-          </Typography>
-        </ListItemButton>
-      </Grid>
+      <Router>
+        <Container sx={{ width: '100%' }}>
+          <Routes>
+            <Route path="*" element={<CurrentRoute />} />
+          </Routes>
+          <MyTabs />
+        </Container>
+      </Router>
     </Card>
   );
 }

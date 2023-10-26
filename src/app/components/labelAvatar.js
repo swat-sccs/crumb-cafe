@@ -1,8 +1,7 @@
 //Top Bar
 'use client';
-import { Avatar, Grid, ListItemButton, ListItem, Typography } from '@mui/material';
+import { Avatar, Grid, Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
-import styles from './navigation.module.css';
 
 export default function LabelAvatar({ title }) {
   const theme = useTheme();
