@@ -5,10 +5,8 @@ export default function Home() {
     <Container>
       <Box>
         <Card elevation={2} sx={{ m: 2, p: 4 }}>
-          <Typography variant="h2">Admin Dashboard ~</Typography>
-          <Typography variant="body1">
-            Here&apos;s the Admin Dash Pretend there are buttons and cool graphs :)
-          </Typography>
+          <Typography variant="h2">Calendar ~</Typography>
+          <Typography variant="body1">Here&apos;s a landing page for the Crumb Cafe.</Typography>
         </Card>
       </Box>
     </Container>

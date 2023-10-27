@@ -1,0 +1,29 @@
+.main {
+  height: 100vh;
+  min-width: 100%;
+  display: flex;
+  overflow: hidden;
+}
+
+.topBar {
+  margin-top: 2%;
+}
+
+.info {
+  min-width: 505;
+  max-height: 140;
+
+  animation-duration: 0.5s;
+  animation-name: animate-fade;
+  animation-delay: 0s;
+  animation-fill-mode: backwards;
+}
+
+@keyframes animate-fade {
+  0% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
