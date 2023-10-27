@@ -1,7 +1,7 @@
 //Side Bar
 'use client';
 import { Grid } from '@mui/material';
-import Navigation from '../components/navigation';
+import Navigation from '../components/navBarExpanded';
 export default function sideBar({ children }: { children: React.ReactNode }) {
   return (
     <section>

@@ -28,7 +28,7 @@ export default function Home() {
             variant="contained"
             size="large"
             sx={{ m: 1, p: 2, width: '130px' }}
-            onClick={() => router.push('/admin/dash')}
+            onClick={() => router.push('/admin')}
           >
             Admin Page
           </Button>
