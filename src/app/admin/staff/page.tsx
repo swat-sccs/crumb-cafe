@@ -26,106 +26,93 @@ export default function Home() {
   const data: GridRowsProp = [
     {
       id: 1,
-      first: 'Dan',
-      last: 'World',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      first: 'SUS',
+      last: 'MC.sus',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'success',
     },
     {
       id: 2,
       first: 'Sam',
       last: 'is Awesome',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'success',
     },
     {
       id: 4,
       first: 'Can',
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'warning',
     },
     {
       id: 5,
       first: 'Ran',
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'success',
     },
     {
       id: 6,
       first: 'Man',
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'success',
     },
     {
       id: 7,
       first: 'Flan',
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'success',
     },
     {
       id: 8,
       first: 'Zam',
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'error',
     },
     {
       id: 9,
       first: 'Bam',
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'warning',
     },
     {
       id: 10,
       first: 'Lam',
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'success',
     },
     {
       id: 11,
       first: "Ma'am",
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'error',
     },
     {
       id: 12,
       first: 'Tam',
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'success',
     },
     {
       id: 13,
       first: 'Pam',
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'success',
     },
     {
       id: 14,
       first: 'DAMN',
       last: 'is Amazing',
-      avatar:
-        'https://img2.cgtrader.com/items/2043784/1926cfc19b/large/star-wars-phase-1-clone-trooper-helmet-3d-model-1926cfc19b.jpg',
+      avatar: 'https://i.pinimg.com/originals/42/16/45/4216450c3b5c529af3b41411179378db.png',
       status: 'error',
     },
   ];

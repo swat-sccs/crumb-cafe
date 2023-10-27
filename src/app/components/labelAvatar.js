@@ -16,7 +16,10 @@ export default function LabelAvatar({ title }) {
         {title}
       </Typography>
 
-      <Avatar sx={{ bgcolor: theme.palette.primary.light }}>A</Avatar>
+      <Avatar
+        sx={{ bgcolor: theme.palette.primary.light }}
+        src="https://assets.stickpng.com/images/61d183263a856e0004c6334a.png"
+      ></Avatar>
     </Grid>
   );
 }

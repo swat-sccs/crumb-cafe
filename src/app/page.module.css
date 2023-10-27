@@ -1,0 +1,7 @@
+.seeThroughButton {
+  background-color: rgb(49, 66, 95, 0.8);
+}
+
+.seeThroughButton :hover {
+  background-color: rgb(49, 66, 95);
+}
