@@ -1,96 +1,49 @@
-'use client';
-import { Button, Typography, Grid, Card } from '@mui/material';
-import CrumbParticles from './components/particles';
-import { useRouter } from 'next/navigation';
-import styles from './page.module.css';
+import { Box, Card, Container, Button, Typography, Grid } from '@mui/material';
 
 export default function Home() {
-  const router = useRouter();
   return (
-    <div>
-      <Grid
-        container
-        direction="column"
-        justifyContent="flex-start"
-        alignItems="center"
-        sx={{ backgroundColor: '', width: '100vw', marginTop: '4%' }}
-      >
-        <Grid item>
-          <Typography variant="h2" style={{ fontWeight: 'bold', color: 'white' }}>
-            Crumb Cafe
+    <Container>
+      <Box>
+        <Card elevation={2} sx={{ m: 1, p: 10 }}>
+          <Typography variant="h3">Welcome!</Typography>
+          <Typography variant="h2" style={{ fontWeight: 'bold' }}>
+            The Crumb Cafe Homepage
           </Typography>
-        </Grid>
-      </Grid>
+          <Grid container mt={3} spacing={4}>
+            <Grid style={{ width: '300px' }} item xs={4}>
+              <Button variant="contained" size="large" style={{ width: '100%', height: '300px' }}>
+                Admin Page
+              </Button>
+            </Grid>
 
-      <Grid
-        container
-        direction="row"
-        justifyContent="space-around"
-        alignItems="center"
-        sx={{ marginTop: '5%', height: '70vh' }}
-      >
-        <Card
-          className={styles.box}
-          sx={{
-            width: '25%',
-            height: '50%',
-            fontSize: '300%',
-            backgroundColor: 'rgb(49, 66, 95, 0.7)',
-            textAlign: 'center',
-            borderRadius: '50px',
-          }}
-          onClick={() => router.push('/admin')}
-        >
-          <Typography
-            sx={{ marginTop: '35%' }}
-            variant="h4"
-            style={{ fontWeight: 'bold', color: 'white' }}
-          >
-            Admin Page
-          </Typography>
+            <Grid style={{ width: '300px' }} item xs={4}>
+              <Button variant="contained" size="large" style={{ width: '100%', height: '300px' }}>
+                POS
+              </Button>
+            </Grid>
+
+            <Grid style={{ width: '300px' }} item xs={4}>
+              <Button
+                variant="contained"
+                size="large"
+                sx={{ mb: '10px' }}
+                style={{ width: '100%', height: '140px' }}
+              >
+                Order Display
+              </Button>
+
+              <Button
+                variant="contained"
+                size="large"
+                sx={{ mt: '10px' }}
+                style={{ width: '100%', height: '140px' }}
+              >
+                Public Order Display
+              </Button>
+            </Grid>
+          </Grid>
         </Card>
-        <Card
-          className={styles.box}
-          sx={{
-            width: '25%',
-            height: '50%',
-            fontSize: '300%',
-            backgroundColor: 'rgb(49, 66, 95, 0.7)',
-            textAlign: 'center',
-            borderRadius: '50px',
-          }}
-          onClick={() => router.push('/point_of_service')}
-        >
-          <Typography
-            sx={{ marginTop: '35%' }}
-            variant="h4"
-            style={{ fontWeight: 'bold', color: 'white' }}
-          >
-            POS
-          </Typography>
-        </Card>
-        <Card
-          className={styles.box}
-          sx={{
-            width: '25%',
-            height: '50%',
-            fontSize: '300%',
-            backgroundColor: 'rgb(49, 66, 95, 0.7)',
-            textAlign: 'center',
-            borderRadius: '50px',
-          }}
-          onClick={() => router.push('/order_display')}
-        >
-          <Typography
-            sx={{ marginTop: '35%' }}
-            variant="h4"
-            style={{ fontWeight: 'bold', color: 'white' }}
-          >
-            Order Display
-          </Typography>
-        </Card>
-      </Grid>
-      <CrumbParticles />
-    </div>
+      </Box>
+    </Container>
   );
 }
