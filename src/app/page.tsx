@@ -1,5 +1,5 @@
 'use client';
-import { Button, Typography, Grid } from '@mui/material';
+import { Button, Typography, Grid, Card } from '@mui/material';
 import CrumbParticles from './components/particles';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
@@ -16,67 +16,79 @@ export default function Home() {
         sx={{ backgroundColor: '', width: '100vw', marginTop: '4%' }}
       >
         <Grid item>
-          <Typography variant="h3" style={{ color: 'white' }} align="center">
-            Welcome!
-          </Typography>
           <Typography variant="h2" style={{ fontWeight: 'bold', color: 'white' }}>
-            The Crumb Cafe Homepage
+            Crumb Cafe
           </Typography>
         </Grid>
       </Grid>
 
       <Grid
         container
-        direction="column"
-        justifyContent="center"
+        direction="row"
+        justifyContent="space-around"
         alignItems="center"
-        sx={{ marginTop: '5%' }}
+        sx={{ marginTop: '5%', height: '70vh' }}
       >
-        <Button
-          variant="contained"
-          size="large"
+        <Card
+          className={styles.box}
           sx={{
-            m: 1,
-            p: 2,
-            width: '40%',
-            height: '300%',
+            width: '25%',
+            height: '50%',
             fontSize: '300%',
             backgroundColor: 'rgb(49, 66, 95, 0.7)',
+            textAlign: 'center',
+            borderRadius: '50px',
           }}
           onClick={() => router.push('/admin')}
         >
-          Admin Page
-        </Button>
-        <Button
-          variant="contained"
-          size="large"
+          <Typography
+            sx={{ marginTop: '35%' }}
+            variant="h4"
+            style={{ fontWeight: 'bold', color: 'white' }}
+          >
+            Admin Page
+          </Typography>
+        </Card>
+        <Card
+          className={styles.box}
           sx={{
-            m: 1,
-            p: 2,
-            width: '40%',
-            height: '200%',
+            width: '25%',
+            height: '50%',
             fontSize: '300%',
             backgroundColor: 'rgb(49, 66, 95, 0.7)',
+            textAlign: 'center',
+            borderRadius: '50px',
           }}
           onClick={() => router.push('/point_of_service')}
         >
-          POS
-        </Button>
-        <Button
-          variant="contained"
-          size="large"
+          <Typography
+            sx={{ marginTop: '35%' }}
+            variant="h4"
+            style={{ fontWeight: 'bold', color: 'white' }}
+          >
+            POS
+          </Typography>
+        </Card>
+        <Card
+          className={styles.box}
           sx={{
-            m: 1,
-            p: 2,
-            width: '40%',
-            height: '200%',
+            width: '25%',
+            height: '50%',
             fontSize: '300%',
             backgroundColor: 'rgb(49, 66, 95, 0.7)',
+            textAlign: 'center',
+            borderRadius: '50px',
           }}
           onClick={() => router.push('/order_display')}
         >
-          Kitchen
-        </Button>
+          <Typography
+            sx={{ marginTop: '35%' }}
+            variant="h4"
+            style={{ fontWeight: 'bold', color: 'white' }}
+          >
+            Order Display
+          </Typography>
+        </Card>
       </Grid>
       <CrumbParticles />
     </div>
