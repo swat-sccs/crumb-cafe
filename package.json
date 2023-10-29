@@ -12,8 +12,11 @@
   "dependencies": {
     "@emotion/react": "^11.11.1",
     "@emotion/styled": "^11.11.0",
+    "@fullcalendar/core": "^6.1.9",
+    "@fullcalendar/daygrid": "^6.1.9",
+    "@fullcalendar/react": "^6.1.9",
     "@mui/icons-material": "^5.14.9",
-    "@mui/material": "^5.14.9",
+    "@mui/material": "^5.14.15",
     "@mui/x-charts": "^6.0.0-alpha.13",
     "@mui/x-data-grid": "^6.16.2",
     "@types/node": "18.14.0",
