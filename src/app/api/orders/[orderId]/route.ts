@@ -22,30 +22,30 @@ export async function GET(_request: NextRequest, { params }: { params: { orderId
 }
 
 export async function POST(_request: NextRequest) {
-    await dbConnect();
+  await dbConnect();
 
-    try {
-      const order = _request.json();
-      const newOrder = await OrderModel.create(order);
-      return new NextResponse('Order created successfully', { status: 201 });
-    } catch (e){
-      return new NextResponse('Poor request', {status: 400})
-    }
+  try {
+    const order = _request.json();
+    const newOrder = await OrderModel.create(order);
+    return new NextResponse('Order created successfully', { status: 201 });
+  } catch (e) {
+    return new NextResponse('Poor request', { status: 400 });
+  }
 }
 
 export async function PUT(_request: NextRequest, { params }: { params: { orderId: string } }) {
-    await dbConnect();
-    const order = _request.json();
-    try {
-        const updatedOrder = await OrderModel.findByIdAndUpdate(params.orderId, order);
+  await dbConnect();
+  const order = _request.json();
+  try {
+    const updatedOrder = await OrderModel.findByIdAndUpdate(params.orderId, order);
 
-        if (!updatedOrder) {
-            return new NextResponse('Order not found', { status: 404 });
-        }
-        return new NextResponse('Order updated successfully', { status: 200 });
-    } catch (e) {
-        return new NextResponse('Unable to update order', { status: 404 }); 
+    if (!updatedOrder) {
+      return new NextResponse('Order not found', { status: 404 });
     }
+    return new NextResponse('Order updated successfully', { status: 200 });
+  } catch (e) {
+    return new NextResponse('Unable to update order', { status: 404 });
+  }
 }
 
 export async function DELETE(_request: NextRequest, { params }: { params: { orderId: string } }) {

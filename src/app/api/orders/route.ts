@@ -93,7 +93,13 @@ export async function POST(request: NextRequest) {
 
   const dishValid = await DishModel.findById(augmentedData.dish);
 
-  // if (dishValid.isOrderable) ???
+  if (!dishValid) {
+    return new NextResponse('Dish not found', { status: 404 });
+  }
+
+  if (!dishValid.isOrderable) {
+    return new NextResponse('Dish is not available, at this time', { status: 406 });
+  }
 
   await dbConnect();
 
