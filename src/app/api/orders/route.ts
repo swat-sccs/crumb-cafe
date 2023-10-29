@@ -5,7 +5,7 @@ import DishModel from '@/models/dish.model';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { parseQuery } from '../parseQuery';
+import { parseQuery, parseBody } from '../parseQuery';
 
 let customerNumberA = 1;
 
@@ -73,33 +73,31 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
+  const { ok, data } = parseBody(newOrderSchema, request);
+
+  if (!ok) {
+    return new NextResponse(data, { status: 400 });
+  }
+
   //assign unique ID, just going up
   const currentCustomerNumber = customerNumberA;
-  const data = { ...request.json(), status: 'new', customerNumber: currentCustomerNumber };
   customerNumberA = customerNumberA + 1;
-
-  const parsed = newOrderSchema.safeParse(data);
-
-  let parsedData;
-  if (parsed.success) {
-    parsedData = parsed.data;
-  } else {
-    return new NextResponse('Poor input', { status: 400 });
-  }
 
   //double check that 1) the dish exists, and 2) isOrderable
 
-  try {
-    const dishValid = DishModel.findById(parsedData.dish);
-    //if (dishValid.isOrderable) ???
-  } catch (e) {
-    // probably a cast error because an invalid ID was supplied
-    return new NextResponse('Dish not found', { status: 404 });
-  }
+  const augmentedData = {
+    ...data,
+    customerNumber: currentCustomerNumber,
+    status: 'new',
+  };
+
+  const dishValid = await DishModel.findById(augmentedData.dish);
+
+  // if (dishValid.isOrderable) ???
 
   await dbConnect();
 
-  const newOrder = new OrderModel(parsedData);
+  const newOrder = new OrderModel(augmentedData);
   const savedOrder = await newOrder.save();
 
   return NextResponse.json({
