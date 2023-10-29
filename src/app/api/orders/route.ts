@@ -1,10 +1,7 @@
 import dbConnect from '@/app/lib/mongodb';
 import OrderModel from '@/models/order.model';
 
-
 import DishModel from '@/models/dish.model';
-
-
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -21,12 +18,16 @@ const orderQuerySchema = z.object({
   updatedAfter: z.coerce.date().optional(),
 });
 
-const newOrderSchema = z.object({ 
+const newOrderSchema = z.object({
   customerName: z.string(), //not optional
   dish: z.string(),
-  options : z.array(z.string()).optional(),
-  notes : z.string().optional(),
-  //customDishOptions: OrderModel.CustomDishOptionsSchema().optional,
+  options: z.map(z.string(), z.array(z.string())),
+  notes: z.string().optional(),
+  customDishOptions: z.object({
+    friendlyName: z.string(),
+    description: z.string(),
+    price: z.number(),
+  }),
 });
 
 export async function GET(request: NextRequest) {
@@ -71,24 +72,23 @@ export async function GET(request: NextRequest) {
   });
 }
 
-
 export async function POST(request: NextRequest) {
   //assign unique ID, just going up
   const currentCustomerNumber = customerNumberA;
-  const data = { ...request.json(), status: "new", customerNumber: currentCustomerNumber };
+  const data = { ...request.json(), status: 'new', customerNumber: currentCustomerNumber };
   customerNumberA = customerNumberA + 1;
 
-  const parsed  = newOrderSchema.safeParse(data); 
+  const parsed = newOrderSchema.safeParse(data);
 
   let parsedData;
-  if (parsed.success){
+  if (parsed.success) {
     parsedData = parsed.data;
-  }else{
-    return new NextResponse("Poor input", {status: 400})
+  } else {
+    return new NextResponse('Poor input', { status: 400 });
   }
 
-  //double check that 1) the dish exists, and 2) isOrderable 
-    
+  //double check that 1) the dish exists, and 2) isOrderable
+
   try {
     const dishValid = DishModel.findById(parsedData.dish);
     //if (dishValid.isOrderable) ???
@@ -98,13 +98,11 @@ export async function POST(request: NextRequest) {
   }
 
   await dbConnect();
-  
+
   const newOrder = new OrderModel(parsedData);
   const savedOrder = await newOrder.save();
 
   return NextResponse.json({
     order: savedOrder,
-  });  
-
-  
+  });
 }
