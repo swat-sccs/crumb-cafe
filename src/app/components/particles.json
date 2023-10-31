@@ -703,7 +703,7 @@
       },
       "rate": {
         "quantity": 1,
-        "delay": 3
+        "delay": 5
       },
       "shape": "square",
       "startCount": 0,

@@ -1,5 +1,5 @@
 'use client';
-import { Button, Typography, Grid, Card } from '@mui/material';
+import { Button, Typography, Grid, Card, CardContent, CardActionArea } from '@mui/material';
 import CrumbParticles from './components/particles';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
@@ -27,7 +27,7 @@ export default function Home() {
         direction="row"
         justifyContent="space-around"
         alignItems="center"
-        sx={{ marginTop: '5%', height: '70vh' }}
+        sx={{ marginTop: '2%', height: '70vh' }}
       >
         <Card
           className={styles.box}
@@ -46,9 +46,10 @@ export default function Home() {
             variant="h4"
             style={{ fontWeight: 'bold', color: 'white' }}
           >
-            Admin Page
+            Admin Panel
           </Typography>
         </Card>
+
         <Card
           className={styles.box}
           sx={{

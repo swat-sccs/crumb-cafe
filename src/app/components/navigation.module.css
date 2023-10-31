@@ -20,3 +20,7 @@
 .active {
   color: white;
 }
+
+.list :hover {
+  background-color: aliceblue;
+}
