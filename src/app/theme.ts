@@ -1,7 +1,7 @@
 import { createTheme } from '@mui/material/styles';
-import { Raleway } from 'next/font/google';
+import { Urbanist } from 'next/font/google';
 
-const raleway = Raleway({ subsets: ['latin', 'latin-ext'] });
+const font = Urbanist({ subsets: ['latin'], weight: ['400'] });
 
 declare module '@mui/material/styles' {
   interface PaletteColor {
@@ -32,7 +32,7 @@ const theme = createTheme({
     borderRadius: 4,
   },
   typography: {
-    allVariants: raleway.style,
+    allVariants: font.style,
   },
   components: {
     MuiButtonBase: {

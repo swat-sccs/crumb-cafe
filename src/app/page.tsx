@@ -24,72 +24,78 @@ export default function Home() {
 
       <Grid
         container
-        direction="row"
-        justifyContent="space-around"
+        justifyContent="space-evenly"
         alignItems="center"
-        sx={{ marginTop: '2%', height: '70vh' }}
+        //direction="column"
+        direction={{ xs: 'column', sm: 'column', md: 'row' }}
+        columnSpacing={{ sm: '2', lg: '5' }}
+        sx={{ marginTop: '2%', height: '80vh' }}
       >
-        <Card
-          className={styles.box}
-          sx={{
-            width: '25%',
-            height: '50%',
-            fontSize: '300%',
-            backgroundColor: 'rgb(49, 66, 95, 0.7)',
-            textAlign: 'center',
-            borderRadius: '50px',
-          }}
-          onClick={() => router.push('/admin')}
-        >
-          <Typography
-            sx={{ marginTop: '35%' }}
-            variant="h4"
-            style={{ fontWeight: 'bold', color: 'white' }}
+        <Grid item xs={1} sm={2} lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
+          <Card
+            className={styles.box}
+            sx={{
+              width: '100%',
+              height: '50%',
+              backgroundColor: 'rgb(49, 66, 95, 0.7)',
+              textAlign: 'center',
+              borderRadius: '50px',
+              marginTop: '50%',
+            }}
+            onClick={() => router.push('/admin')}
           >
-            Admin Panel
-          </Typography>
-        </Card>
+            <Typography
+              variant="h4"
+              style={{ fontWeight: 'bold', color: 'white', marginTop: '30%' }}
+            >
+              Admin Panel
+            </Typography>
+          </Card>
+        </Grid>
 
-        <Card
-          className={styles.box}
-          sx={{
-            width: '25%',
-            height: '50%',
-            fontSize: '300%',
-            backgroundColor: 'rgb(49, 66, 95, 0.7)',
-            textAlign: 'center',
-            borderRadius: '50px',
-          }}
-          onClick={() => router.push('/point_of_service')}
-        >
-          <Typography
-            sx={{ marginTop: '35%' }}
-            variant="h4"
-            style={{ fontWeight: 'bold', color: 'white' }}
+        <Grid item xs={1} sm={2} lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
+          <Card
+            className={styles.box}
+            sx={{
+              width: '100%',
+              height: '50%',
+              backgroundColor: 'rgb(49, 66, 95, 0.7)',
+              textAlign: 'center',
+              borderRadius: '50px',
+              marginTop: '50%',
+            }}
+            onClick={() => router.push('/point_of_service')}
           >
-            POS
-          </Typography>
-        </Card>
-        <Card
-          className={styles.box}
-          sx={{
-            width: '25%',
-            height: '50%',
-            fontSize: '300%',
-            backgroundColor: 'rgb(49, 66, 95, 0.7)',
-            textAlign: 'center',
-            borderRadius: '50px',
-          }}
-          onClick={() => router.push('/order_display')}
-        >
-          <Typography
-            sx={{ marginTop: '35%' }}
-            variant="h4"
-            style={{ fontWeight: 'bold', color: 'white' }}
+            <Typography
+              variant="h4"
+              style={{ fontWeight: 'bold', color: 'white', marginTop: '30%' }}
+            >
+              POS
+            </Typography>
+          </Card>
+        </Grid>
+
+        <Grid item xs={1} sm={2} lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
+          <Card
+            className={styles.box}
+            sx={{
+              width: '100%',
+              height: '50%',
+              backgroundColor: 'rgb(49, 66, 95, 0.7)',
+              textAlign: 'center',
+              borderRadius: '50px',
+              marginTop: '50%',
+            }}
+            onClick={() => router.push('/order_display')}
           >
-            Order Display
-          </Typography>
-        </Card>
+            <Typography
+              variant="h4"
+              style={{ fontWeight: 'bold', color: 'white', marginTop: '30%' }}
+            >
+              Order Display
+            </Typography>
+          </Card>
+        </Grid>
       </Grid>
       <CrumbParticles />
     </div>

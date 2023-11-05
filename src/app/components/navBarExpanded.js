@@ -2,7 +2,16 @@
 'use client';
 import * as React from 'react';
 
-import { Box, Grid, ListItem, Typography, Drawer, ListItemButton } from '@mui/material';
+import {
+  Box,
+  Grid,
+  ListItem,
+  Typography,
+  Drawer,
+  ListItemButton,
+  Card,
+  Container,
+} from '@mui/material';
 
 import { useTheme } from '@mui/material/styles';
 
@@ -38,8 +47,18 @@ export default function Navigation() {
   };
 
   return (
-    <Grid container direction="row" justifyContent="space-around">
-      <Menu fontSize="large" onClick={toggleDrawer('open', true)} sx={{ marginTop: '25%' }}></Menu>
+    <Container>
+      <Card
+        sx={{
+          backgroundColor: theme.palette.primary.main,
+          marginTop: '35%',
+          borderRadius: '10px',
+        }}
+      >
+        <Grid container alignContent="center" justifyContent="center">
+          <Menu sx={{ fontSize: '300%' }} onClick={toggleDrawer('open', true)}></Menu>
+        </Grid>
+      </Card>
 
       <Drawer
         open={state['open']}
@@ -132,6 +151,6 @@ export default function Navigation() {
           </Grid>
         </Box>
       </Drawer>
-    </Grid>
+    </Container>
   );
 }

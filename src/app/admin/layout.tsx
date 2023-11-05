@@ -1,5 +1,3 @@
-//Side Bar
-'use client';
 import { Grid } from '@mui/material';
 import Navigation from '../components/navBarExpanded';
 export default function sideBar({ children }: { children: React.ReactNode }) {
@@ -10,7 +8,7 @@ export default function sideBar({ children }: { children: React.ReactNode }) {
           item
           xs={1}
           sm={1}
-          md={1}
+          md={1.2}
           lg={1}
           xl={1}
           justifyContent="center"
@@ -23,7 +21,7 @@ export default function sideBar({ children }: { children: React.ReactNode }) {
           item
           xs={10}
           sm={10}
-          md={10}
+          md={10.8}
           lg={10}
           xl={10}
           justifyContent="flex-start"

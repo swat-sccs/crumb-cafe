@@ -1,5 +1,13 @@
 import { Box, Card, CardHeader, Container, Typography, useTheme } from '@mui/material';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+} from '@mui/material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import CardContent from '@mui/material/CardContent';
 import styles from '../page.module.css';
@@ -50,27 +58,46 @@ export default function Home() {
   return (
     <Container>
       <Box>
-        <Card elevation={2} sx={{ m: 2, p: 2, backgroundColor: '#31425f' }}>
-          <Typography textAlign="center" variant="h3" color="white">
-            Crumb Cafe Orders
-          </Typography>
-        </Card>
-        <Grid container spacing={2} justifyContent="center">
-          <Grid xs={12} sx={{ display: 'flex', justifyContent: 'center' }}>
-            <Card sx={{ m: 2, p: 1, width: 300 }}>
-              <Typography variant="h4" textAlign="center">
-                Ready
+        <Grid container justifyContent="center" alignContent="center">
+          <Card elevation={10} sx={{ m: 2, p: 2, backgroundColor: '#31425f', width: '50%' }}>
+            <Typography textAlign="center" variant="h3" color="white">
+              Orders
+            </Typography>
+          </Card>
+        </Grid>
+
+        <Grid container direction="row" alignItems="center" justifyContent="space-between">
+          <Grid container direction="column" spacing={2} justifyContent="center">
+            <Grid sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Card sx={{ m: 2, p: 1, width: 300 }}>
+                <Typography variant="h4" textAlign="center">
+                  In Progress
+                </Typography>
+              </Card>
+            </Grid>
+            <Card elevation={2} sx={{ m: 2, p: 2, width: 350, height: 450 }}>
+              <Typography textAlign="left" variant="h3">
+                Order #1: Tina
               </Typography>
             </Card>
           </Grid>
-          <Card elevation={2} sx={{ m: 2, p: 2, width: 1200, height:450 }}>
-          <Typography textAlign="left" variant="h3">
-            Order #1: Tina
-          </Typography>
-        </Card>
+
+          <Grid container direction="column" spacing={2} justifyContent="center">
+            <Grid sx={{ display: 'flex', justifyContent: 'center' }}>
+              <Card sx={{ m: 2, p: 1, width: 300 }}>
+                <Typography variant="h4" textAlign="center">
+                  Ready
+                </Typography>
+              </Card>
+            </Grid>
+            <Card elevation={2} sx={{ m: 2, p: 2, width: 350, height: 450 }}>
+              <Typography textAlign="left" variant="h3">
+                Order #1: Tina
+              </Typography>
+            </Card>
+          </Grid>
         </Grid>
       </Box>
     </Container>
   );
-
 }
