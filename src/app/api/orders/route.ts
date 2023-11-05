@@ -116,12 +116,24 @@ export async function POST(request: NextRequest) {
 
   //assign unique ID, just going up
   const currentCustomerNumber = getNextCustomerNumber();
+  let currentCustomerNumber2;
+
+  const currentCustomerNumberSearch = await OrderModel.find({})
+    .sort({ customerNumber: -1 })
+    .limit(1)
+    .exec();
+
+  if (currentCustomerNumberSearch.length == 0) {
+    currentCustomerNumber2 = 0; // no orders yet
+  }
+
+  currentCustomerNumber2 = currentCustomerNumberSearch[0].customerNumber + 1;
 
   //double check that 1) the dish exists, and 2) isOrderable
 
   const augmentedData = {
     ...data,
-    customerNumber: currentCustomerNumber,
+    customerNumber: currentCustomerNumber2,
     status: 'new',
   };
 
