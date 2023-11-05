@@ -124,7 +124,7 @@ export async function POST(request: NextRequest) {
     .exec();
 
   if (currentCustomerNumberSearch.length == 0) {
-    currentCustomerNumber2 = 0; // no orders yet
+    currentCustomerNumber2 = null; // no orders yet
   }
 
   currentCustomerNumber2 = currentCustomerNumberSearch[0].customerNumber + 1;

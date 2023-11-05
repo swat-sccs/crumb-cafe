@@ -14,6 +14,34 @@ const dishQuerySchema = z.object({
   updatedAfter: z.coerce.date().optional(),
 });
 
+const newDishSchema = z.object({
+  _id: z.string(),
+  friendlyName: z.string(),
+  basePrice: z.number(),
+  categories: z.array(z.string()),
+  isOrderable: z.boolean(),
+  isArchived: z.boolean(),
+  options: z.object({
+    //dish GROUP SCHEMA
+    _id: z.string(),
+    friendlyName: z.string(),
+    allowMultipleSelections: z.boolean(),
+    allowNoSelection: z.boolean(),
+    allowQuantity: z.boolean(),
+    options: z.object({
+      //ITEM SCHEMA
+      _id: z.string(),
+      friendlyName: z.string(),
+      extraPrice: z.number(),
+      allowQuantity: z.boolean(),
+      //dependicies
+    }),
+    //dependencies
+  }),
+
+  //dependencies:  I do not know, how to set this one up
+});
+
 export async function GET(request: NextRequest) {
   const { ok, data } = parseQuery(dishQuerySchema, request);
 
@@ -33,7 +61,7 @@ export async function GET(request: NextRequest) {
     query = query.byFriendlyName(data.friendlyName);
   }
 
-if (data.categories) {
+  if (data.categories) {
     query = query.byCategories(data.categories);
   }
 
