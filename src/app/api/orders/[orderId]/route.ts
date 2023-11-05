@@ -26,7 +26,7 @@ export async function POST(_request: NextRequest) {
 
   try {
     const order = _request.json();
-    const newOrder = await OrderModel.create(order);
+    await OrderModel.create(order);
     return new NextResponse('Order created successfully', { status: 201 });
   } catch (e) {
     return new NextResponse('Poor request', { status: 400 });
