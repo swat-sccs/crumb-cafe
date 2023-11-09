@@ -139,6 +139,23 @@ export default function App() {
     setDrinks([...drinks]);
   };
 
+   const cancelOrder = () => {
+    console.log("order canceled");
+    for (const thing of items) {
+        thing.qty = 0;
+    }
+    for (const thing of drinks){
+        thing.qty = 0;
+    }
+    console.log(runningTotal);
+    setRunningTotal(0);
+    console.log(runningTotal);
+  }
+
+  const confirmOrder = () => {
+    console.log("order confirmed!");
+  }
+
   const renderFoodButtons = () => {
     let buttons = [];
     for (var prop in dict) {
@@ -205,6 +222,7 @@ export default function App() {
           lineHeight: 1.4,
         }}
         size="large"
+        onClick={() => cancelOrder()}
       >
         CANCEL
         <br />
@@ -227,6 +245,7 @@ export default function App() {
           lineHeight: 1.4,
         }}
         size="large"
+        onClick={() => confirmOrder()}
       >
         <Grid container direction="row" justifyContent="space-around" alignItems="center">
           <Grid item xs={3}>
