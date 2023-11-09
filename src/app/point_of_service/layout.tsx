@@ -1,5 +1,9 @@
+'use client';
+import * as React from 'react';
+
 import { Grid, AppBar, Toolbar, IconButton, Typography, Button, Container } from '@mui/material';
 import MenuIcon from '@mui/icons-material/Menu';
+import Navigation from './navBarPOS.js';
 
 export default function sideBar({ children }: { children: React.ReactNode }) {
   return (
@@ -7,9 +11,7 @@ export default function sideBar({ children }: { children: React.ReactNode }) {
       <Grid container>
         <AppBar position="static">
           <Toolbar>
-            <IconButton size="large" edge="start" color="inherit" aria-label="menu" sx={{ mr: 2 }}>
-              <MenuIcon />
-            </IconButton>
+            <Navigation></Navigation>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Order 021
             </Typography>

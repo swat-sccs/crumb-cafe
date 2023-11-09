@@ -5,7 +5,7 @@
 import {
   Box,
   Card,
-  CardHeader,
+  CardContent,
   Container,
   Typography,
   Button,
@@ -31,10 +31,16 @@ import { LegendToggle } from '@mui/icons-material';
 import { AnyKeys } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
 
+import useSWR from 'swr';
+
+const fetcher = (url: any) => fetch(url).then((res) => res.json());
+
 export default function App() {
+  //const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
   const [user, setUser] = useState('izzy');
-  const [dish, setDish] = useState(['loaded quesadilla']);
+  const [dish, setDish] = useState('Simple Quesadilla');
   const [flag, setFlag] = useState(true); //true is food, false is drink
+  const [options, setOptions] = useState(false); //true is in (options/customization mode) false is normal menu
 
   const dict: any = {
     1: { id: 1, name: 'Simple Quesadilla' },
@@ -98,6 +104,9 @@ export default function App() {
     rt += items[item - 1].price;
     setRunningTotal(rt);
     setItems([...items]);
+    //console.log(items[item - 1].name);
+    setDish(items[item - 1].name);
+    setOptions(true);
   };
 
   const addDrinks = (item: any) => {
@@ -114,17 +123,28 @@ export default function App() {
 
   const removeItem = (item: any) => {
     let rt = runningTotal;
-    // rt -= items[item - 1].price;
 
     for (const thing of items) {
-      if (thing.name == item.name) {
+      if (thing.name == item.name && thing.qty - 1 >= 0) {
         thing.qty -= 1;
         rt -= thing.price;
+        if (thing.qty == 0) {
+          setOptions(false);
+        }
       }
     }
 
     setRunningTotal(rt);
     setItems([...items]);
+  };
+
+  const showOptions = (item: any) => {
+    setDish(item.name);
+    if (item.qty == 0) {
+      setOptions(false);
+    } else {
+      setOptions(true);
+    }
   };
 
   const removeDrink = (item: any) => {
@@ -157,6 +177,7 @@ export default function App() {
   }
 
   const renderFoodButtons = () => {
+    //console.log(data);
     let buttons = [];
     for (var prop in dict) {
       let currentDish = prop;
@@ -196,6 +217,77 @@ export default function App() {
     return buttons;
   };
 
+  /*
+  RenderOptions
+
+  When a {dish} is added or selected from list a new set of options will appear. 
+  These options replace the menu items and give the user the oppourtunity to make additions
+  or add and subtract the number of items being added. 
+  */
+  const renderOptions = () => {
+    //Call to API/DB to pull options for current menu Item
+    var qty = 0;
+    for (const prop of items) {
+      if (prop.name == dish) {
+        qty = prop.qty;
+      }
+    }
+
+    var currentDishNum = '0';
+    var currentDish = {};
+    for (var prop in dict) {
+      if (dict[prop].name == dish) {
+        currentDishNum = prop;
+        currentDish = dict[prop];
+      }
+    }
+
+    return (
+      <Grid container direction="row" justifyContent="space-evenly" sx={{ height: '90vh' }}>
+        <Grid item xs={6}>
+          <Card
+            sx={{
+              borderRadius: '10px',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '30%',
+            }}
+          >
+            <CardContent sx={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              <Typography fontSize="180%" textAlign="center">
+                {dish}
+              </Typography>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item xs={5}>
+          <Card
+            sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
+          >
+            <CardContent>
+              <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
+                <Button onClick={() => removeItem(currentDish)} sx={{ fontSize: '200%' }}>
+                  -
+                </Button>
+                <Typography variant="h4">{qty}</Typography>
+                <Button onClick={() => addItems(currentDishNum)} sx={{ fontSize: '200%' }}>
+                  +
+                </Button>
+              </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid item>
+          <Typography variant="h2" sx={{ marginLeft: '5%' }}>
+            Options will be rendered here
+          </Typography>
+        </Grid>
+      </Grid>
+    );
+  };
+
   const DrinkButtonComponent = () => {
     return <React.Fragment>{renderDrinkButtons()}</React.Fragment>;
   };
@@ -203,13 +295,43 @@ export default function App() {
     return <React.Fragment>{renderFoodButtons()}</React.Fragment>;
   };
 
-  const FoodODrinkRender = () => {
-    if (foodOdrink == 'food') {
-      return <React.Fragment>{FoodButtonComponent()}</React.Fragment>;
-    } else if (foodOdrink == 'drink') {
-      return <React.Fragment>{DrinkButtonComponent()}</React.Fragment>;
+  //RENDER ITEMS CONDITIONALLY based on selection of Food or Drink
+  //Customization Tab (Extra ingredients/ notes etc)
+  const OrderComponent = () => {
+    if (options) {
+      return <React.Fragment>{renderOptions()}</React.Fragment>;
+    } else {
+      if (foodOdrink == 'food') {
+        return <React.Fragment>{FoodButtonComponent()}</React.Fragment>;
+      } else if (foodOdrink == 'drink') {
+        return <React.Fragment>{DrinkButtonComponent()}</React.Fragment>;
+      }
     }
-    return <React.Fragment>{renderCurrentItems()}</React.Fragment>;
+    return <React.Fragment>{FoodButtonComponent()}</React.Fragment>;
+  };
+
+  const ToggleComponent = () => {
+    if (!options) {
+      return (
+        <ToggleButtonGroup
+          value={foodOdrink}
+          exclusive
+          onChange={handleAlignment}
+          aria-label="text alignment"
+          sx={{ marginBottom: '10%' }}
+          fullWidth
+        >
+          <ToggleButton value="food" aria-label="left aligned">
+            FOOD
+          </ToggleButton>
+          <ToggleButton value="drink" aria-label="centered">
+            DRINK
+          </ToggleButton>
+        </ToggleButtonGroup>
+      );
+    } else {
+      return <React.Fragment></React.Fragment>;
+    }
   };
 
   const renderCancelOrderComponent = () => {
@@ -268,63 +390,59 @@ export default function App() {
     return <React.Fragment>{renderConfirmOrderComponent()}</React.Fragment>;
   };
 
-  const renderDeleteItemComponent = () => {
-    return (
-      <Button
-        sx={{
-          m: 1,
-          width: '30%',
-          height: 60,
-          fontSize: 12,
-        }}
-        size="large"
-      >
-        Delete This Item
-      </Button>
-    );
+  /*
+  renderDeleteConfirmCustomComponent
+
+  Three buttons names describe function
+  
+  */
+  const renderDeleteConfirmCustomComponent = () => {
+    if (options) {
+      return (
+        <Grid>
+          {' '}
+          <Button
+            sx={{
+              m: 1,
+              width: '30%',
+              height: 60,
+              fontSize: 12,
+            }}
+            size="large"
+            onClick={() => setOptions(false)}
+          >
+            Delete This Item
+          </Button>
+          <Button
+            sx={{
+              m: 1,
+              width: '30%',
+              fontSize: 12,
+              height: 60,
+            }}
+            size="large"
+          >
+            Custom Item
+          </Button>
+          <Button
+            sx={{
+              m: 1,
+              width: '30%',
+              fontSize: 12,
+              height: 60,
+            }}
+            size="large"
+            onClick={() => setOptions(false)}
+          >
+            Confirm This Item
+          </Button>
+        </Grid>
+      );
+    }
   };
 
-  const DeleteItemComponent = () => {
-    return <React.Fragment>{renderDeleteItemComponent()}</React.Fragment>;
-  };
-
-  const renderCustomItemComponent = () => {
-    return (
-      <Button
-        sx={{
-          m: 1,
-          width: '30%',
-          fontSize: 12,
-          height: 60,
-        }}
-        size="large"
-      >
-        Custom Item
-      </Button>
-    );
-  };
-
-  const CustomItemComponent = () => {
-    return <React.Fragment>{renderCustomItemComponent()}</React.Fragment>;
-  };
-  const renderConfirmItemComponent = () => {
-    return (
-      <Button
-        sx={{
-          m: 1,
-          width: '30%',
-          fontSize: 12,
-          height: 60,
-        }}
-        size="large"
-      >
-        Confirm This Item
-      </Button>
-    );
-  };
-
-  const ConfirmItemComponent = () => {
-    return <React.Fragment>{renderConfirmItemComponent()}</React.Fragment>;
+  const DeleteConfirmCustomComponent = () => {
+    return <React.Fragment>{renderDeleteConfirmCustomComponent()}</React.Fragment>;
   };
 
   //adds to current order side
@@ -344,17 +462,20 @@ export default function App() {
 
     return selectedItems.map((item: any) => (
       <>
-        <ListItemButton>
+        <ListItemButton onClick={() => showOptions(item)} key={item.name}>
           <ListItemText style={{ textAlign: 'left' }}>
             <Grid container direction="row" justifyContent="space-between" alignItems="center">
               <Grid item sm={4}>
-                <Typography>{item.name}</Typography>
+                <Typography variant="h5">{item.name}</Typography>
               </Grid>
               <Grid item sm={5}>
-                <Typography textAlign="center">{item.qty}</Typography>
+                <Typography textAlign="center" variant="h5">
+                  {item.qty}
+                </Typography>
               </Grid>
+
               <Grid item sm={3}>
-                <Typography textAlign="right">
+                <Typography textAlign="right" variant="h5">
                   ${Number.parseFloat(item.price).toFixed(2)}
                 </Typography>
               </Grid>
@@ -389,13 +510,15 @@ export default function App() {
           <ListItemText style={{ textAlign: 'left' }}>
             <Grid container direction="row" justifyContent="space-between" alignItems="center">
               <Grid item sm={4}>
-                <Typography>{item.name}</Typography>
+                <Typography variant="h5">{item.name}</Typography>
               </Grid>
               <Grid item sm={5}>
-                <Typography textAlign="center">{item.qty}</Typography>
+                <Typography textAlign="center" variant="h5">
+                  {item.qty}
+                </Typography>
               </Grid>
               <Grid item sm={3}>
-                <Typography textAlign="right">
+                <Typography textAlign="right" variant="h5">
                   ${Number.parseFloat(item.price).toFixed(2)}
                 </Typography>
               </Grid>
@@ -460,43 +583,27 @@ export default function App() {
           <Grid item xs={6}>
             <Grid container spacing={1} alignContent="space-around" justifyContent="center">
               <Grid item xs={6}>
-                <ToggleButtonGroup
-                  value={foodOdrink}
-                  exclusive
-                  onChange={handleAlignment}
-                  aria-label="text alignment"
-                  sx={{ marginBottom: '10%' }}
-                  fullWidth
-                >
-                  <ToggleButton value="food" aria-label="left aligned">
-                    FOOD
-                  </ToggleButton>
-                  <ToggleButton value="drink" aria-label="centered">
-                    DRINK
-                  </ToggleButton>
-                </ToggleButtonGroup>
+                <ToggleComponent></ToggleComponent>
               </Grid>
             </Grid>
 
-            <Grid container spacing={2} sx={{}}>
-              <FoodODrinkRender></FoodODrinkRender>
+            <Grid container spacing={2} sx={{ maxHeight: '60vh' }}>
+              <OrderComponent></OrderComponent>
             </Grid>
           </Grid>
         </Grid>
       </Box>
-      <Box sx={{ marginTop: '5%' }}>
-        <Grid container spacing={1}>
+      <Grid sx={{ marginTop: '5%', backgroundColor: '' }}>
+        <Grid container spacing={3}>
           <Grid item xs={6}>
             <CancelOrderComponent></CancelOrderComponent>
             <ConfirmOrderComponent></ConfirmOrderComponent>
           </Grid>
           <Grid item xs={6}>
-            <DeleteItemComponent></DeleteItemComponent>
-            <CustomItemComponent></CustomItemComponent>
-            <ConfirmItemComponent></ConfirmItemComponent>
+            <DeleteConfirmCustomComponent></DeleteConfirmCustomComponent>
           </Grid>
         </Grid>
-      </Box>
+      </Grid>
     </Container>
   );
 }
