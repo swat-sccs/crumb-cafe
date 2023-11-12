@@ -1,3 +1,4 @@
+import React from 'react';
 import { Box, Card, CardHeader, Container, Typography, useTheme, Slide } from '@mui/material';
 import {
   Table,
@@ -9,93 +10,122 @@ import {
   Paper,
   Button,
   Stack,
+  Grid,
+  List,
+  ListItem,
+  ListItemAvatar,
+  Avatar,
+  ListItemText,
+  Drawer,
 } from '@mui/material';
 // import { NavigateBeforeIcon, NavigateNextIcon, } from '@mui/icons-material';
-import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import CardContent from '@mui/material/CardContent';
 import styles from '../page.module.css';
 
-const stuffs: { order_number: string; name: string }[] = [
-  { order_number: '1', name: 'Tina' },
-  { order_number: '2', name: 'Helen' },
-  { order_number: '3', name: 'Summit' },
-  { order_number: '4', name: 'Tina' },
-  { order_number: '5', name: 'Helen' },
-  { order_number: '6', name: 'Summit' },
+const stuffs = [{ order_number: '1', name: 'Tina' }];
+
+const orders = [
+  {
+    name: 'J. Fox',
+    items: [
+      { item: 'Burger', qty: '1' },
+      { item: 'Fries', qty: '1' },
+      { item: 'Chicken Tenders', qty: '1' },
+      { item: 'Coke', qty: '1' },
+      { item: 'MilkShake', qty: '1' },
+    ],
+  },
+  {
+    name: 'M. Fox',
+    items: [
+      { item: 'Chips and Salsa', qty: '1' },
+      { item: 'MilkShake', qty: '1' },
+      { item: 'Chicken Tenders', qty: '1' },
+      { item: 'Pepsi', qty: '1' },
+    ],
+  },
 ];
 
-function StuffCard({ order_number, name }: { order_number: string; name: string }) {
-  return (
-    <Card sx={{ borderRadius: '10px', borderColor: 'black', border: 1, width: 200, height: 200 }}>
-      <Typography
-        variant="h5"
-        bgcolor={'orange'}
-        color={'white'}
-        sx={{ width: '100%', borderStartEndRadius: '10px' }}
-        textAlign={'center'}
-      >
-        {' '}
-        {name}{' '}
-      </Typography>
-      <CardContent>
-        <Typography variant="h5" textAlign={'center'}>
-          {' '}
-          {order_number}{' '}
-        </Typography>
-      </CardContent>
-    </Card>
-  );
-}
-
 export default function Home() {
+  const OrderCard = () => {
+    return (
+      <>
+        {orders.map((order) => (
+          <Card
+            sx={{ borderRadius: '10px', borderColor: 'black', border: 1, width: 200, height: '' }}
+            key={order.name}
+          >
+            <Typography
+              variant="h5"
+              bgcolor={'orange'}
+              color={'white'}
+              sx={{ width: '100%', borderStartEndRadius: '10px' }}
+              textAlign={'center'}
+            >
+              {order.name}
+            </Typography>
+            <CardContent>
+              <List>
+                <OrderCardItems />
+              </List>
+            </CardContent>
+          </Card>
+        ))}
+      </>
+    );
+  };
+
+  const OrderCardItems = () => {
+    return (
+      <>
+        {orders.map((o) => (
+          <ListItem key={o.name}>{o.items.item}</ListItem>
+        ))}
+      </>
+    );
+  };
+
   return (
-    <Container>
-      <Box>
-        <Card elevation={2} sx={{ m: 2, p: 2, backgroundColor: '#31425f' }}>
-          <Typography textAlign="center" variant="h3" color="white">
-            Crumb Cafe Kitchen Portal
-          </Typography>
-        </Card>
-        <Grid container spacing={2} alignItems="center">
-          <Grid xs={6}>
-            <Card sx={{ m: 1, p: 1 }}>
-              <Typography variant="h4" textAlign="center">
-                In Progress
-              </Typography>
-            </Card>
-          </Grid>
-          <Grid xs={6}>
-            <Card sx={{ m: 1, p: 1 }}>
-              <Typography variant="h4" textAlign="center">
-                Completed
-              </Typography>
-            </Card>
-          </Grid>
-          <Grid xs={1}>
-            <Stack spacing={2} sx={{ m: 1 }} direction="column" alignItems="center">
-              <Button sx={{ rotate: 'z -90deg', width: '10rem' }} variant="contained">
-                Newer Orders
-              </Button>
-            </Stack>
-          </Grid>
-          <Grid xs={10}>
-            <Container sx={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
-              {stuffs.map((stuff) => (
-                <Grid key={stuff.order_number} item xs={4}>
-                  <StuffCard name={stuff.name} order_number={stuff.order_number} />
-                </Grid>
-              ))}
-            </Container>
-          </Grid>
-          <Grid xs={1}>
-            <Stack spacing={2} sx={{ m: 1 }} direction="column" alignItems="center">
-              <Button sx={{ rotate: 'z 90deg', width: '10rem' }} variant="contained">
-                Older Orders
-              </Button>
-            </Stack>
+    <div>
+      <Card elevation={2} sx={{ m: 1, p: 2, backgroundColor: '#31425f' }}>
+        <Typography textAlign="center" variant="h5" color="white">
+          Kitchen Portal
+        </Typography>
+      </Card>
+
+      <Grid container direction="row" justifyContent="flex-start">
+        <Grid item xs={1.5}>
+          <Card sx={{ width: '10vw', m: 0, height: '90vh' }}>
+            <Typography variant="h5" textAlign="left" sx={{ marginTop: '10%', m: 2 }}>
+              Total:
+            </Typography>
+            <List>
+              <ListItem>
+                <ListItemText>
+                  <Typography variant="body1" textAlign="left">
+                    4 Tacos
+                  </Typography>
+                  <Typography variant="body1" textAlign="left">
+                    3 Burgers
+                  </Typography>
+                  <Typography variant="body1" textAlign="left">
+                    2 Fries
+                  </Typography>
+                  <Typography variant="body1" textAlign="left">
+                    10 Pepsis
+                  </Typography>
+                </ListItemText>
+              </ListItem>
+            </List>
+          </Card>
+        </Grid>
+
+        <Grid item xs={10}>
+          <Grid container direction="row" justifyContent="flex-start" columnGap={2}>
+            <OrderCard></OrderCard>
           </Grid>
         </Grid>
-      </Box>
-    </Container>
+      </Grid>
+    </div>
   );
 }
