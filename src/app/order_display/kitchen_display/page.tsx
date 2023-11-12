@@ -72,8 +72,8 @@ export default function Home() {
             </Card>
           </Grid>
           <Grid xs={1}>
-            <Stack spacing={2} sx={{ m: 1 }} direction="column">
-              <Button sx={{ rotate: 'z -90deg' }} variant="contained">
+            <Stack spacing={2} sx={{ m: 1 }} direction="column" alignItems="center">
+              <Button sx={{ rotate: 'z -90deg', width: '10rem' }} variant="contained">
                 Newer Orders
               </Button>
             </Stack>
@@ -89,7 +89,7 @@ export default function Home() {
           </Grid>
           <Grid xs={1}>
             <Stack spacing={2} sx={{ m: 1 }} direction="column" alignItems="center">
-              <Button sx={{ rotate: 'z 90deg' }} variant="contained">
+              <Button sx={{ rotate: 'z 90deg', width: '10rem' }} variant="contained">
                 Older Orders
               </Button>
             </Stack>
