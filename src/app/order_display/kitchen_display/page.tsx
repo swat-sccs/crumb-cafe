@@ -1,5 +1,15 @@
 import { Box, Card, CardHeader, Container, Typography, useTheme, Slide } from '@mui/material';
-import { Table, TableBody, TableCell, TableContainer, TableHead, TableRow, Paper, Button, Stack } from '@mui/material';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TableRow,
+  Paper,
+  Button,
+  Stack,
+} from '@mui/material';
 // import { NavigateBeforeIcon, NavigateNextIcon, } from '@mui/icons-material';
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 import CardContent from '@mui/material/CardContent';
@@ -16,7 +26,7 @@ const stuffs: { order_number: string; name: string }[] = [
 
 function StuffCard({ order_number, name }: { order_number: string; name: string }) {
   return (
-    <Card sx={{ borderRadius: '10px', borderColor: 'black', border: 1, width: 200, height: 200}}>
+    <Card sx={{ borderRadius: '10px', borderColor: 'black', border: 1, width: 200, height: 200 }}>
       <Typography
         variant="h5"
         bgcolor={'orange'}
@@ -47,7 +57,7 @@ export default function Home() {
           </Typography>
         </Card>
         <Grid container spacing={2} alignItems="center">
-         <Grid xs={6}>
+          <Grid xs={6}>
             <Card sx={{ m: 1, p: 1 }}>
               <Typography variant="h4" textAlign="center">
                 In Progress
@@ -61,25 +71,25 @@ export default function Home() {
               </Typography>
             </Card>
           </Grid>
-          <Grid xs={3}> 
+          <Grid xs={1}>
             <Stack spacing={2} sx={{ m: 1 }} direction="column">
-              <Button sx={{rotate: "z -90deg"}} variant="contained">
+              <Button sx={{ rotate: 'z -90deg' }} variant="contained">
                 Newer Orders
               </Button>
             </Stack>
           </Grid>
-          <Grid xs={6}> 
-            <Container sx={{ display: 'flex', justifyContent: 'center' }}>
+          <Grid xs={10}>
+            <Container sx={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
               {stuffs.map((stuff) => (
-                <Grid key={stuff.order_number}>
+                <Grid key={stuff.order_number} item xs={4}>
                   <StuffCard name={stuff.name} order_number={stuff.order_number} />
                 </Grid>
-              ))} 
+              ))}
             </Container>
           </Grid>
-          <Grid xs={3}> 
-            <Stack spacing={2} sx={{ m: 1 }} direction="column">
-              <Button sx={{rotate: "z 90deg"}} variant="contained">
+          <Grid xs={1}>
+            <Stack spacing={2} sx={{ m: 1 }} direction="column" alignItems="center">
+              <Button sx={{ rotate: 'z 90deg' }} variant="contained">
                 Older Orders
               </Button>
             </Stack>
