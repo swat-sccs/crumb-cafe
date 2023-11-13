@@ -44,12 +44,20 @@ export default function Home() {
             }}
             onClick={() => router.push('/admin')}
           >
-            <Typography
-              variant="h4"
-              style={{ fontWeight: 'bold', color: 'white', marginTop: '30%' }}
+            <Grid
+              container
+              direction="column"
+              justifyContent="space-evenly"
+              alignItems="center"
+              sx={{ height: '40vh' }}
             >
-              Admin Panel
-            </Typography>
+              <Typography
+                className={styles.font}
+                style={{ fontWeight: 'bold', color: 'white', fontSize: '2rem' }}
+              >
+                Admin Panel
+              </Typography>
+            </Grid>
           </Card>
         </Grid>
 
@@ -66,12 +74,17 @@ export default function Home() {
             }}
             onClick={() => router.push('/point_of_service')}
           >
-            <Typography
-              variant="h4"
-              style={{ fontWeight: 'bold', color: 'white', marginTop: '30%' }}
+            <Grid
+              container
+              direction="column"
+              justifyContent="space-evenly"
+              alignItems="center"
+              sx={{ height: '40vh' }}
             >
-              POS
-            </Typography>
+              <Typography variant="h4" style={{ fontWeight: 'bold', color: 'white' }}>
+                POS
+              </Typography>
+            </Grid>
           </Card>
         </Grid>
 
@@ -88,12 +101,17 @@ export default function Home() {
             }}
             onClick={() => router.push('/order_display')}
           >
-            <Typography
-              variant="h4"
-              style={{ fontWeight: 'bold', color: 'white', marginTop: '30%' }}
+            <Grid
+              container
+              direction="column"
+              justifyContent="space-evenly"
+              alignItems="center"
+              sx={{ height: '40vh' }}
             >
-              Order Display
-            </Typography>
+              <Typography variant="h4" style={{ fontWeight: 'bold', color: 'white' }}>
+                Order Display
+              </Typography>
+            </Grid>
           </Card>
         </Grid>
       </Grid>
