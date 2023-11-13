@@ -27,7 +27,7 @@ import MenuIcon from '@mui/icons-material/Menu';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { orange, cyan, blueGrey } from '@mui/material/colors';
 import React, { useState, useEffect } from 'react';
-import { LegendToggle } from '@mui/icons-material';
+import { BreakfastDiningOutlined, LegendToggle } from '@mui/icons-material';
 import { AnyKeys } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
 
@@ -42,20 +42,36 @@ export default function App() {
   const [flag, setFlag] = useState(true); //true is food, false is drink
   const [options, setOptions] = useState(false); //true is in (options/customization mode) false is normal menu
 
-  const dict: any = {
-    1: { id: 1, name: 'Simple Quesadilla' },
-    2: { id: 2, name: 'Loaded Quesadilla!' },
-    3: { id: 3, name: 'Avo-Goat-O' },
-    4: { id: 4, name: 'Avocado Toast' },
-    5: { id: 5, name: 'Grilled Cheese' },
-    6: { id: 6, name: 'Caprese' },
-    7: { id: 7, name: 'Chips and Guac' },
-    8: { id: 8, name: 'Chips and Salsa' },
-    9: { id: 9, name: 'Cheese Fries' },
-    10: { id: 10, name: 'Pancakes' },
-    11: { id: 11, name: 'French Toast' },
-    12: { id: 12, name: 'Nachos' },
-    13: { id: 13, name: 'Dumplings' },
+  // const dict: any = {
+  //   1: { id: 1, name: 'Simple Quesadilla' },
+  //   2: { id: 2, name: 'Loaded Quesadilla!' },
+  //   3: { id: 3, name: 'Avo-Goat-O' },
+  //   4: { id: 4, name: 'Avocado Toast' },
+  //   5: { id: 5, name: 'Grilled Cheese' },
+  //   6: { id: 6, name: 'Caprese' },
+  //   7: { id: 7, name: 'Chips and Guac' },
+  //   8: { id: 8, name: 'Chips and Salsa' },
+  //   9: { id: 9, name: 'Cheese Fries' },
+  //   10: { id: 10, name: 'Pancakes' },
+  //   11: { id: 11, name: 'French Toast' },
+  //   12: { id: 12, name: 'Nachos' },
+  //   13: { id: 13, name: 'Dumplings' },
+  // };
+
+   const foodItems: any = {
+    1: { name: 'Simple Quesadilla', price: 5.25 },
+    2: { name: 'Loaded Quesadilla!', price: 5.0 },
+    3: { name: 'Avo-Goat-O', price: 5.0 },
+    4: { name: 'Avocado Toast', price: 5.0 },
+    5: { name: 'Grilled Cheese', price: 5.0 },
+    6: { name: 'Caprese', price: 5.0 },
+    7: { name: 'Chips and Guac', price: 5.0 },
+    8: { name: 'Chips and Salsa', price: 5.0 },
+    9: { name: 'Cheese Fries', price: 5.0 },
+    10: { name: 'Pancakes', price: 5.0 },
+    11: { name: 'French Toast', price: 5.0 },
+    12: { name: 'Nachos', price: 5.0 },
+    13: { name: 'Dumplings', price: 5.0 },
   };
 
   const [runningTotal, setRunningTotal] = useState(0);
@@ -85,6 +101,8 @@ export default function App() {
     { name: 'Dumplings', qty: 0, price: 5.0 },
   ]);
 
+  const [currentItems, setCurrentItems] = useState([]);
+
   const [drinks, setDrinks] = useState([
     { name: 'Sprite', qty: 0, price: 1.25 },
     { name: 'Pepsi', qty: 0, price: 1.0 },
@@ -97,15 +115,42 @@ export default function App() {
     { name: 'Chocky Milk', qty: 0, price: 1.0 },
   ]);
 
-  const addItems = (item: any) => {
+  // const addItems = (item: any) => {
+  //   console.log(item);
+  //   let rt = runningTotal;
+  //   let temp = drinks;
+  //   items[item - 1].qty += 1;
+  //   rt += items[item - 1].price;
+  //   setRunningTotal(rt);
+  //   setItems([...items]);
+  //   //console.log(items[item - 1].name);
+  //   setDish(items[item - 1].name);
+  //   setOptions(true);
+  // };
+
+
+  //pass button as props to this func
+  const addItems = (props : any) => {
+    // let temp = drinks;
+    // item.qty += 1;
+    // items[item - 1].qty += 1;
     let rt = runningTotal;
-    let temp = drinks;
-    items[item - 1].qty += 1;
-    rt += items[item - 1].price;
+    rt += foodItems[props].price;
     setRunningTotal(rt);
-    setItems([...items]);
-    //console.log(items[item - 1].name);
-    setDish(items[item - 1].name);
+    let temp = currentItems;
+    //console.log(props[1]); //undefined
+    //must be a better way to do this
+    temp.push({
+      name : foodItems[props].name,
+      price : foodItems[props].price,
+      //need to change for addItems(currentDishNum)
+      qty : 1,
+    });
+    //console.log(temp);
+    setCurrentItems(temp);
+    // setItems([...items]);
+    // console.log(foodItems[props - 1].name);
+    setDish(foodItems[props].name);
     setOptions(true);
   };
 
@@ -121,21 +166,34 @@ export default function App() {
     setDrinks([...drinks]);
   };
 
-  const removeItem = (item: any) => {
+  const removeItem = (props : any) => {
     let rt = runningTotal;
+    let temp = currentItems;
 
-    for (const thing of items) {
-      if (thing.name == item.name && thing.qty - 1 >= 0) {
+    for (const thing of temp) {
+      if (thing.name == props.name && thing.qty - 1 >= 0) {
+        //console.log(thing);
         thing.qty -= 1;
         rt -= thing.price;
         if (thing.qty == 0) {
+          // console.log("before");
+          // console.log(temp);
+          //remove from current items aka temp
+          // console.log(temp.indexOf(thing));
+          let index = temp.indexOf(thing);
+          temp.splice(index, 1);
+          //console.log(temp.splice(temp.indexOf(thing),1));
           setOptions(false);
+          // console.log("after");
+          // console.log(temp);
         }
+        break;//uhhhhhh
       }
     }
-
+    console.log(temp);
     setRunningTotal(rt);
-    setItems([...items]);
+    setCurrentItems(temp);
+    //setItems([...items]);
   };
 
   const showOptions = (item: any) => {
@@ -235,10 +293,10 @@ export default function App() {
 
     var currentDishNum = '0';
     var currentDish = {};
-    for (var prop in dict) {
-      if (dict[prop].name == dish) {
+    for (var prop in foodItems) {
+      if (foodItems[prop].name == dish) {
         currentDishNum = prop;
-        currentDish = dict[prop];
+        currentDish = foodItems[prop];
       }
     }
 
@@ -323,7 +381,7 @@ export default function App() {
   const FoodButtonComponent = () => {
     //console.log(data);
     let buttons = [];
-    for (var prop in dict) {
+    for (var prop in foodItems) {
       let currentDish = prop;
       buttons.push(
         <Grid item xs={4}>
@@ -332,7 +390,7 @@ export default function App() {
             size="large"
             onClick={() => addItems(currentDish)}
           >
-            {dict[prop].name}
+            {foodItems[prop].name}
           </Button>
         </Grid>,
       );
@@ -460,6 +518,8 @@ export default function App() {
             }}
             size="large"
             onClick={() => setOptions(false)}
+            //come back here IZZY
+            //onClick={() => removeItem()}
           >
             Delete This Item
           </Button>
@@ -495,7 +555,7 @@ export default function App() {
     return <React.Fragment>{renderDeleteConfirmCustomComponent()}</React.Fragment>;
   };
 
-  //adds to current order side
+  //adds to current order side (left)
   const CurrentOrderItemsComponent = () => {
     return <React.Fragment>{renderCurrentItems()}</React.Fragment>;
   };
@@ -504,10 +564,12 @@ export default function App() {
   const renderCurrentItems = () => {
     let selectedItems = [];
 
-    for (const prop of items) {
-      if (prop.qty > 0) {
-        selectedItems.push(prop);
-      }
+    for (const prop of currentItems) {
+      //console.log(prop);
+      //if (prop.qty > 0) {
+      //   selectedItems.push(prop);
+      // }
+      selectedItems.push(prop);
     }
 
     return selectedItems.map((item: any) => (
