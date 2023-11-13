@@ -86,6 +86,8 @@ export default function App() {
     }
   };
 
+  const [items, setItems] = useState([]);
+  /*
   const [items, setItems] = useState([
     { name: 'Simple Quesadilla', qty: 0, price: 5.25 },
     { name: 'Loaded Quesadilla!', qty: 0, price: 5.0 },
@@ -101,6 +103,7 @@ export default function App() {
     { name: 'Nachos', qty: 0, price: 5.0 },
     { name: 'Dumplings', qty: 0, price: 5.0 },
   ]);
+  */
 
   //setItems(data);
 
@@ -405,8 +408,15 @@ export default function App() {
           <CircularProgress />
         </Grid>
       );
+    }
+    if (error) {
+      return (
+        <Grid container justifyContent="center">
+          <div>Something went wrong: {error}</div>
+        </Grid>
+      );
     } else {
-      setItems(data);
+      //setItems(data);
       const food = [];
       for (const foodItem of data.dishes) {
         if (foodItem.categories != 'drinks') {
@@ -414,13 +424,13 @@ export default function App() {
         }
       }
       console.log(food);
-      return data.dishes.map((item: any) => (
+      return food.map((item: any) => (
         <>
           <Grid item xs={4}>
             <Button
               sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
               size="large"
-              onClick={() => addItems(currentDish)}
+              //onClick={() => addItems(currentDish)}
             >
               {item.friendlyName}
             </Button>
@@ -434,95 +444,93 @@ export default function App() {
   //Customization Tab (Extra ingredients/ notes etc)
   const OrderComponent = () => {
     if (options) {
-      return <React.Fragment>{renderOptions()}</React.Fragment>;
+      return <>{renderOptions()}</>;
     } else {
       if (foodOdrink == 'food') {
-        return <React.Fragment>{FoodButtonComponent()}</React.Fragment>;
+        return <>{FoodButtonComponent()}</>;
       } else if (foodOdrink == 'drink') {
-        return <React.Fragment>{DrinkButtonComponent()}</React.Fragment>;
+        return <>{DrinkButtonComponent()}</>;
       }
     }
-    return <React.Fragment>{FoodButtonComponent()}</React.Fragment>;
+    return <></>;
   };
 
   const ToggleComponent = () => {
     if (!options) {
       return (
-        <ToggleButtonGroup
-          value={foodOdrink}
-          exclusive
-          onChange={handleAlignment}
-          aria-label="text alignment"
-          sx={{ marginBottom: '10%' }}
-          fullWidth
-        >
-          <ToggleButton value="food" aria-label="left aligned">
-            FOOD
-          </ToggleButton>
-          <ToggleButton value="drink" aria-label="centered">
-            DRINK
-          </ToggleButton>
-        </ToggleButtonGroup>
+        <>
+          <ToggleButtonGroup
+            value={foodOdrink}
+            exclusive
+            onChange={handleAlignment}
+            aria-label="text alignment"
+            sx={{ marginBottom: '10%' }}
+            fullWidth
+          >
+            <ToggleButton value="food" aria-label="left aligned">
+              FOOD
+            </ToggleButton>
+            <ToggleButton value="drink" aria-label="centered">
+              DRINK
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </>
       );
     } else {
       return <React.Fragment></React.Fragment>;
     }
   };
 
-  const renderCancelOrderComponent = () => {
-    return (
-      <Button
-        sx={{
-          m: 1,
-          width: '47%',
-          height: 60,
-          lineHeight: 1.4,
-        }}
-        size="large"
-        onClick={() => cancelOrder()}
-      >
-        CANCEL
-        <br />
-        ORDER
-      </Button>
-    );
-  };
-
   const CancelOrderComponent = () => {
-    return <React.Fragment>{renderCancelOrderComponent()}</React.Fragment>;
-  };
-
-  const renderConfirmOrderComponent = () => {
     return (
-      <Button
-        sx={{
-          m: 1,
-          width: '47%',
-          height: 60,
-          lineHeight: 1.4,
-        }}
-        size="large"
-        onClick={() => confirmOrder()}
-      >
-        <Grid container direction="row" justifyContent="space-around" alignItems="center">
-          <Grid item xs={3}>
-            CONFIRM
-            <br />
-            ORDER
-          </Grid>
-
-          <Grid item xs={5}>
-            <Typography fontSize="200%">
-              (${Number.parseFloat(runningTotal.toString()).toFixed(2)})
-            </Typography>
-          </Grid>
-        </Grid>
-      </Button>
+      <>
+        <Button
+          sx={{
+            m: 1,
+            width: '47%',
+            height: 60,
+            lineHeight: 1.4,
+          }}
+          size="large"
+          onClick={() => cancelOrder()}
+        >
+          CANCEL
+          <br />
+          ORDER
+        </Button>
+      </>
     );
   };
 
   const ConfirmOrderComponent = () => {
-    return <React.Fragment>{renderConfirmOrderComponent()}</React.Fragment>;
+    return (
+      <>
+        <Button
+          sx={{
+            m: 1,
+            width: '47%',
+            height: 60,
+            lineHeight: 1.4,
+          }}
+          size="large"
+          onClick={() => confirmOrder()}
+        >
+          <Grid container direction="row" justifyContent="space-around" alignItems="center">
+            <Grid item xs={3}>
+              CONFIRM
+              <br />
+              ORDER
+            </Grid>
+
+            <Grid item xs={5}>
+              <Typography fontSize="200%">
+                (${Number.parseFloat(runningTotal.toString()).toFixed(2)})
+              </Typography>
+            </Grid>
+          </Grid>
+        </Button>
+      </>
+    );
   };
 
   /*
@@ -531,65 +539,59 @@ export default function App() {
   Three buttons names describe function
   
   */
-  const renderDeleteConfirmCustomComponent = () => {
+  const DeleteConfirmCustomComponent = () => {
     if (options) {
       return (
-        <Grid>
-          {' '}
-          <Button
-            sx={{
-              m: 1,
-              width: '30%',
-              height: 60,
-              fontSize: 12,
-            }}
-            size="large"
-            onClick={() => setOptions(false)}
-            //come back here IZZY
-            //onClick={() => removeItem()}
-          >
-            Delete This Item
-          </Button>
-          <Button
-            sx={{
-              m: 1,
-              width: '30%',
-              fontSize: 12,
-              height: 60,
-            }}
-            size="large"
-          >
-            Custom Item
-          </Button>
-          <Button
-            sx={{
-              m: 1,
-              width: '30%',
-              fontSize: 12,
-              height: 60,
-            }}
-            size="large"
-            onClick={() => setOptions(false)}
-          >
-            Confirm This Item
-          </Button>
-        </Grid>
+        <>
+          <Grid>
+            {' '}
+            <Button
+              sx={{
+                m: 1,
+                width: '30%',
+                height: 60,
+                fontSize: 12,
+              }}
+              size="large"
+              onClick={() => setOptions(false)}
+              //come back here IZZY
+              //onClick={() => removeItem()}
+            >
+              Delete This Item
+            </Button>
+            <Button
+              sx={{
+                m: 1,
+                width: '30%',
+                fontSize: 12,
+                height: 60,
+              }}
+              size="large"
+            >
+              Custom Item
+            </Button>
+            <Button
+              sx={{
+                m: 1,
+                width: '30%',
+                fontSize: 12,
+                height: 60,
+              }}
+              size="large"
+              onClick={() => setOptions(false)}
+            >
+              Confirm This Item
+            </Button>
+          </Grid>
+        </>
       );
     }
-  };
-
-  const DeleteConfirmCustomComponent = () => {
-    return <React.Fragment>{renderDeleteConfirmCustomComponent()}</React.Fragment>;
-  };
-
-  //adds to current order side (left)
-  const CurrentOrderItemsComponent = () => {
-    return <React.Fragment>{renderCurrentItems()}</React.Fragment>;
+    return <></>;
   };
 
   //Render Current Selected food on left List
-  const renderCurrentItems = () => {
-    let selectedItems = [];
+  const CurrentOrderItemsComponent = () => {
+    const selectedItems = [];
 
     for (const prop of currentItems) {
       //console.log(prop);
@@ -599,42 +601,41 @@ export default function App() {
       selectedItems.push(prop);
     }
 
-    return selectedItems.map((item: any) => (
-      <>
-        <ListItemButton onClick={() => showOptions(item)} key={item.name}>
-          <ListItemText style={{ textAlign: 'left' }}>
-            <Grid container direction="row" justifyContent="space-between" alignItems="center">
-              <Grid item sm={4}>
-                <Typography variant="h5">{item.name}</Typography>
-              </Grid>
-              <Grid item sm={5}>
-                <Typography textAlign="center" variant="h5">
-                  {item.qty}
-                </Typography>
-              </Grid>
+    const listItems = [];
+    for (const item of selectedItems) {
+      listItems.push(
+        <>
+          <ListItemButton onClick={() => showOptions(item)} key={item.name}>
+            <ListItemText style={{ textAlign: 'left' }}>
+              <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                <Grid item sm={4}>
+                  <Typography variant="h5">{item.name}</Typography>
+                </Grid>
+                <Grid item sm={5}>
+                  <Typography textAlign="center" variant="h5">
+                    {item.qty}
+                  </Typography>
+                </Grid>
 
-              <Grid item sm={3}>
-                <Typography textAlign="right" variant="h5">
-                  ${Number.parseFloat(item.price).toFixed(2)}
-                </Typography>
+                <Grid item sm={3}>
+                  <Typography textAlign="right" variant="h5">
+                    ${Number.parseFloat(item.price).toFixed(2)}
+                  </Typography>
+                </Grid>
               </Grid>
-            </Grid>
-          </ListItemText>
-          <IconButton edge="end" aria-label="delete" onClick={() => removeItem(item)}>
-            <DeleteIcon />
-          </IconButton>
-        </ListItemButton>
-        <hr />
-      </>
-    ));
+            </ListItemText>
+            <IconButton edge="end" aria-label="delete" onClick={() => removeItem(item)}>
+              <DeleteIcon />
+            </IconButton>
+          </ListItemButton>
+          <hr />
+        </>,
+      );
+    }
+    return <>{listItems}</>;
   };
 
-  //Same as above but for drinks
   const CurrentOrderDrinksComponent = () => {
-    return <React.Fragment>{renderCurrentDrinks()}</React.Fragment>;
-  };
-
-  const renderCurrentDrinks = () => {
     let selectedItems = [];
 
     for (const prop of drinks) {
@@ -643,42 +644,48 @@ export default function App() {
       }
     }
 
-    return selectedItems.map((item: any) => (
-      <>
-        <ListItemButton>
-          <ListItemText style={{ textAlign: 'left' }}>
-            <Grid container direction="row" justifyContent="space-between" alignItems="center">
-              <Grid item sm={4}>
-                <Typography variant="h5">{item.name}</Typography>
+    const listItems = [];
+
+    for (const item of selectedItems) {
+      listItems.push(
+        <>
+          <ListItemButton>
+            <ListItemText style={{ textAlign: 'left' }}>
+              <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                <Grid item sm={4}>
+                  <Typography variant="h5">{item.name}</Typography>
+                </Grid>
+                <Grid item sm={5}>
+                  <Typography textAlign="center" variant="h5">
+                    {item.qty}
+                  </Typography>
+                </Grid>
+                <Grid item sm={3}>
+                  <Typography textAlign="right" variant="h5">
+                    ${Number.parseFloat(item.price.toString()).toFixed(2)}
+                  </Typography>
+                </Grid>
               </Grid>
-              <Grid item sm={5}>
-                <Typography textAlign="center" variant="h5">
-                  {item.qty}
-                </Typography>
-              </Grid>
-              <Grid item sm={3}>
-                <Typography textAlign="right" variant="h5">
-                  ${Number.parseFloat(item.price).toFixed(2)}
-                </Typography>
-              </Grid>
-            </Grid>
-          </ListItemText>
-          <IconButton edge="end" aria-label="delete" onClick={() => removeDrink(item)}>
-            <DeleteIcon />
-          </IconButton>
-        </ListItemButton>
-        <hr />
-      </>
-    ));
+            </ListItemText>
+            <IconButton edge="end" aria-label="delete" onClick={() => removeDrink(item)}>
+              <DeleteIcon />
+            </IconButton>
+          </ListItemButton>
+          <hr />
+        </>,
+      );
+    }
+    return <>{listItems}</>;
   };
 
   useEffect(() => {
     //runs after first and every render
     console.log('page loaded');
-    logUser();
+    //logUser();
     logDish();
   }, []);
 
+  /*
   async function logUser() {
     const response = await fetch('http://localhost:3000/api/hello');
     const users = await response.json();
@@ -687,6 +694,7 @@ export default function App() {
     setUser(users.name);
     console.log(user);
   }
+  */
 
   async function logDish() {
     //const response = await fetch("http://localhost:3000/api/dishes/[[...params]]");
