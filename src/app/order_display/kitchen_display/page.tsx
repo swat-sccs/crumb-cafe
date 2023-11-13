@@ -81,7 +81,7 @@ export default function Home() {
           <Grid xs={10}>
             <Container sx={{ display: 'flex', justifyContent: 'space-evenly', flexWrap: 'wrap' }}>
               {stuffs.map((stuff) => (
-                <Grid key={stuff.order_number} item xs={4}>
+                <Grid key={stuff.order_number} xs={4}>
                   <StuffCard name={stuff.name} order_number={stuff.order_number} />
                 </Grid>
               ))}
