@@ -13,6 +13,7 @@ import {
   List,
   ListItemButton,
   ListItemIcon,
+  CircularProgress,
   ListItemText,
   Divider,
   ToggleButton,
@@ -31,12 +32,12 @@ import { BreakfastDiningOutlined, LegendToggle } from '@mui/icons-material';
 import { AnyKeys } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
 
-// import useSWR from 'swr';
+import useSWR from 'swr';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function App() {
-  //const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
+  const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
   const [user, setUser] = useState('izzy');
   const [dish, setDish] = useState('Simple Quesadilla');
   const [flag, setFlag] = useState(true); //true is food, false is drink
@@ -58,7 +59,7 @@ export default function App() {
   //   13: { id: 13, name: 'Dumplings' },
   // };
 
-   const foodItems: any = {
+  const foodItems: any = {
     1: { name: 'Simple Quesadilla', price: 5.25 },
     2: { name: 'Loaded Quesadilla!', price: 5.0 },
     3: { name: 'Avo-Goat-O', price: 5.0 },
@@ -101,6 +102,8 @@ export default function App() {
     { name: 'Dumplings', qty: 0, price: 5.0 },
   ]);
 
+  //setItems(data);
+
   const [currentItems, setCurrentItems] = useState([]);
 
   const [drinks, setDrinks] = useState([
@@ -128,9 +131,8 @@ export default function App() {
   //   setOptions(true);
   // };
 
-
-  //pass button (with info from foodItems) as props to this func
-  const addItems = (props : any) => {
+  //pass button as props to this func
+  const addItems = (props: any) => {
     // let temp = drinks;
     // item.qty += 1;
     // items[item - 1].qty += 1;
@@ -139,17 +141,14 @@ export default function App() {
     setRunningTotal(rt);
     let temp = currentItems;
     //console.log(props[1]); //undefined
-    //must be a better way to do this, make a type and instance of new object??
-    //use props ????? not foodItems??
-    //if props.
-
-    let foodObj = {
-      name : foodItems[props].name,
-      price : foodItems[props].price,
+    //must be a better way to do this
+    temp.push({
+      name: foodItems[props].name,
+      price: foodItems[props].price,
       //need to change for addItems(currentDishNum)
-      qty : 1,
-    }
-    temp.push(foodObj);
+      qty: 1,
+    });
+    //console.log(temp);
     setCurrentItems(temp);
     // setItems([...items]);
     // console.log(foodItems[props - 1].name);
@@ -170,7 +169,7 @@ export default function App() {
     setDrinks([...drinks]);
   };
 
-  const removeItem = (props : any) => {
+  const removeItem = (props: any) => {
     let rt = runningTotal;
     let temp = currentItems;
 
@@ -191,7 +190,7 @@ export default function App() {
           // console.log("after");
           // console.log(temp);
         }
-        break;//uhhhhhh
+        break; //uhhhhhh
       }
     }
     console.log(temp);
@@ -221,43 +220,22 @@ export default function App() {
     setDrinks([...drinks]);
   };
 
-   const cancelOrder = () => {
-    console.log("order canceled");
+  const cancelOrder = () => {
+    console.log('order canceled');
     for (const thing of items) {
-        thing.qty = 0;
+      thing.qty = 0;
     }
-    for (const thing of drinks){
-        thing.qty = 0;
+    for (const thing of drinks) {
+      thing.qty = 0;
     }
     console.log(runningTotal);
     setRunningTotal(0);
     console.log(runningTotal);
-  }
+  };
 
   const confirmOrder = () => {
-    console.log("order confirmed!");
-  }
-
-  // const renderFoodButtons = () => {
-  //   //console.log(data);
-  //   let buttons = [];
-  //   for (var prop in dict) {
-  //     let currentDish = prop;
-  //     buttons.push(
-  //       <Grid item xs={4}>
-  //         <Button
-  //           sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
-  //           size="large"
-  //           onClick={() => addItems(currentDish)}
-  //         >
-  //           {dict[prop].name}
-  //         </Button>
-  //       </Grid>,
-  //     );
-  //     //console.log(dict[prop].name);
-  //   }
-  //   return buttons;
-  // };
+    console.log('order confirmed!');
+  };
 
   // const renderDrinkButtons = () => {
   //   const buttons = [];
@@ -381,41 +359,75 @@ export default function App() {
         </Grid>,
       );
     }
-      //console.log(dict[prop].name);
-    return (
-      <>
-      {buttons}
-      </>
-    );
+    //console.log(dict[prop].name);
+    return <>{buttons}</>;
   };
 
   // const FoodButtonComponent = () => {
   //   return <React.Fragment>{renderFoodButtons()}</React.Fragment>;
   // };
 
+  /*
   const FoodButtonComponent = () => {
     //console.log(data);
-    let buttons = [];
-    for (var prop in foodItems) {
-      let currentDish = prop;
-      buttons.push(
-        <Grid item xs={4}>
-          <Button
-            sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
-            size="large"
-            onClick={() => addItems(currentDish)}
-          >
-            {foodItems[prop].name}
-          </Button>
-        </Grid>,
+    if (isLoading) {
+      return (
+        <Grid container justifyContent="center">
+          <CircularProgress />
+        </Grid>
       );
-      //console.log(dict[prop].name);
+    } else {
+      let buttons = [];
+      for (var prop in foodItems) {
+        let currentDish = prop;
+        buttons.push(
+          <Grid item xs={4}>
+            <Button
+              sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
+              size="large"
+              onClick={() => addItems(currentDish)}
+            >
+              {foodItems[prop].name}
+            </Button>
+          </Grid>,
+        );
+      }
+      return <>{buttons}</>;
     }
-    return (
-      <>
-      {buttons}
-      </>
-    );
+  };
+
+  */
+
+  const FoodButtonComponent = () => {
+    if (isLoading) {
+      return (
+        <Grid container justifyContent="center">
+          <CircularProgress />
+        </Grid>
+      );
+    } else {
+      setItems(data);
+      const food = [];
+      for (const foodItem of data.dishes) {
+        if (foodItem.categories != 'drinks') {
+          food.push(foodItem);
+        }
+      }
+      console.log(food);
+      return data.dishes.map((item: any) => (
+        <>
+          <Grid item xs={4}>
+            <Button
+              sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
+              size="large"
+              onClick={() => addItems(currentDish)}
+            >
+              {item.friendlyName}
+            </Button>
+          </Grid>
+        </>
+      ));
+    }
   };
 
   //RENDER ITEMS CONDITIONALLY based on selection of Food or Drink
