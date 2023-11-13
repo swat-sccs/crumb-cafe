@@ -38,28 +38,14 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function App() {
   const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
-  console.log("isLoading: " + isLoading);
-
   const [user, setUser] = useState('izzy');
-  const [dish, setDish] = useState('Simple Quesadilla');
+  const [currentDish, setCurrentDish] = useState(); //when selected CurrentDish is updated to display correct options.
   const [flag, setFlag] = useState(true); //true is food, false is drink
+
+  //NEEDS TO BE CHANGED to; showOptions or something similar
   const [options, setOptions] = useState(false); //true is in (options/customization mode) false is normal menu
 
-  // const dict: any = {
-  //   1: { id: 1, name: 'Simple Quesadilla' },
-  //   2: { id: 2, name: 'Loaded Quesadilla!' },
-  //   3: { id: 3, name: 'Avo-Goat-O' },
-  //   4: { id: 4, name: 'Avocado Toast' },
-  //   5: { id: 5, name: 'Grilled Cheese' },
-  //   6: { id: 6, name: 'Caprese' },
-  //   7: { id: 7, name: 'Chips and Guac' },
-  //   8: { id: 8, name: 'Chips and Salsa' },
-  //   9: { id: 9, name: 'Cheese Fries' },
-  //   10: { id: 10, name: 'Pancakes' },
-  //   11: { id: 11, name: 'French Toast' },
-  //   12: { id: 12, name: 'Nachos' },
-  //   13: { id: 13, name: 'Dumplings' },
-  // };
+  const [currentOrder, setCurrentOrder]: any[] = useState([]); //Keeps Track of current running order
 
   const foodItems: any = {
     1: { name: 'Simple Quesadilla', price: 5.25 },
@@ -88,7 +74,8 @@ export default function App() {
     }
   };
 
-  const [items, setItems] = useState([]);
+  //const [items, setItems] = useState([data]);
+
   /*
   const [items, setItems] = useState([
     { name: 'Simple Quesadilla', qty: 0, price: 5.25 },
@@ -108,8 +95,6 @@ export default function App() {
   */
 
   //setItems(data);
-
-  const [currentItems, setCurrentItems] = useState([]);
 
   const [drinks, setDrinks] = useState([
     { name: 'Sprite', qty: 0, price: 1.25 },
@@ -137,30 +122,11 @@ export default function App() {
   // };
 
   //pass button as props to this func
-  const addItems = (props: any) => {
-    // let temp = drinks;
-    // item.qty += 1;
-    // items[item - 1].qty += 1;
-    let rt = runningTotal;
-    rt += foodItems[props].price;
-    setRunningTotal(rt);
-    let temp = currentItems;
-    //console.log(props[1]); //undefined
-    //must be a better way to do this
-    let foodObj = 
-    {
-      name: foodItems[props].name,
-      price: foodItems[props].price,
-      //need to change for addItems(currentDishNum)
-      qty: 1,
-    }
-    temp.push(foodObj);
-    //console.log(temp);
-    setCurrentItems(temp);
-    // setItems([...items]);
-    // console.log(foodItems[props - 1].name);
-    console.log(currentItems);
-    setDish(foodItems[props].name);
+  //Each item passed in is a full Dish{}
+  const addItems = (item: any) => {
+    setCurrentDish(item);
+    console.log(item);
+    setCurrentOrder([...currentOrder, item]);
     setOptions(true);
   };
 
@@ -271,78 +237,50 @@ export default function App() {
   or add and subtract the number of items being added. 
   */
   const renderOptions = () => {
-    //Call to API/DB to pull options for current menu Item
-    var qty = 0;
-    // for (const prop of items) {
-    //   if (prop.name == dish) {
-    //     //match prop.name (big list of items) w/ currentItems
-    //     console.log(currentItems);
-    //     qty = prop.qty;
-    //   }
-    // }
-    for (const item of currentItems) {
-      if (item.name == dish) {
-        //match prop.name (big list of items) w/ currentItems
-        console.log(currentItems);
-        //come back here!!!
-        console.log(item);
-        qty = item['qty'];
-      }
+    for (const item of currentOrder) {
+      return (
+        <Grid container direction="row" justifyContent="space-evenly" sx={{ height: '90vh' }}>
+          <Grid item xs={6}>
+            <Card
+              sx={{
+                borderRadius: '10px',
+                display: 'flex',
+                flexDirection: 'column',
+                height: '30%',
+              }}
+            >
+              <CardContent sx={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                <Typography fontSize="180%" textAlign="center">
+                  {item.friendlyName}
+                </Typography>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item xs={5}>
+            <Card
+              sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
+            >
+              <CardContent>
+                <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
+                  <Button onClick={() => removeItem(currentDish)} sx={{ fontSize: '200%' }}>
+                    -
+                  </Button>
+                  <Typography variant="h4">N/A</Typography>
+                  <Button sx={{ fontSize: '200%' }}>+</Button>
+                </Grid>
+              </CardContent>
+            </Card>
+          </Grid>
+
+          <Grid item>
+            <Typography variant="h2" sx={{ marginLeft: '5%' }}>
+              Options will be rendered here
+            </Typography>
+          </Grid>
+        </Grid>
+      );
     }
-
-    var currentDishNum = '0';
-    var currentDish = {};
-    for (var prop in foodItems) {
-      if (foodItems[prop].name == dish) {
-        currentDishNum = prop;
-        currentDish = foodItems[prop];
-      }
-    }
-
-    return (
-      <Grid container direction="row" justifyContent="space-evenly" sx={{ height: '90vh' }}>
-        <Grid item xs={6}>
-          <Card
-            sx={{
-              borderRadius: '10px',
-              display: 'flex',
-              flexDirection: 'column',
-              height: '30%',
-            }}
-          >
-            <CardContent sx={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <Typography fontSize="180%" textAlign="center">
-                {dish}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={5}>
-          <Card
-            sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
-          >
-            <CardContent>
-              <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
-                <Button onClick={() => removeItem(currentDish)} sx={{ fontSize: '200%' }}>
-                  -
-                </Button>
-                <Typography variant="h4">{qty}</Typography>
-                <Button onClick={() => addItems(currentDishNum)} sx={{ fontSize: '200%' }}>
-                  +
-                </Button>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item>
-          <Typography variant="h2" sx={{ marginLeft: '5%' }}>
-            Options will be rendered here
-          </Typography>
-        </Grid>
-      </Grid>
-    );
   };
 
   // const DrinkButtonComponent = () => {
@@ -419,21 +357,19 @@ export default function App() {
         </Grid>
       );
     } else {
-      //setItems(data);
       const food = [];
       for (const foodItem of data.dishes) {
         if (foodItem.categories != 'drinks') {
           food.push(foodItem);
         }
       }
-      console.log(food);
       return food.map((item: any) => (
         <>
           <Grid item xs={4}>
             <Button
               sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
               size="large"
-              //onClick={() => addItems(currentDish)}
+              onClick={() => addItems(item)}
             >
               {item.friendlyName}
             </Button>
@@ -595,34 +531,26 @@ export default function App() {
   //Render Current Selected food on left List
   const CurrentOrderItemsComponent = () => {
     const selectedItems = [];
-
-    for (const prop of currentItems) {
-      //console.log(prop);
-      //if (prop.qty > 0) {
-      //   selectedItems.push(prop);
-      // }
-      selectedItems.push(prop);
-    }
-
     const listItems = [];
-    for (const item of selectedItems) {
+
+    for (const item of currentOrder) {
       listItems.push(
         <>
-          <ListItemButton onClick={() => showOptions(item)} key={item.name}>
+          <ListItemButton onClick={() => showOptions(item)} key={item.friendlyName}>
             <ListItemText style={{ textAlign: 'left' }}>
               <Grid container direction="row" justifyContent="space-between" alignItems="center">
                 <Grid item sm={4}>
-                  <Typography variant="h5">{item.name}</Typography>
+                  <Typography variant="h5">{item.friendlyName}</Typography>
                 </Grid>
                 <Grid item sm={5}>
                   <Typography textAlign="center" variant="h5">
-                    {item.qty}
+                    N/A
                   </Typography>
                 </Grid>
 
                 <Grid item sm={3}>
                   <Typography textAlign="right" variant="h5">
-                    ${Number.parseFloat(item.price).toFixed(2)}
+                    ${Number.parseFloat(item.basePrice).toFixed(2)}
                   </Typography>
                 </Grid>
               </Grid>
