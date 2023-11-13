@@ -31,7 +31,7 @@ export default function Home() {
         columnSpacing={{ sm: '2', lg: '5' }}
         sx={{ marginTop: '2%', height: '80vh' }}
       >
-        <Grid item md={2} lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
+        <Grid item xs={1} sm={2} lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
           <Card
             className={styles.box}
             sx={{
@@ -44,24 +44,16 @@ export default function Home() {
             }}
             onClick={() => router.push('/admin')}
           >
-            <Grid
-              container
-              direction="column"
-              justifyContent="space-evenly"
-              alignItems="center"
-              sx={{ height: '40vh' }}
+            <Typography
+              variant="h4"
+              style={{ fontWeight: 'bold', color: 'white', marginTop: '30%' }}
             >
-              <Typography
-                className={styles.font}
-                style={{ fontWeight: 'bold', color: 'white', fontSize: '2rem' }}
-              >
-                Admin Panel
-              </Typography>
-            </Grid>
+              Admin Panel
+            </Typography>
           </Card>
         </Grid>
 
-        <Grid item lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
+        <Grid item xs={1} sm={2} lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
           <Card
             className={styles.box}
             sx={{
@@ -74,21 +66,16 @@ export default function Home() {
             }}
             onClick={() => router.push('/point_of_service')}
           >
-            <Grid
-              container
-              direction="column"
-              justifyContent="space-evenly"
-              alignItems="center"
-              sx={{ height: '40vh' }}
+            <Typography
+              variant="h4"
+              style={{ fontWeight: 'bold', color: 'white', marginTop: '30%' }}
             >
-              <Typography variant="h4" style={{ fontWeight: 'bold', color: 'white' }}>
-                POS
-              </Typography>
-            </Grid>
+              POS
+            </Typography>
           </Card>
         </Grid>
 
-        <Grid item lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
+        <Grid item xs={1} sm={2} lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
           <Card
             className={styles.box}
             sx={{
@@ -101,17 +88,12 @@ export default function Home() {
             }}
             onClick={() => router.push('/order_display')}
           >
-            <Grid
-              container
-              direction="column"
-              justifyContent="space-evenly"
-              alignItems="center"
-              sx={{ height: '40vh' }}
+            <Typography
+              variant="h4"
+              style={{ fontWeight: 'bold', color: 'white', marginTop: '30%' }}
             >
-              <Typography variant="h4" style={{ fontWeight: 'bold', color: 'white' }}>
-                Order Display
-              </Typography>
-            </Grid>
+              Order Display
+            </Typography>
           </Card>
         </Grid>
       </Grid>
