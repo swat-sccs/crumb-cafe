@@ -31,7 +31,7 @@ import { LegendToggle } from '@mui/icons-material';
 import { AnyKeys } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
 
-import useSWR from 'swr';
+// import useSWR from 'swr';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
@@ -176,46 +176,46 @@ export default function App() {
     console.log("order confirmed!");
   }
 
-  const renderFoodButtons = () => {
-    //console.log(data);
-    let buttons = [];
-    for (var prop in dict) {
-      let currentDish = prop;
-      buttons.push(
-        <Grid item xs={4}>
-          <Button
-            sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
-            size="large"
-            onClick={() => addItems(currentDish)}
-          >
-            {dict[prop].name}
-          </Button>
-        </Grid>,
-      );
-      //console.log(dict[prop].name);
-    }
-    return buttons;
-  };
+  // const renderFoodButtons = () => {
+  //   //console.log(data);
+  //   let buttons = [];
+  //   for (var prop in dict) {
+  //     let currentDish = prop;
+  //     buttons.push(
+  //       <Grid item xs={4}>
+  //         <Button
+  //           sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
+  //           size="large"
+  //           onClick={() => addItems(currentDish)}
+  //         >
+  //           {dict[prop].name}
+  //         </Button>
+  //       </Grid>,
+  //     );
+  //     //console.log(dict[prop].name);
+  //   }
+  //   return buttons;
+  // };
 
-  const renderDrinkButtons = () => {
-    const buttons = [];
-    for (const prop of drinks) {
-      const currentDrink = prop;
-      buttons.push(
-        <Grid item xs={4}>
-          <Button
-            sx={{ m: 1, width: '100%', height: '100%', fontSize: '120%', fontWeight: 'bold' }}
-            size="large"
-            onClick={() => addDrinks(currentDrink)}
-          >
-            {currentDrink.name}
-          </Button>
-        </Grid>,
-      );
-      //console.log(dict[prop].name);
-    }
-    return buttons;
-  };
+  // const renderDrinkButtons = () => {
+  //   const buttons = [];
+  //   for (const prop of drinks) {
+  //     const currentDrink = prop;
+  //     buttons.push(
+  //       <Grid item xs={4}>
+  //         <Button
+  //           sx={{ m: 1, width: '100%', height: '100%', fontSize: '120%', fontWeight: 'bold' }}
+  //           size="large"
+  //           onClick={() => addDrinks(currentDrink)}
+  //         >
+  //           {currentDrink.name}
+  //         </Button>
+  //       </Grid>,
+  //     );
+  //     //console.log(dict[prop].name);
+  //   }
+  //   return buttons;
+  // };
 
   /*
   RenderOptions
@@ -288,11 +288,61 @@ export default function App() {
     );
   };
 
+  // const DrinkButtonComponent = () => {
+  //   return <React.Fragment>{renderDrinkButtons()}</React.Fragment>;
+  // };
+
   const DrinkButtonComponent = () => {
-    return <React.Fragment>{renderDrinkButtons()}</React.Fragment>;
+    const buttons = [];
+    for (const prop of drinks) {
+      const currentDrink = prop;
+      buttons.push(
+        <Grid item xs={4}>
+          <Button
+            sx={{ m: 1, width: '100%', height: '100%', fontSize: '120%', fontWeight: 'bold' }}
+            size="large"
+            onClick={() => addDrinks(currentDrink)}
+          >
+            {currentDrink.name}
+          </Button>
+        </Grid>,
+      );
+    }
+      //console.log(dict[prop].name);
+    return (
+      <>
+      {buttons}
+      </>
+    );
   };
+
+  // const FoodButtonComponent = () => {
+  //   return <React.Fragment>{renderFoodButtons()}</React.Fragment>;
+  // };
+
   const FoodButtonComponent = () => {
-    return <React.Fragment>{renderFoodButtons()}</React.Fragment>;
+    //console.log(data);
+    let buttons = [];
+    for (var prop in dict) {
+      let currentDish = prop;
+      buttons.push(
+        <Grid item xs={4}>
+          <Button
+            sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
+            size="large"
+            onClick={() => addItems(currentDish)}
+          >
+            {dict[prop].name}
+          </Button>
+        </Grid>,
+      );
+      //console.log(dict[prop].name);
+    }
+    return (
+      <>
+      {buttons}
+      </>
+    );
   };
 
   //RENDER ITEMS CONDITIONALLY based on selection of Food or Drink
