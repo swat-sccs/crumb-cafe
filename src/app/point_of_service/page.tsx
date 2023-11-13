@@ -38,6 +38,8 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function App() {
   const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
+  console.log("isLoading: " + isLoading);
+
   const [user, setUser] = useState('izzy');
   const [dish, setDish] = useState('Simple Quesadilla');
   const [flag, setFlag] = useState(true); //true is food, false is drink
@@ -142,12 +144,14 @@ export default function App() {
     let temp = currentItems;
     //console.log(props[1]); //undefined
     //must be a better way to do this
-    temp.push({
+    let foodObj = 
+    {
       name: foodItems[props].name,
       price: foodItems[props].price,
       //need to change for addItems(currentDishNum)
       qty: 1,
-    });
+    }
+    temp.push(foodObj);
     //console.log(temp);
     setCurrentItems(temp);
     // setItems([...items]);
@@ -221,7 +225,6 @@ export default function App() {
   };
 
   const cancelOrder = () => {
-    console.log('order canceled');
     for (const thing of items) {
       thing.qty = 0;
     }
@@ -420,7 +423,7 @@ export default function App() {
             <Button
               sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
               size="large"
-              onClick={() => addItems(currentDish)}
+              onClick={() => addItems(item)}
             >
               {item.friendlyName}
             </Button>
@@ -689,10 +692,10 @@ export default function App() {
   }
 
   async function logDish() {
-    //const response = await fetch("http://localhost:3000/api/dishes/[[...params]]");
-    //const dishes = await response.json();
-    //console.log(dish);
-    //console.log('dish ' + dish);
+    // const response = await fetch("http://localhost:3000/api/dishes");
+    // const dishes = await response.json();
+    // console.log(dishes);
+    // console.log('dish ' + dish);
     //setUser(dishes);
     //console.log(dishes);
   }
