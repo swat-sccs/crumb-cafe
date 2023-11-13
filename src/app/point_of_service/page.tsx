@@ -129,7 +129,7 @@ export default function App() {
   // };
 
 
-  //pass button as props to this func
+  //pass button (with info from foodItems) as props to this func
   const addItems = (props : any) => {
     // let temp = drinks;
     // item.qty += 1;
@@ -139,17 +139,21 @@ export default function App() {
     setRunningTotal(rt);
     let temp = currentItems;
     //console.log(props[1]); //undefined
-    //must be a better way to do this
-    temp.push({
+    //must be a better way to do this, make a type and instance of new object??
+    //use props ????? not foodItems??
+    //if props.
+
+    let foodObj = {
       name : foodItems[props].name,
       price : foodItems[props].price,
       //need to change for addItems(currentDishNum)
       qty : 1,
-    });
-    //console.log(temp);
+    }
+    temp.push(foodObj);
     setCurrentItems(temp);
     // setItems([...items]);
     // console.log(foodItems[props - 1].name);
+    console.log(currentItems);
     setDish(foodItems[props].name);
     setOptions(true);
   };
@@ -171,11 +175,11 @@ export default function App() {
     let temp = currentItems;
 
     for (const thing of temp) {
-      if (thing.name == props.name && thing.qty - 1 >= 0) {
+      if (thing['name'] == props.name && thing['qty'] - 1 >= 0) {
         //console.log(thing);
-        thing.qty -= 1;
-        rt -= thing.price;
-        if (thing.qty == 0) {
+        thing['qty'] -= 1;
+        rt -= thing['price'];
+        if (thing['qty'] == 0) {
           // console.log("before");
           // console.log(temp);
           //remove from current items aka temp
@@ -285,9 +289,20 @@ export default function App() {
   const renderOptions = () => {
     //Call to API/DB to pull options for current menu Item
     var qty = 0;
-    for (const prop of items) {
-      if (prop.name == dish) {
-        qty = prop.qty;
+    // for (const prop of items) {
+    //   if (prop.name == dish) {
+    //     //match prop.name (big list of items) w/ currentItems
+    //     console.log(currentItems);
+    //     qty = prop.qty;
+    //   }
+    // }
+    for (const item of currentItems) {
+      if (item.name == dish) {
+        //match prop.name (big list of items) w/ currentItems
+        console.log(currentItems);
+        //come back here!!!
+        console.log(item);
+        qty = item['qty'];
       }
     }
 
