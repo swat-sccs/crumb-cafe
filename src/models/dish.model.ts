@@ -83,6 +83,10 @@ const DishSchema = new Schema(
       type: Number,
       required: true,
     },
+    tags: {
+      type: [String],
+      requried: true,
+    },
     categories: {
       // e.g. food, drink, special
       type: [String],
@@ -119,6 +123,9 @@ const DishSchema = new Schema(
       },
       byFriendlyName(friendlyName: string) {
         return this.where('friendlyName').equals(friendlyName);
+      },
+      byTags(tags: string[]) {
+        return this.where('tags').in(tags);
       },
       byCategories(categories: string[]) {
         return this.where('categories').in(categories);

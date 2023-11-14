@@ -7,6 +7,7 @@ import { parseQuery } from '../parseQuery';
 const dishQuerySchema = z.object({
   isOrderable: z.boolean().optional(),
   friendlyName: z.string().optional(),
+  tags: z.array(z.string()).optional(),
   categories: z.array(z.string()).optional(),
   createdBefore: z.coerce.date().optional(),
   createdAfter: z.coerce.date().optional(),
@@ -18,6 +19,7 @@ const newDishSchema = z.object({
   _id: z.string(),
   friendlyName: z.string(),
   basePrice: z.number(),
+  tags: z.array(z.string()),
   categories: z.array(z.string()),
   isOrderable: z.boolean(),
   isArchived: z.boolean(),
@@ -59,6 +61,10 @@ export async function GET(request: NextRequest) {
 
   if (data.friendlyName) {
     query = query.byFriendlyName(data.friendlyName);
+  }
+
+  if (data.tags) {
+    query = query.byTags(data.tags);
   }
 
   if (data.categories) {

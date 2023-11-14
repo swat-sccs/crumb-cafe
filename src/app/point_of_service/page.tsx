@@ -39,7 +39,6 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function App() {
   const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
-  console.log(data);
   const [user, setUser] = useState('izzy');
   const [currentDish, setCurrentDish] = useState(); //when selected CurrentDish is updated to display correct options.
   const [flag, setFlag] = useState(true); //true is food, false is drink
@@ -128,7 +127,7 @@ export default function App() {
   const addItems = (item: any) => {
     let rt = runningTotal;
     setCurrentDish(item);
-    //console.log(item);
+    console.log(currentDish);
     setCurrentOrder([...currentOrder, item]);
     rt += item.basePrice;
     setRunningTotal(rt);
@@ -234,61 +233,59 @@ export default function App() {
   or add and subtract the number of items being added. 
   */
   const renderOptions = () => {
-    for (const item of currentOrder) {
-      return (
-        <Grid container direction="row" justifyContent="space-evenly" sx={{ height: '90vh' }}>
-          <Grid item xs={6}>
-            <Card
-              sx={{
-                borderRadius: '10px',
-                display: 'flex',
-                flexDirection: 'column',
-                height: '30%',
-              }}
-            >
-              <CardContent sx={{ marginTop: 'auto', marginBottom: 'auto' }}>
-                <Typography fontSize="180%" textAlign="center">
-                  {item.friendlyName}
-                </Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid item xs={5}>
-            <Card
-              sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
-            >
-              <CardContent>
-                <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
-                  {''}
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
-
-          <Grid container>
-            <Card
-              sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
-            >
-              <CardContent>
-                <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
-                  {item.options[0].friendlyName}
-                </Grid>
-              </CardContent>
-            </Card>
-            <Card
-              sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
-            >
-              <CardContent>
-                <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
-                  {''}
-                </Grid>
-              </CardContent>
-            </Card>
-          </Grid>
+    return (
+      <Grid container direction="row" justifyContent="space-evenly" sx={{ height: '90vh' }}>
+        <Grid item xs={6}>
+          <Card
+            sx={{
+              borderRadius: '10px',
+              display: 'flex',
+              flexDirection: 'column',
+              height: '30%',
+            }}
+          >
+            <CardContent sx={{ marginTop: 'auto', marginBottom: 'auto' }}>
+              <Typography fontSize="180%" textAlign="center">
+                {currentDish.friendlyName}
+              </Typography>
+            </CardContent>
+          </Card>
         </Grid>
-      );
-    }
+
+        <Grid item xs={5}>
+          <Card
+            sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
+          >
+            <CardContent>
+              <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
+                {''}
+              </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+
+        <Grid container>
+          <Card
+            sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
+          >
+            <CardContent>
+              <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
+                {currentDish.options[0].friendlyName}
+              </Grid>
+            </CardContent>
+          </Card>
+          <Card
+            sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
+          >
+            <CardContent>
+              <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
+                {''}
+              </Grid>
+            </CardContent>
+          </Card>
+        </Grid>
+      </Grid>
+    );
   };
 
   // const DrinkButtonComponent = () => {

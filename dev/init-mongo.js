@@ -93,8 +93,9 @@ db.orders.insertMany([
 db.dishes.insertMany([
   {
     _id: 'pancakes',
-    friendlyName: 'pancakes',
+    friendlyName: 'Pancakes',
     basePrice: 1,
+    tags: ['food'],
     categories: ['breakfast'],
     isOrderable: true,
     isArchived: false,
@@ -133,9 +134,45 @@ db.dishes.insertMany([
     __v: 0,
   },
   {
+    _id: 'loaded-quesadilla',
+    friendlyName: 'Loaded Quesadilla',
+    basePrice: 1,
+    tags: ['food'],
+    categories: ['breakfast'],
+    isOrderable: true,
+    isArchived: false,
+    options: [
+      {
+        _id: 'toppings',
+        friendlyName: 'toppings',
+        allowMultipleSelections: true,
+        allowNoSelection: true,
+        options: [
+          {
+            _id: 'sour-cream',
+            friendlyName: 'Sour Cream',
+            extraPrice: 0,
+            allowQuantity: false,
+            dependencies: [],
+          },
+        ],
+        dependencies: [],
+      },
+    ],
+    dependencies: [],
+    createdAt: {
+      $date: '2023-09-18T24:05:50.607Z',
+    },
+    updatedAt: {
+      $date: '2023-09-18T24:05:50.607Z',
+    },
+    __v: 0,
+  },
+  {
     _id: 'italian-soda',
     friendlyName: 'italian soda',
     basePrice: 5,
+    tags: ['drink'],
     categories: ['drinks'],
     isOrderable: true,
     isArchived: false,
