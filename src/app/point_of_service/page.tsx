@@ -38,6 +38,7 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function App() {
   const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
+  console.log(data);
   const [user, setUser] = useState('izzy');
   const [currentDish, setCurrentDish] = useState(); //when selected CurrentDish is updated to display correct options.
   const [flag, setFlag] = useState(true); //true is food, false is drink
@@ -124,9 +125,12 @@ export default function App() {
   //pass button as props to this func
   //Each item passed in is a full Dish{}
   const addItems = (item: any) => {
+    let rt = runningTotal;
     setCurrentDish(item);
-    console.log(item);
+    //console.log(item);
     setCurrentOrder([...currentOrder, item]);
+    rt += item.basePrice;
+    setRunningTotal(rt);
     setOptions(true);
   };
 
@@ -143,42 +147,35 @@ export default function App() {
   };
 
   const removeItem = (props: any) => {
+    console.log("props to follow");
+    console.log(props);
     let rt = runningTotal;
-    let temp = currentItems;
-
-    for (const thing of temp) {
-      if (thing['name'] == props.name && thing['qty'] - 1 >= 0) {
-        //console.log(thing);
-        thing['qty'] -= 1;
-        rt -= thing['price'];
-        if (thing['qty'] == 0) {
-          // console.log("before");
-          // console.log(temp);
-          //remove from current items aka temp
-          // console.log(temp.indexOf(thing));
-          let index = temp.indexOf(thing);
-          temp.splice(index, 1);
-          //console.log(temp.splice(temp.indexOf(thing),1));
-          setOptions(false);
-          // console.log("after");
-          // console.log(temp);
-        }
-        break; //uhhhhhh
+    let temp = currentOrder;
+    //this finds the first match, but we want it to delete current item! 
+    //fix later by making sure ALL fields match
+    for (const thing of currentOrder) {
+      if (thing.friendlyName == props.friendlyName) {
+        rt -= thing.basePrice;
+        let index = temp.indexOf(thing);
+        temp.splice(index, 1);
+        setOptions(false);
+        console.log("options set to false");
       }
     }
-    console.log(temp);
     setRunningTotal(rt);
-    setCurrentItems(temp);
-    //setItems([...items]);
+    setCurrentOrder(temp);
   };
 
   const showOptions = (item: any) => {
-    setDish(item.name);
-    if (item.qty == 0) {
-      setOptions(false);
-    } else {
-      setOptions(true);
-    }
+    console.log("selecting from list");
+    setCurrentDish(item);
+    // if (item.qty == 0) {
+    //   setOptions(false);
+    // } else {
+    //   setOptions(true);
+    // }
+    // setCurrentDish(item);
+    setOptions(true);
   };
 
   const removeDrink = (item: any) => {
@@ -194,9 +191,7 @@ export default function App() {
   };
 
   const cancelOrder = () => {
-    for (const thing of items) {
-      thing.qty = 0;
-    }
+    setCurrentOrder([]);
     for (const thing of drinks) {
       thing.qty = 0;
     }
@@ -492,9 +487,8 @@ export default function App() {
                 fontSize: 12,
               }}
               size="large"
-              onClick={() => setOptions(false)}
               //come back here IZZY
-              //onClick={() => removeItem()}
+              onClick={() => removeItem(currentDish)}
             >
               Delete This Item
             </Button>
