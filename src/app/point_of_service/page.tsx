@@ -16,6 +16,7 @@ import {
   CircularProgress,
   ListItemText,
   Divider,
+  ListItem,
   ToggleButton,
   ToggleButtonGroup,
 } from '@mui/material';
@@ -147,11 +148,12 @@ export default function App() {
   };
 
   const removeItem = (props: any) => {
-    console.log("props to follow");
+    setOptions(false);
+    console.log('props to follow');
     console.log(props);
     let rt = runningTotal;
     let temp = currentOrder;
-    //this finds the first match, but we want it to delete current item! 
+    //this finds the first match, but we want it to delete current item!
     //fix later by making sure ALL fields match
     for (const thing of currentOrder) {
       if (thing.friendlyName == props.friendlyName) {
@@ -159,7 +161,7 @@ export default function App() {
         let index = temp.indexOf(thing);
         temp.splice(index, 1);
         setOptions(false);
-        console.log("options set to false");
+        console.log('options set to false');
       }
     }
     setRunningTotal(rt);
@@ -167,7 +169,7 @@ export default function App() {
   };
 
   const showOptions = (item: any) => {
-    console.log("selecting from list");
+    console.log('selecting from list');
     setCurrentDish(item);
     // if (item.qty == 0) {
     //   setOptions(false);
@@ -258,20 +260,31 @@ export default function App() {
             >
               <CardContent>
                 <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
-                  <Button onClick={() => removeItem(currentDish)} sx={{ fontSize: '200%' }}>
-                    -
-                  </Button>
-                  <Typography variant="h4">N/A</Typography>
-                  <Button sx={{ fontSize: '200%' }}>+</Button>
+                  {''}
                 </Grid>
               </CardContent>
             </Card>
           </Grid>
 
-          <Grid item>
-            <Typography variant="h2" sx={{ marginLeft: '5%' }}>
-              Options will be rendered here
-            </Typography>
+          <Grid container>
+            <Card
+              sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
+            >
+              <CardContent>
+                <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
+                  {item.options[0].friendlyName}
+                </Grid>
+              </CardContent>
+            </Card>
+            <Card
+              sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
+            >
+              <CardContent>
+                <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
+                  {''}
+                </Grid>
+              </CardContent>
+            </Card>
           </Grid>
         </Grid>
       );
@@ -283,23 +296,40 @@ export default function App() {
   // };
 
   const DrinkButtonComponent = () => {
-    const buttons = [];
-    for (const prop of drinks) {
-      const currentDrink = prop;
-      buttons.push(
-        <Grid item xs={4}>
-          <Button
-            sx={{ m: 1, width: '100%', height: '100%', fontSize: '120%', fontWeight: 'bold' }}
-            size="large"
-            onClick={() => addDrinks(currentDrink)}
-          >
-            {currentDrink.name}
-          </Button>
-        </Grid>,
+    if (isLoading) {
+      return (
+        <Grid container justifyContent="center">
+          <CircularProgress />
+        </Grid>
       );
     }
-    //console.log(dict[prop].name);
-    return <>{buttons}</>;
+    if (error) {
+      return (
+        <Grid container justifyContent="center">
+          <div>Something went wrong: {error}</div>
+        </Grid>
+      );
+    } else {
+      const drinks = [];
+      for (const item of data.dishes) {
+        if (item.categories == 'drinks') {
+          drinks.push(item);
+        }
+      }
+      return drinks.map((item: any) => (
+        <>
+          <Grid item xs={4}>
+            <Button
+              sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
+              size="large"
+              onClick={() => addItems(item)}
+            >
+              {item.friendlyName}
+            </Button>
+          </Grid>
+        </>
+      ));
+    }
   };
 
   // const FoodButtonComponent = () => {
@@ -530,30 +560,30 @@ export default function App() {
     for (const item of currentOrder) {
       listItems.push(
         <>
-          <ListItemButton onClick={() => showOptions(item)} key={item.friendlyName}>
-            <ListItemText style={{ textAlign: 'left' }}>
-              <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                <Grid item sm={4}>
-                  <Typography variant="h5">{item.friendlyName}</Typography>
-                </Grid>
-                <Grid item sm={5}>
-                  <Typography textAlign="center" variant="h5">
-                    N/A
-                  </Typography>
-                </Grid>
+          <ListItem
+            secondaryAction={
+              <IconButton edge="end" aria-label="delete" onClick={() => removeItem(item)}>
+                <DeleteIcon />
+              </IconButton>
+            }
+            disablePadding
+          >
+            <ListItemButton key={item.friendlyName} onClick={() => showOptions(item)}>
+              <ListItemText style={{ textAlign: 'left' }}>
+                <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                  <Grid item sm={4}>
+                    <Typography variant="h5">{item.friendlyName}</Typography>
+                  </Grid>
 
-                <Grid item sm={3}>
-                  <Typography textAlign="right" variant="h5">
-                    ${Number.parseFloat(item.basePrice).toFixed(2)}
-                  </Typography>
+                  <Grid item sm={3}>
+                    <Typography textAlign="right" variant="h5">
+                      ${Number.parseFloat(item.basePrice).toFixed(2)}
+                    </Typography>
+                  </Grid>
                 </Grid>
-              </Grid>
-            </ListItemText>
-            <IconButton edge="end" aria-label="delete" onClick={() => removeItem(item)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItemButton>
-          <hr />
+              </ListItemText>
+            </ListItemButton>
+          </ListItem>
         </>,
       );
     }
@@ -635,21 +665,27 @@ export default function App() {
       <Box>
         <Grid container spacing={12} rowSpacing={10} columnSpacing={{ xs: 5, sm: 2, md: 2 }}>
           <Grid item sm={6}>
-            <Grid container direction="row" alignContent="center" justifyContent="space-between">
+            <Grid
+              container
+              direction="row"
+              alignContent="center"
+              justifyContent="space-between"
+              sx={{ p: 2 }}
+            >
               <Typography variant="h6" textAlign="left">
                 Item
               </Typography>
-              <Typography variant="h6" textAlign="center">
-                Qty
-              </Typography>
+
               <Typography variant="h6" textAlign="right">
                 Price
               </Typography>
             </Grid>
-            <List sx={{ overflow: 'auto', height: '60vh' }}>
-              <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
-              <CurrentOrderDrinksComponent></CurrentOrderDrinksComponent>
-            </List>
+            <Grid item>
+              <List sx={{ overflow: 'auto', height: '60vh' }}>
+                <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
+                <CurrentOrderDrinksComponent></CurrentOrderDrinksComponent>
+              </List>
+            </Grid>
           </Grid>
 
           <Grid item xs={6}>
