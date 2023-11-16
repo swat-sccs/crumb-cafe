@@ -30,7 +30,7 @@ const YourComponent = () => {
 
         <Card
           sx={{
-            backgroundColor: '#77A4D8',
+            backgroundColor: '#3a6eac',
             //#FC80FE
             p: 4,
             borderRadius: 4,
