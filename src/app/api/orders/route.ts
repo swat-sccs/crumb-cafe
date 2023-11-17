@@ -15,35 +15,6 @@ const Counter = mongoose.model(
 );
 */
 
-async function initializeCustomerNumber() {
-  try {
-    const counter = await Counter2.create({ id: 3 });
-    await counter.save();
-    return counter.id;
-  } catch (error) {
-    throw 'Initialization failed';
-  }
-}
-
-async function getNextCustomerNumber() {
-  try {
-    const counter: { id: number } = await Counter2.findOneAndUpdate(
-      { id: 'customerNumber' }, // Use a unique identifier for the counter
-      { $inc: { id: 1 } }, // Increment the counter by 1
-      { upsert: true, new: true },
-    );
-
-    if (!counter) {
-      //initialize to one
-      return initializeCustomerNumber();
-    }
-    console.log(counter.id);
-    return counter.id;
-  } catch (error) {
-    throw error;
-  }
-}
-
 const orderQuerySchema = z.object({
   status: z.enum(['new', 'in_progress', 'completed']).optional(),
   customerName: z.string().optional(),
@@ -117,26 +88,26 @@ export async function POST(request: NextRequest) {
   await dbConnect();
 
   //assign unique ID, just going up
-  const currentCustomerNumber = getNextCustomerNumber();
-  let currentCustomerNumber2;
+  // const currentCustomerNumber = getNextCustomerNumber();
+  // let currentCustomerNumber2;
 
   const currentCustomerNumberSearch = await OrderModel.find({})
     .sort({ customerNumber: -1 })
     .limit(1)
     .exec();
 
-  if (currentCustomerNumberSearch.length == 0) {
-    currentCustomerNumber2 = null; // no orders yet
-  }
+  // if (currentCustomerNumberSearch.length == 0) {
+  //   currentCustomerNumber2 = null; // no orders yet
+  // }
 
-  currentCustomerNumber2 = currentCustomerNumberSearch[0].customerNumber + 1;
-  console.log(currentCustomerNumber2);
+  const currentCustomerNumber = currentCustomerNumberSearch[0]?.customerNumber + 1 || 1;
+  console.log(currentCustomerNumber);
 
   //double check that 1) the dish exists, and 2) isOrderable
 
   const augmentedData = {
     ...data,
-    customerNumber: currentCustomerNumber2,
+    customerNumber: currentCustomerNumber,
     status: 'new',
   };
 
