@@ -1,5 +1,8 @@
 import { models, model, Schema, InferSchemaType } from 'mongoose';
 
+const Counter2 = new Schema({ id: Number });
+export type Counter = InferSchemaType<typeof Counter2>;
+
 const OrderUpdateSchema = new Schema(
   {
     newStatus: {

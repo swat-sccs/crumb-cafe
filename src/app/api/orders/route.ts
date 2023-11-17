@@ -2,21 +2,22 @@ import dbConnect from '@/app/lib/mongodb';
 import * as mongoose from 'mongoose'; //for Schema and model
 import OrderModel from '@/models/order.model';
 import DishModel from '@/models/dish.model';
+import Counter2 from '@/models/dish.model';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { parseQuery, parseBody } from '../parseQuery';
 
-// const Counter = mongoose.model(
-//   'Counter',
-//   new mongoose.Schema({ id: Number }, { collection: 'counter' }),
-// );
-const schemaCounter = new mongoose.Schema({ id: Number });
-const Counter2 = mongoose.model('Counter', schemaCounter);
+/*
+const Counter = mongoose.model(
+  'Counter',
+  new mongoose.Schema({ id: Number }, { collection: 'counter' }),
+);
+*/
 
 async function initializeCustomerNumber() {
   try {
-    const counter = new Counter2({ id: 1 });
+    const counter = await Counter2.create({ id: 3 });
     await counter.save();
     return counter.id;
   } catch (error) {
@@ -36,6 +37,7 @@ async function getNextCustomerNumber() {
       //initialize to one
       return initializeCustomerNumber();
     }
+    console.log(counter.id);
     return counter.id;
   } catch (error) {
     throw error;
@@ -54,7 +56,7 @@ const orderQuerySchema = z.object({
 const newOrderSchema = z.object({
   customerName: z.string(), //not optional
   dish: z.string(),
-  options: z.map(z.string(), z.array(z.string())),
+  options: z.map(z.string(), z.array(z.string())).optional(),
   notes: z.string().optional(),
   customDishOptions: z.object({
     friendlyName: z.string(),
@@ -128,6 +130,7 @@ export async function POST(request: NextRequest) {
   }
 
   currentCustomerNumber2 = currentCustomerNumberSearch[0].customerNumber + 1;
+  console.log(currentCustomerNumber2);
 
   //double check that 1) the dish exists, and 2) isOrderable
 

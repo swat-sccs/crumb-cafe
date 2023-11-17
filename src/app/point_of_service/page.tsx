@@ -32,6 +32,7 @@ import React, { useState, useEffect } from 'react';
 import { BreakfastDiningOutlined, LegendToggle } from '@mui/icons-material';
 import { AnyKeys } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
+import axios from 'axios';
 
 import useSWR from 'swr';
 
@@ -127,11 +128,12 @@ export default function App() {
   const addItems = (item: any) => {
     let rt = runningTotal;
     setCurrentDish(item);
-    console.log(currentDish);
+    // console.log(currentDish);
     setCurrentOrder([...currentOrder, item]);
     rt += item.basePrice;
     setRunningTotal(rt);
     setOptions(true);
+    console.log(currentOrder);
   };
 
   const addDrinks = (item: any) => {
@@ -201,8 +203,25 @@ export default function App() {
     console.log(runningTotal);
   };
 
-  const confirmOrder = () => {
+  const confirmOrder = async () => {
     console.log('order confirmed!');
+
+    for (const order of currentOrder) {
+      console.log(order);
+      const thing1 = {
+        customerName: 'customer4',
+        dish: 'pancakes',
+        options: { 'flavor-shots': ['apple', 'lychee'] },
+        customDishOptions: {
+          friendlyName: 'Italian Soda',
+          description: 'It is soda',
+          price: 100,
+        },
+      };
+      await axios.post('/api/orders', thing1).then((response) => {
+        console.log(response.status, response.data.token);
+      });
+    }
   };
 
   // const renderDrinkButtons = () => {
@@ -307,12 +326,9 @@ export default function App() {
         </Grid>
       );
     } else {
-      const drinks = [];
-      for (const item of data.dishes) {
-        if (item.categories == 'drinks') {
-          drinks.push(item);
-        }
-      }
+      const drinks = data.dishes.filter(
+        (drink: any) => drink.isOrderable == true && drink.tags.includes('drink'),
+      );
       return drinks.map((item: any) => (
         <>
           <Grid item xs={4}>
@@ -379,12 +395,10 @@ export default function App() {
         </Grid>
       );
     } else {
-      const food = [];
-      for (const foodItem of data.dishes) {
-        if (foodItem.categories != 'drinks') {
-          food.push(foodItem);
-        }
-      }
+      const food = data.dishes.filter(
+        (dish: any) => dish.isOrderable == true && dish.tags.includes('food'),
+      );
+
       return food.map((item: any) => (
         <>
           <Grid item xs={4}>
