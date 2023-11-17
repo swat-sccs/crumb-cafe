@@ -27,7 +27,7 @@ const orderQuerySchema = z.object({
 const newOrderSchema = z.object({
   customerName: z.string(), //not optional
   dish: z.string(),
-  options: z.map(z.string(), z.array(z.string())).optional(),
+  options: z.record(z.array(z.string())).optional(),
   notes: z.string().optional(),
   customDishOptions: z.object({
     friendlyName: z.string(),
