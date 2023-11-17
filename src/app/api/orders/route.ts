@@ -79,7 +79,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { ok, data } = parseBody(newOrderSchema, request);
+  const { ok, data } = await parseBody(newOrderSchema, request);
 
   if (!ok) {
     return new NextResponse(data, { status: 400 });
