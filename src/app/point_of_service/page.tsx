@@ -19,6 +19,8 @@ import {
   ListItem,
   ToggleButton,
   ToggleButtonGroup,
+  Tabs,
+  Tab,
 } from '@mui/material';
 import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -434,6 +436,19 @@ export default function App() {
     if (!options) {
       return (
         <>
+         <Tabs value={foodOdrink} exclusive onChange={handleAlignment} aria-label="text alignment" sx={{ marginBottom: '10%' }}
+            fullWidth>
+              <Tab value="food" aria-label="left aligned" label="Food" />
+              <Tab value="drink" aria-label="centered" label="Drink" />
+          </Tabs></>
+      )
+    }
+  }
+/*
+  const ToggleComponent = () => {
+    if (!options) {
+      return (
+        <>
           <ToggleButtonGroup
             value={foodOdrink}
             exclusive
@@ -455,7 +470,7 @@ export default function App() {
       return <React.Fragment></React.Fragment>;
     }
   };
-
+*/
   const CancelOrderComponent = () => {
     return (
       <>
