@@ -6,6 +6,8 @@ import DishModel from '@/models/dish.model';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { parseQuery, parseBody } from '../parseQuery';
+import { getServerSession } from "next-auth/next" 
+import { authOptions } from "@/app/api/auth/[...nextauth]/route"
 
 const orderQuerySchema = z.object({
   status: z.enum(['new', 'in_progress', 'completed']).optional(),
@@ -29,13 +31,19 @@ const newOrderSchema = z.object({
 });
 
 export async function GET(request: NextRequest) {
+  await dbConnect();
+  
+  const session = await getServerSession(authOptions)
+
+  console.log(session)
+
+
   const { ok, data } = parseQuery(orderQuerySchema, request);
 
   if (!ok) {
     return new NextResponse(data, { status: 400 });
   }
 
-  await dbConnect();
 
   let query = OrderModel.find();
 
