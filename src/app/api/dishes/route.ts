@@ -34,12 +34,11 @@ const newDishSchema = z.object({
       friendlyName: z.string(),
       extraPrice: z.number(),
       allowQuantity: z.boolean(),
-      //dependicies
+      dependencies: z.array(z.string()), //empty array for now
     }),
-    //dependencies
+    dependencies: z.array(z.string()), //empty array
   }),
-
-  //dependencies:  I do not know, how to set this one up
+  dependencies: z.array(z.string()), //empty array
 });
 
 export async function GET(request: NextRequest) {
