@@ -118,7 +118,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (!dishValid.isOrderable) {
-    return new NextResponse('Dish is not available, at this time', { status: 406 });
+    return new NextResponse('Dish is not available, at this time', { status: 400 });
   }
 
   const newOrder = new OrderModel(augmentedData);
