@@ -7,10 +7,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { parseQuery, parseBody } from '../parseQuery';
 
-// const Counter = mongoose.model(
-//   'Counter',
-//   new mongoose.Schema({ id: Number }, { collection: 'counter' }),
-// );
 const schemaCounter = new mongoose.Schema({ id: Number });
 const Counter2 = mongoose.model('Counter', schemaCounter);
 
@@ -115,7 +111,7 @@ export async function POST(request: NextRequest) {
   await dbConnect();
 
   //assign unique ID, just going up
-  const currentCustomerNumber = getNextCustomerNumber();
+  //const currentCustomerNumber = getNextCustomerNumber();
   let currentCustomerNumber2;
 
   const currentCustomerNumberSearch = await OrderModel.find({})
@@ -124,10 +120,10 @@ export async function POST(request: NextRequest) {
     .exec();
 
   if (currentCustomerNumberSearch.length == 0) {
-    currentCustomerNumber2 = null; // no orders yet
+    currentCustomerNumber2 = 1; // no orders yet
+  } else {
+    currentCustomerNumber2 = currentCustomerNumberSearch[0].customerNumber + 1;
   }
-
-  currentCustomerNumber2 = currentCustomerNumberSearch[0].customerNumber + 1;
 
   //double check that 1) the dish exists, and 2) isOrderable
 
@@ -144,7 +140,7 @@ export async function POST(request: NextRequest) {
   }
 
   if (!dishValid.isOrderable) {
-    return new NextResponse('Dish is not available, at this time', { status: 406 });
+    return new NextResponse('Dish is not available, at this time', { status: 400 });
   }
 
   const newOrder = new OrderModel(augmentedData);
