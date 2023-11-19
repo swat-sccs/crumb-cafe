@@ -158,6 +158,7 @@ export default function App() {
     let temp = currentOrder;
     //this finds the first match, but we want it to delete current item!
     //fix later by making sure ALL fields match
+    
     for (const thing of currentOrder) {
       if (thing.friendlyName == props.friendlyName) {
         rt -= thing.basePrice;
@@ -440,8 +441,11 @@ export default function App() {
             fullWidth>
               <Tab value="food" aria-label="left aligned" label="Food" />
               <Tab value="drink" aria-label="centered" label="Drink" />
-          </Tabs></>
+          </Tabs>
+        </>
       )
+    } else {
+      return <React.Fragment></React.Fragment>;
     }
   }
 /*
@@ -577,14 +581,10 @@ export default function App() {
     }
     return <></>;
   };
-
+  
   //Render Current Selected food on left List
   const CurrentOrderItemsComponent = () => {
-    const selectedItems = [];
-    const listItems = [];
-
-    for (const item of currentOrder) {
-      listItems.push(
+    const listItems = currentOrder.map((item) => (
         <>
           <ListItem
             secondaryAction={
@@ -610,52 +610,46 @@ export default function App() {
               </ListItemText>
             </ListItemButton>
           </ListItem>
-        </>,
-      );
-    }
+        </>
+    ));
     return <>{listItems}</>;
   };
 
+
   const CurrentOrderDrinksComponent = () => {
     let selectedItems = [];
-
     for (const prop of drinks) {
       if (prop.qty > 0) {
         selectedItems.push(prop);
       }
     }
-
-    const listItems = [];
-
-    for (const item of selectedItems) {
-      listItems.push(
-        <>
-          <ListItemButton>
-            <ListItemText style={{ textAlign: 'left' }}>
-              <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                <Grid item sm={4}>
-                  <Typography variant="h5">{item.name}</Typography>
-                </Grid>
-                <Grid item sm={5}>
-                  <Typography textAlign="center" variant="h5">
-                    {item.qty}
-                  </Typography>
-                </Grid>
-                <Grid item sm={3}>
-                  <Typography textAlign="right" variant="h5">
-                    ${Number.parseFloat(item.price.toString()).toFixed(2)}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </ListItemText>
-            <IconButton edge="end" aria-label="delete" onClick={() => removeDrink(item)}>
-              <DeleteIcon />
-            </IconButton>
-          </ListItemButton>
-          <hr />
-        </>,
-      );
-    }
+    const listItems = selectedItems.map((item) => (
+    <>
+      <ListItemButton>
+        <ListItemText style={{ textAlign: 'left' }}>
+          <Grid container direction="row" justifyContent="space-between" alignItems="center">
+            <Grid item sm={4}>
+              <Typography variant="h5">{item.name}</Typography>
+            </Grid>
+            <Grid item sm={5}>
+              <Typography textAlign="center" variant="h5">
+                {item.qty}
+              </Typography>
+            </Grid>
+            <Grid item sm={3}>
+              <Typography textAlign="right" variant="h5">
+                ${Number.parseFloat(item.price.toString()).toFixed(2)}
+              </Typography>
+            </Grid>
+          </Grid>
+        </ListItemText>
+        <IconButton edge="end" aria-label="delete" onClick={() => removeDrink(item)}>
+          <DeleteIcon />
+        </IconButton>
+      </ListItemButton>
+      <hr />
+      </>
+    ));
     return <>{listItems}</>;
   };
 
