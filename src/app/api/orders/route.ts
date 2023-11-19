@@ -1,42 +1,11 @@
 import dbConnect from '@/app/lib/mongodb';
-import * as mongoose from 'mongoose'; //for Schema and model
+//import * as mongoose from 'mongoose'; //for Schema and model
 import OrderModel from '@/models/order.model';
 import DishModel from '@/models/dish.model';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { parseQuery, parseBody } from '../parseQuery';
-
-const schemaCounter = new mongoose.Schema({ id: Number });
-const Counter2 = mongoose.model('Counter', schemaCounter);
-
-async function initializeCustomerNumber() {
-  try {
-    const counter = new Counter2({ id: 1 });
-    await counter.save();
-    return counter.id;
-  } catch (error) {
-    throw 'Initialization failed';
-  }
-}
-
-async function getNextCustomerNumber() {
-  try {
-    const counter: { id: number } = await Counter2.findOneAndUpdate(
-      { id: 'customerNumber' }, // Use a unique identifier for the counter
-      { $inc: { id: 1 } }, // Increment the counter by 1
-      { upsert: true, new: true },
-    );
-
-    if (!counter) {
-      //initialize to one
-      return initializeCustomerNumber();
-    }
-    return counter.id;
-  } catch (error) {
-    throw error;
-  }
-}
 
 const orderQuerySchema = z.object({
   status: z.enum(['new', 'in_progress', 'completed']).optional(),
@@ -110,9 +79,7 @@ export async function POST(request: NextRequest) {
 
   await dbConnect();
 
-  //assign unique ID, just going up
-  //const currentCustomerNumber = getNextCustomerNumber();
-  let currentCustomerNumber2;
+  let currentCustomerNumber;
 
   const currentCustomerNumberSearch = await OrderModel.find({})
     .sort({ customerNumber: -1 })
@@ -120,16 +87,16 @@ export async function POST(request: NextRequest) {
     .exec();
 
   if (currentCustomerNumberSearch.length == 0) {
-    currentCustomerNumber2 = 1; // no orders yet
+    currentCustomerNumber = 1; // no orders yet
   } else {
-    currentCustomerNumber2 = currentCustomerNumberSearch[0].customerNumber + 1;
+    currentCustomerNumber = currentCustomerNumberSearch[0].customerNumber + 1;
   }
 
   //double check that 1) the dish exists, and 2) isOrderable
 
   const augmentedData = {
     ...data,
-    customerNumber: currentCustomerNumber2,
+    customerNumber: currentCustomerNumber,
     status: 'new',
   };
 
