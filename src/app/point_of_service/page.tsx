@@ -20,6 +20,10 @@ import {
   Tab,
   IconButton,
   Toolbar,
+  Backdrop,
+  InputBase,
+  Modal,
+  Fade,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
 
@@ -37,6 +41,11 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 export default function App() {
   const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
   const [user, setUser] = useState('izzy');
+  //Name PopUp Open and Close
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+
   const [currentDish, setCurrentDish] = useState({
     _id: 'pancakes',
     friendlyName: 'Pancakes',
@@ -239,7 +248,9 @@ export default function App() {
 
   const confirmOrder = async () => {
     console.log('order confirmed!');
+    handleOpen();
 
+    /*
     for (const order of currentOrder) {
       console.log(order);
 
@@ -265,7 +276,7 @@ export default function App() {
           setOptions(false);
         }
       });
-    }
+    }*/
   };
 
   // const renderDrinkButtons = () => {
@@ -338,6 +349,66 @@ export default function App() {
           </Card>
         </Grid>
       </Grid>
+    );
+  };
+
+  const NamePopUp = () => {
+    const style = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -140%)',
+      width: '30vw',
+      bgcolor: 'background.paper',
+      border: '2px solid #000',
+      boxShadow: 24,
+      p: 4,
+    };
+
+    return (
+      <Modal
+        //disableEnforceFocus
+        aria-labelledby="transition-modal-title"
+        aria-describedby="transition-modal-description"
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+        slots={{ backdrop: Backdrop }}
+        slotProps={{
+          backdrop: {
+            color: '#ffaf',
+            timeout: 500,
+          },
+        }}
+      >
+        <Fade in={open}>
+          <Box sx={style}>
+            <Typography id="transition-modal-title" variant="h3" align="center">
+              Order Name
+            </Typography>
+
+            <Grid container direction="row" justifyContent="center" sx={{ marginTop: '7%' }}>
+              <Box
+                sx={{
+                  borderRadius: 10,
+                  width: '20vw',
+                  height: '10vh',
+                  outlineColor: 'white',
+                  outlineStyle: 'solid',
+                }}
+              >
+                <InputBase
+                  autoFocus
+                  inputProps={{ style: { textAlign: 'center' } }}
+                  id="filled-basic"
+                  placeholder="Name"
+                  sx={{ fontSize: '250%', padding: 1, ml: 1, flex: 1 }}
+                />
+              </Box>
+            </Grid>
+          </Box>
+        </Fade>
+      </Modal>
     );
   };
 
@@ -748,6 +819,7 @@ export default function App() {
 
   return (
     <Container sx={{}}>
+      <NamePopUp></NamePopUp>
       <Box>
         <Grid container spacing={12} rowSpacing={10} columnSpacing={{ xs: 5, sm: 2, md: 2 }}>
           <Grid item sm={6}>
