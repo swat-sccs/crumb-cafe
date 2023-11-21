@@ -37,7 +37,42 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 export default function App() {
   const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
   const [user, setUser] = useState('izzy');
-  const [currentDish, setCurrentDish] = useState(); //when selected CurrentDish is updated to display correct options.
+  const [currentDish, setCurrentDish] = useState({
+    _id: 'pancakes',
+    friendlyName: 'Pancakes',
+    basePrice: 1,
+    tags: ['food'],
+    categories: ['breakfast'],
+    isOrderable: true,
+    isArchived: false,
+    options: [
+      {
+        _id: 'toppings',
+        friendlyName: 'toppings',
+        allowMultipleSelections: true,
+        allowNoSelection: true,
+        options: [
+          {
+            _id: 'syrup',
+            friendlyName: 'maple syrup',
+            extraPrice: 0,
+            allowQuantity: false,
+            dependencies: [],
+          },
+          {
+            _id: 'berries',
+            friendlyName: 'berries',
+            extraPrice: 1,
+            allowQuantity: false,
+            dependencies: [],
+          },
+        ],
+        dependencies: [],
+      },
+    ],
+    dependencies: [],
+    __v: 0,
+  }); //when selected CurrentDish is updated to display correct options.
   const [flag, setFlag] = useState(true); //true is food, false is drink
 
   //NEEDS TO BE CHANGED to; showOptions or something similar
@@ -65,7 +100,7 @@ export default function App() {
   //const [foodOdrink, setfoodOdrink] = useState('food');
   const [foodOdrink, setfoodOdrink] = React.useState<string | null>('food');
 
-  const handleAlignment = (event: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
+  const handleAlignment = (event: React.SyntheticEvent, newAlignment: string | null) => {
     //setfoodOdrink(newAlignment);
     if (newAlignment !== null) {
       setfoodOdrink(newAlignment);
@@ -124,6 +159,8 @@ export default function App() {
   const addItems = (item: any) => {
     let rt = runningTotal;
     setCurrentDish(item);
+    console.log(currentDish);
+
     // console.log(currentDish);
     setCurrentOrder([...currentOrder, item]);
     rt += item.basePrice;
@@ -462,11 +499,11 @@ export default function App() {
         <>
           <Tabs
             value={foodOdrink}
-            exclusive
-            onChange={handleAlignment}
+            //exclusive
             aria-label="text alignment"
             sx={{ marginBottom: '10%' }}
-            fullWidth
+            onChange={handleAlignment}
+            variant="fullWidth"
           >
             <Tab value="food" aria-label="left aligned" label="Food" />
             <Tab value="drink" aria-label="centered" label="Drink" />

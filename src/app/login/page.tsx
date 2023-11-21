@@ -1,8 +1,10 @@
 'use client';
 import React from 'react';
 import { TextField, Button, Typography, Grid, Card } from '@mui/material';
+import styles from './page.module.css';
 
 const YourComponent = () => {
+  /*
   const divStyle = {
     display: 'flex',
     alignItems: 'center',
@@ -15,9 +17,10 @@ const YourComponent = () => {
     width: '100vw',
     height: '100vh',
   };
+  */
 
   return (
-    <div style={divStyle}>
+    <div className={styles.divStyle}>
       <Typography
         sx={{
           marginTop: '15%',
