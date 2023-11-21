@@ -46,6 +46,11 @@ export default function App() {
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
 
+  const [name, setName] = React.useState('');
+  function handleNameChange(e: any) {
+    setName(e.target.value);
+  }
+
   const [currentDish, setCurrentDish] = useState({
     _id: 'pancakes',
     friendlyName: 'Pancakes',
@@ -167,9 +172,9 @@ export default function App() {
   //Each item passed in is a full Dish{}
   const addItems = (item: any) => {
     let rt = runningTotal;
+    item['selectedOptions'] = ['Syrup', 'Apple', 'Berries'];
     setCurrentDish(item);
     console.log(currentDish);
-
     // console.log(currentDish);
     setCurrentOrder([...currentOrder, item]);
     rt += item.basePrice;
@@ -247,17 +252,14 @@ export default function App() {
   };
 
   const confirmOrder = async () => {
-    console.log('order confirmed!');
-    handleOpen();
+    console.log('order confirmed!: ' + name);
+    handleClose();
 
-    /*
     for (const order of currentOrder) {
-      console.log(order);
-
       const thing1 = {
-        customerName: 'Test Customer',
+        customerName: name,
         dish: order._id,
-        options: { 'flavor-shots': ['apple', 'lychee'] },
+        options: order.options,
         notes: 'Once apon a time',
         customDishOptions: {
           friendlyName: order.friendlyName,
@@ -266,17 +268,18 @@ export default function App() {
         },
       };
 
-      ///console.log(data);
+      console.log(thing1);
 
       await axios.post('/api/orders', thing1).then((response) => {
         console.log(response.status, response.data.token);
         if (response.status == 200) {
           setCurrentOrder([]);
+          setName('');
           setRunningTotal(0);
           setOptions(false);
         }
       });
-    }*/
+    }
   };
 
   // const renderDrinkButtons = () => {
@@ -309,47 +312,88 @@ export default function App() {
   const RenderOptions = () => {
     //console.log(currentDish);
     return (
-      <Grid container direction="row" justifyContent="space-evenly" sx={{ height: '90vh' }}>
-        <Grid item xs={6}>
-          <Card
-            sx={{
-              borderRadius: '10px',
-              display: 'flex',
-              flexDirection: 'column',
-              height: '30%',
-            }}
-          >
-            <CardContent sx={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <Typography fontSize="180%" textAlign="center">
-                {currentDish.friendlyName}
-              </Typography>
-            </CardContent>
-          </Card>
+      <Grid container direction="column" justifyContent="flex-start" sx={{ height: '90vh' }}>
+        <Grid item xs={2}>
+          <Grid container direction="row" justifyContent="center">
+            <Grid item xs={6}>
+              <Card
+                sx={{
+                  borderRadius: '10px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                }}
+              >
+                <CardContent sx={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                  <Typography fontSize="180%" textAlign="center">
+                    {currentDish.friendlyName}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
         </Grid>
 
-        <Grid container>
-          <Card
-            sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
-          >
-            <CardContent>
-              <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
-                <SubOptions></SubOptions>
-                {currentDish.options[0].friendlyName}
-              </Grid>
-            </CardContent>
-          </Card>
-          <Card
-            sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
-          >
-            <CardContent>
-              <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
-                {''}
-              </Grid>
-            </CardContent>
-          </Card>
+        <Grid item xs={6}>
+          <Grid container direction="row" justifyContent="center" alignItems="center">
+            <Options options={currentDish.options}></Options>
+          </Grid>
         </Grid>
       </Grid>
     );
+  };
+
+  const Options = (props: any) => {
+    const options = [];
+    const specific = [];
+    //console.log(props);
+
+    /*
+    [
+    {
+        "_id": "toppings",
+        "friendlyName": "toppings",
+        "allowMultipleSelections": true,
+        "allowNoSelection": true,
+        "options": [
+            {
+                "_id": "syrup",
+                "friendlyName": "maple syrup",
+                "extraPrice": 0,
+                "allowQuantity": false,
+                "dependencies": []
+            },
+            {
+                "_id": "berries",
+                "friendlyName": "berries",
+                "extraPrice": 1,
+                "allowQuantity": false,
+                "dependencies": []
+            }
+        ],
+        "dependencies": []
+    }
+]
+
+    */
+
+    for (const optionType of props.options) {
+      //console.log(subOptions.options);
+      for (const subOption of optionType.options) {
+        //console.log(x);
+        specific.push(
+          <>
+            <Grid item sx={{ m: 1 }}>
+              <Button size="large">{subOption.friendlyName}</Button>
+            </Grid>
+          </>,
+        );
+      }
+      //options.push({ specific });
+      //console.log(thing);
+    }
+
+    return <>{specific}</>;
   };
 
   const NamePopUp = () => {
@@ -357,36 +401,31 @@ export default function App() {
       position: 'absolute',
       top: '50%',
       left: '50%',
-      transform: 'translate(-50%, -140%)',
+      transform: 'translate(-50%, -50%)',
       width: '30vw',
       bgcolor: 'background.paper',
       border: '2px solid #000',
       boxShadow: 24,
       p: 4,
     };
+    console.log('what the heck');
 
     return (
       <Modal
         //disableEnforceFocus
+        disableScrollLock
         aria-labelledby="transition-modal-title"
         aria-describedby="transition-modal-description"
         open={open}
         onClose={handleClose}
         closeAfterTransition
-        slots={{ backdrop: Backdrop }}
-        slotProps={{
-          backdrop: {
-            color: '#ffaf',
-            timeout: 500,
-          },
-        }}
       >
-        <Fade in={open}>
-          <Box sx={style}>
-            <Typography id="transition-modal-title" variant="h3" align="center">
-              Order Name
-            </Typography>
+        <Box sx={style}>
+          <Typography id="transition-modal-title" variant="h3" align="center">
+            Order Name
+          </Typography>
 
+          <Grid container direction="column" justifyContent="space-evenly">
             <Grid container direction="row" justifyContent="center" sx={{ marginTop: '7%' }}>
               <Box
                 sx={{
@@ -399,15 +438,21 @@ export default function App() {
               >
                 <InputBase
                   autoFocus
+                  autoComplete="off"
                   inputProps={{ style: { textAlign: 'center' } }}
                   id="filled-basic"
                   placeholder="Name"
+                  value={name}
+                  onChange={handleNameChange}
                   sx={{ fontSize: '250%', padding: 1, ml: 1, flex: 1 }}
                 />
               </Box>
             </Grid>
-          </Box>
-        </Fade>
+            <Button sx={{ marginTop: 2 }} onClick={() => confirmOrder()}>
+              Submit
+            </Button>
+          </Grid>
+        </Box>
       </Modal>
     );
   };
@@ -644,7 +689,7 @@ export default function App() {
             lineHeight: 1.4,
           }}
           size="large"
-          onClick={() => confirmOrder()}
+          onClick={() => handleOpen()}
         >
           <Grid container direction="row" justifyContent="space-around" alignItems="center">
             <Grid item xs={3}>
