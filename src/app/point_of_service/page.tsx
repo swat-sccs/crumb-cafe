@@ -12,22 +12,17 @@ import {
   Grid,
   List,
   ListItemButton,
-  ListItemIcon,
   CircularProgress,
   ListItemText,
   Divider,
   ListItem,
-  ToggleButton,
-  ToggleButtonGroup,
   Tabs,
   Tab,
+  IconButton,
+  Toolbar,
 } from '@mui/material';
-import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { orange, cyan, blueGrey } from '@mui/material/colors';
 import React, { useState, useEffect } from 'react';
@@ -35,7 +30,6 @@ import { BreakfastDiningOutlined, LegendToggle } from '@mui/icons-material';
 import { AnyKeys } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
 import axios from 'axios';
-
 import useSWR from 'swr';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
@@ -158,7 +152,7 @@ export default function App() {
     let temp = currentOrder;
     //this finds the first match, but we want it to delete current item!
     //fix later by making sure ALL fields match
-    
+
     for (const thing of currentOrder) {
       if (thing.friendlyName == props.friendlyName) {
         rt -= thing.basePrice;
@@ -211,18 +205,28 @@ export default function App() {
 
     for (const order of currentOrder) {
       console.log(order);
+
       const thing1 = {
-        customerName: 'customer4',
-        dish: 'pancakes',
+        customerName: 'Test Customer',
+        dish: order._id,
         options: { 'flavor-shots': ['apple', 'lychee'] },
+        notes: 'Once apon a time',
         customDishOptions: {
-          friendlyName: 'Italian Soda',
+          friendlyName: order.friendlyName,
           description: 'It is soda',
-          price: 100,
+          price: order.basePrice,
         },
       };
+
+      ///console.log(data);
+
       await axios.post('/api/orders', thing1).then((response) => {
         console.log(response.status, response.data.token);
+        if (response.status == 200) {
+          setCurrentOrder([]);
+          setRunningTotal(0);
+          setOptions(false);
+        }
       });
     }
   };
@@ -254,7 +258,8 @@ export default function App() {
   These options replace the menu items and give the user the oppourtunity to make additions
   or add and subtract the number of items being added. 
   */
-  const renderOptions = () => {
+  const RenderOptions = () => {
+    //console.log(currentDish);
     return (
       <Grid container direction="row" justifyContent="space-evenly" sx={{ height: '90vh' }}>
         <Grid item xs={6}>
@@ -274,24 +279,13 @@ export default function App() {
           </Card>
         </Grid>
 
-        <Grid item xs={5}>
-          <Card
-            sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
-          >
-            <CardContent>
-              <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
-                {''}
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-
         <Grid container>
           <Card
             sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
           >
             <CardContent>
               <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
+                <SubOptions></SubOptions>
                 {currentDish.options[0].friendlyName}
               </Grid>
             </CardContent>
@@ -308,6 +302,35 @@ export default function App() {
         </Grid>
       </Grid>
     );
+  };
+
+  const SubOptions = () => {
+    /*
+    {
+    "_id": "toppings",
+    "friendlyName": "toppings",
+    "allowMultipleSelections": true,
+    "allowNoSelection": true,
+    "options": [
+        {
+            "_id": "syrup",
+            "friendlyName": "maple syrup",
+            "extraPrice": 0,
+            "allowQuantity": false,
+            "dependencies": []
+        },
+        {
+            "_id": "berries",
+            "friendlyName": "berries",
+            "extraPrice": 1,
+            "allowQuantity": false,
+            "dependencies": []
+        }
+    ],
+    "dependencies": []
+}*/
+
+    return <></>;
   };
 
   // const DrinkButtonComponent = () => {
@@ -422,7 +445,7 @@ export default function App() {
   //Customization Tab (Extra ingredients/ notes etc)
   const OrderComponent = () => {
     if (options) {
-      return <>{renderOptions()}</>;
+      return <>{RenderOptions()}</>;
     } else {
       if (foodOdrink == 'food') {
         return <>{FoodButtonComponent()}</>;
@@ -437,18 +460,24 @@ export default function App() {
     if (!options) {
       return (
         <>
-         <Tabs value={foodOdrink} exclusive onChange={handleAlignment} aria-label="text alignment" sx={{ marginBottom: '10%' }}
-            fullWidth>
-              <Tab value="food" aria-label="left aligned" label="Food" />
-              <Tab value="drink" aria-label="centered" label="Drink" />
+          <Tabs
+            value={foodOdrink}
+            exclusive
+            onChange={handleAlignment}
+            aria-label="text alignment"
+            sx={{ marginBottom: '10%' }}
+            fullWidth
+          >
+            <Tab value="food" aria-label="left aligned" label="Food" />
+            <Tab value="drink" aria-label="centered" label="Drink" />
           </Tabs>
         </>
-      )
+      );
     } else {
       return <React.Fragment></React.Fragment>;
     }
-  }
-/*
+  };
+  /*
   const ToggleComponent = () => {
     if (!options) {
       return (
@@ -581,40 +610,40 @@ export default function App() {
     }
     return <></>;
   };
-  
+
   //Render Current Selected food on left List
   const CurrentOrderItemsComponent = () => {
-    const listItems = currentOrder.map((item) => (
-        <>
-          <ListItem
-            secondaryAction={
-              <IconButton edge="end" aria-label="delete" onClick={() => removeItem(item)}>
-                <DeleteIcon />
-              </IconButton>
-            }
-            disablePadding
-          >
-            <ListItemButton key={item.friendlyName} onClick={() => showOptions(item)}>
-              <ListItemText style={{ textAlign: 'left' }}>
-                <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                  <Grid item sm={4}>
-                    <Typography variant="h5">{item.friendlyName}</Typography>
-                  </Grid>
-
-                  <Grid item sm={3}>
-                    <Typography textAlign="right" variant="h5">
-                      ${Number.parseFloat(item.basePrice).toFixed(2)}
-                    </Typography>
-                  </Grid>
+    const listItems = currentOrder.map((item: any) => (
+      <>
+        <ListItem
+          secondaryAction={
+            <IconButton edge="end" aria-label="delete" onClick={() => removeItem(item)}>
+              <DeleteIcon />
+            </IconButton>
+          }
+          disablePadding
+        >
+          <ListItemButton key={item.friendlyName} onClick={() => showOptions(item)}>
+            <ListItemText style={{ textAlign: 'left' }}>
+              <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                <Grid item sm={4}>
+                  <Typography variant="h5">{item.friendlyName}</Typography>
                 </Grid>
-              </ListItemText>
-            </ListItemButton>
-          </ListItem>
-        </>
+
+                <Grid item sm={3}>
+                  <Typography textAlign="right" variant="h5">
+                    ${Number.parseFloat(item.basePrice).toFixed(2)}
+                  </Typography>
+                </Grid>
+              </Grid>
+            </ListItemText>
+          </ListItemButton>
+        </ListItem>
+        <Divider></Divider>
+      </>
     ));
     return <>{listItems}</>;
   };
-
 
   const CurrentOrderDrinksComponent = () => {
     let selectedItems = [];
@@ -624,30 +653,30 @@ export default function App() {
       }
     }
     const listItems = selectedItems.map((item) => (
-    <>
-      <ListItemButton>
-        <ListItemText style={{ textAlign: 'left' }}>
-          <Grid container direction="row" justifyContent="space-between" alignItems="center">
-            <Grid item sm={4}>
-              <Typography variant="h5">{item.name}</Typography>
+      <>
+        <ListItemButton>
+          <ListItemText style={{ textAlign: 'left' }}>
+            <Grid container direction="row" justifyContent="space-between" alignItems="center">
+              <Grid item sm={4}>
+                <Typography variant="h5">{item.name}</Typography>
+              </Grid>
+              <Grid item sm={5}>
+                <Typography textAlign="center" variant="h5">
+                  {item.qty}
+                </Typography>
+              </Grid>
+              <Grid item sm={3}>
+                <Typography textAlign="right" variant="h5">
+                  ${Number.parseFloat(item.price.toString()).toFixed(2)}
+                </Typography>
+              </Grid>
             </Grid>
-            <Grid item sm={5}>
-              <Typography textAlign="center" variant="h5">
-                {item.qty}
-              </Typography>
-            </Grid>
-            <Grid item sm={3}>
-              <Typography textAlign="right" variant="h5">
-                ${Number.parseFloat(item.price.toString()).toFixed(2)}
-              </Typography>
-            </Grid>
-          </Grid>
-        </ListItemText>
-        <IconButton edge="end" aria-label="delete" onClick={() => removeDrink(item)}>
-          <DeleteIcon />
-        </IconButton>
-      </ListItemButton>
-      <hr />
+          </ListItemText>
+          <IconButton edge="end" aria-label="delete" onClick={() => removeDrink(item)}>
+            <DeleteIcon />
+          </IconButton>
+        </ListItemButton>
+        <hr />
       </>
     ));
     return <>{listItems}</>;

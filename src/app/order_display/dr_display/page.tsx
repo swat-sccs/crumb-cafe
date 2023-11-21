@@ -22,6 +22,7 @@ import {
 // import { NavigateBeforeIcon, NavigateNextIcon, } from '@mui/icons-material';
 import CardContent from '@mui/material/CardContent';
 import styles from '../page.module.css';
+import axios from 'axios';
 
 import useSWR from 'swr';
 
@@ -29,6 +30,7 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function Home() {
   const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 5000 });
+  //axios.get('/api/dishes').then((reponse) => console.log(reponse));
 
   const OrderCard = () => {
     if (isLoading) {
@@ -51,33 +53,34 @@ export default function Home() {
         console.log(item);
         orders.push(
           <>
-            <Card
-              sx={{
-                borderRadius: '10px',
-                borderColor: 'black',
-                border: 1,
-                width: 200,
-                height: '',
-              }}
-              key={item.customerName}
-            >
-              <Typography
-                variant="h4"
-                bgcolor={statusColor}
-                color={'white'}
-                sx={{ width: '100%', borderStartEndRadius: '10px' }}
-                textAlign={'center'}
+            <Grid item>
+              <Card
+                sx={{
+                  borderRadius: '10px',
+                  borderColor: 'black',
+                  border: 1,
+                  width: 200,
+                }}
+                key={item.customerName}
               >
-                {item.customerName}
-              </Typography>
-
-              <CardContent>
-                <Typography variant="h6" textAlign={'left'}>
-                  {item.dish}
+                <Typography
+                  variant="h4"
+                  bgcolor={statusColor}
+                  color={'white'}
+                  sx={{ width: '100%', borderStartEndRadius: '10px' }}
+                  textAlign={'center'}
+                >
+                  {item.customerName}
                 </Typography>
-                <Options options={item.options}></Options>
-              </CardContent>
-            </Card>
+
+                <CardContent>
+                  <Typography variant="h6" textAlign={'left'}>
+                    {item.dish}
+                  </Typography>
+                  <Options options={item.options}></Options>
+                </CardContent>
+              </Card>
+            </Grid>
           </>,
         );
       }
@@ -161,9 +164,11 @@ export default function Home() {
         </Grid>
 
         <Grid item xs={10}>
-          <Grid container direction="row" justifyContent="flex-start" columnGap={2}>
-            <OrderCard></OrderCard>
-          </Grid>
+          <Container sx={{ overflow: 'auto', height: '90vh' }}>
+            <Grid container direction="row" justifyContent="flex-start" columnGap={10} spacing={2}>
+              <OrderCard></OrderCard>
+            </Grid>
+          </Container>
         </Grid>
       </Grid>
     </div>
