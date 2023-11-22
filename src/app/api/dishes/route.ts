@@ -2,7 +2,7 @@ import dbConnect from '@/app/lib/mongodb';
 import DishModel from '@/models/dish.model';
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
-import { parseQuery } from '../parseQuery';
+import { parseQuery, parseBody } from '../parseQuery';
 
 const dishQuerySchema = z.object({
   isOrderable: z.boolean().optional(),
@@ -84,5 +84,31 @@ export async function GET(request: NextRequest) {
 
   return NextResponse.json({
     dishes: res,
+  });
+}
+
+export async function POST(request: NextRequest) {
+  const { ok, data } = parseBody(newDishSchema, request);
+
+  if (!ok) {
+    return new NextResponse(data, { status: 400 });
+  }
+
+  await dbConnect();
+
+  //some logic i guess, if dish already exists?? no need to post again
+  const dishCopy = await DishModel.findById(data._id);
+
+  if (dishCopy) {
+    return new NextResponse('Dish already exists', { status: 208 });
+  }
+
+  //end of logic
+
+  const newOrder = new DishModel(data);
+  const savedOrder = await newOrder.save();
+
+  return NextResponse.json({
+    order: savedOrder,
   });
 }
