@@ -35,6 +35,7 @@ import { AnyKeys } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
 import axios from 'axios';
 import useSWR from 'swr';
+import { Dictionary } from '@fullcalendar/core/internal';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
@@ -59,6 +60,7 @@ export default function App() {
     categories: ['breakfast'],
     isOrderable: true,
     isArchived: false,
+    selectedOptions: [],
     options: [
       {
         _id: 'toppings',
@@ -94,6 +96,7 @@ export default function App() {
 
   const [currentOrder, setCurrentOrder]: any[] = useState([]); //Keeps Track of current running order
 
+  /*
   const foodItems: any = {
     1: { name: 'Simple Quesadilla', price: 5.25 },
     2: { name: 'Loaded Quesadilla!', price: 5.0 },
@@ -109,7 +112,7 @@ export default function App() {
     12: { name: 'Nachos', price: 5.0 },
     13: { name: 'Dumplings', price: 5.0 },
   };
-
+*/
   const [runningTotal, setRunningTotal] = useState(0);
   //const [foodOdrink, setfoodOdrink] = useState('food');
   const [foodOdrink, setfoodOdrink] = React.useState<string | null>('food');
@@ -120,28 +123,6 @@ export default function App() {
       setfoodOdrink(newAlignment);
     }
   };
-
-  //const [items, setItems] = useState([data]);
-
-  /*
-  const [items, setItems] = useState([
-    { name: 'Simple Quesadilla', qty: 0, price: 5.25 },
-    { name: 'Loaded Quesadilla!', qty: 0, price: 5.0 },
-    { name: 'Avo-Goat-O', qty: 0, price: 5.0 },
-    { name: 'Avocado Toast', qty: 0, price: 5.0 },
-    { name: 'Grilled Cheese', qty: 0, price: 5.0 },
-    { name: 'Caprese', qty: 0, price: 5.0 },
-    { name: 'Chips and Guac', qty: 0, price: 5.0 },
-    { name: 'Chips and Salsa', qty: 0, price: 5.0 },
-    { name: 'Cheese Fries', qty: 0, price: 5.0 },
-    { name: 'Pancakes', qty: 0, price: 5.0 },
-    { name: 'French Toast', qty: 0, price: 5.0 },
-    { name: 'Nachos', qty: 0, price: 5.0 },
-    { name: 'Dumplings', qty: 0, price: 5.0 },
-  ]);
-  */
-
-  //setItems(data);
 
   const [drinks, setDrinks] = useState([
     { name: 'Sprite', qty: 0, price: 1.25 },
@@ -155,50 +136,34 @@ export default function App() {
     { name: 'Chocky Milk', qty: 0, price: 1.0 },
   ]);
 
-  // const addItems = (item: any) => {
-  //   console.log(item);
-  //   let rt = runningTotal;
-  //   let temp = drinks;
-  //   items[item - 1].qty += 1;
-  //   rt += items[item - 1].price;
-  //   setRunningTotal(rt);
-  //   setItems([...items]);
-  //   //console.log(items[item - 1].name);
-  //   setDish(items[item - 1].name);
-  //   setOptions(true);
-  // };
-
-  //pass button as props to this func
-  //Each item passed in is a full Dish{}
-  const addItems = (item: any) => {
+  const addItems = () => {
     let rt = runningTotal;
-    item['selectedOptions'] = ['Syrup', 'Apple', 'Berries'];
-    setCurrentDish(item);
-    console.log(currentDish);
+    //setCurrentDish(item);
+    //console.log(currentDish);
     // console.log(currentDish);
-    setCurrentOrder([...currentOrder, item]);
-    rt += item.basePrice;
+    //setCurrentOrder([...currentOrder, currentDish]);
+    rt += currentDish.basePrice;
     setRunningTotal(rt);
-    setOptions(true);
-    console.log(currentOrder);
+    setOptions(false);
+    //console.log(currentOrder);
   };
 
-  const addDrinks = (item: any) => {
-    let rt = runningTotal;
-    for (const thing of drinks) {
-      if (thing.name == item.name) {
-        thing.qty += 1;
-      }
-    }
-    rt += item.price;
-    setRunningTotal(rt);
-    setDrinks([...drinks]);
+  const handleOpenOptions = (item: any) => {
+    //console.log(item);
+    setCurrentOrder([...currentOrder, item]);
+    setCurrentDish(item);
+    setOptions(true);
+    //console.log(currentOrder);
+  };
+
+  const updateOrder = () => {
+    console.log(currentDish);
   };
 
   const removeItem = (props: any) => {
     setOptions(false);
-    console.log('props to follow');
-    console.log(props);
+    //console.log('props to follow');
+    //console.log(props);
     let rt = runningTotal;
     let temp = currentOrder;
     //this finds the first match, but we want it to delete current item!
@@ -246,9 +211,9 @@ export default function App() {
     for (const thing of drinks) {
       thing.qty = 0;
     }
-    console.log(runningTotal);
+    //console.log(runningTotal);
     setRunningTotal(0);
-    console.log(runningTotal);
+    //console.log(runningTotal);
   };
 
   const confirmOrder = async () => {
@@ -268,8 +233,7 @@ export default function App() {
         },
       };
 
-      console.log(thing1);
-
+      //Upon order completion, reset all states
       await axios.post('/api/orders', thing1).then((response) => {
         console.log(response.status, response.data.token);
         if (response.status == 200) {
@@ -336,64 +300,56 @@ export default function App() {
 
         <Grid item xs={6}>
           <Grid container direction="row" justifyContent="center" alignItems="center">
-            <Options options={currentDish.options}></Options>
+            <OptionsComponent options={currentDish.options}></OptionsComponent>
           </Grid>
         </Grid>
       </Grid>
     );
   };
 
-  const Options = (props: any) => {
+  const OptionsComponent = (props: any) => {
     const options = [];
     const specific = [];
-    //console.log(props);
-
-    /*
-    [
-    {
-        "_id": "toppings",
-        "friendlyName": "toppings",
-        "allowMultipleSelections": true,
-        "allowNoSelection": true,
-        "options": [
-            {
-                "_id": "syrup",
-                "friendlyName": "maple syrup",
-                "extraPrice": 0,
-                "allowQuantity": false,
-                "dependencies": []
-            },
-            {
-                "_id": "berries",
-                "friendlyName": "berries",
-                "extraPrice": 1,
-                "allowQuantity": false,
-                "dependencies": []
-            }
-        ],
-        "dependencies": []
-    }
-]
-
-    */
 
     for (const optionType of props.options) {
-      //console.log(subOptions.options);
       for (const subOption of optionType.options) {
-        //console.log(x);
         specific.push(
           <>
             <Grid item sx={{ m: 1 }}>
-              <Button size="large">{subOption.friendlyName}</Button>
+              <Button
+                onClick={() =>
+                  addOption(subOption.friendlyName, subOption.extraPrice, optionType.friendlyName)
+                }
+                size="large"
+              >
+                {subOption.friendlyName}
+              </Button>
             </Grid>
           </>,
         );
       }
-      //options.push({ specific });
-      //console.log(thing);
     }
 
     return <>{specific}</>;
+  };
+
+  const addOption = (name: string, price: number, optionType: string) => {
+    let theOptions: any = [];
+
+    theOptions = Object.assign([], currentDish.selectedOptions);
+
+    theOptions.push(name);
+
+    //const editedDish = currentDish;
+    const editedDish = Object.assign({}, currentDish);
+    editedDish['basePrice'] = currentDish.basePrice + price;
+    editedDish['selectedOptions'] = theOptions;
+    setCurrentDish(editedDish);
+
+    const editedOrder = Object.assign([], currentOrder);
+    editedOrder[currentOrder.length - 1] = editedDish;
+    setCurrentOrder(editedOrder);
+    //addItems();
   };
 
   const NamePopUp = () => {
@@ -408,7 +364,6 @@ export default function App() {
       boxShadow: 24,
       p: 4,
     };
-    console.log('what the heck');
 
     return (
       <Modal
@@ -457,39 +412,6 @@ export default function App() {
     );
   };
 
-  const SubOptions = () => {
-    /*
-    {
-    "_id": "toppings",
-    "friendlyName": "toppings",
-    "allowMultipleSelections": true,
-    "allowNoSelection": true,
-    "options": [
-        {
-            "_id": "syrup",
-            "friendlyName": "maple syrup",
-            "extraPrice": 0,
-            "allowQuantity": false,
-            "dependencies": []
-        },
-        {
-            "_id": "berries",
-            "friendlyName": "berries",
-            "extraPrice": 1,
-            "allowQuantity": false,
-            "dependencies": []
-        }
-    ],
-    "dependencies": []
-}*/
-
-    return <></>;
-  };
-
-  // const DrinkButtonComponent = () => {
-  //   return <React.Fragment>{renderDrinkButtons()}</React.Fragment>;
-  // };
-
   const DrinkButtonComponent = () => {
     if (isLoading) {
       return (
@@ -514,7 +436,7 @@ export default function App() {
             <Button
               sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
               size="large"
-              onClick={() => addItems(item)}
+              onClick={() => handleOpenOptions(item)}
             >
               {item.friendlyName}
             </Button>
@@ -584,7 +506,7 @@ export default function App() {
             <Button
               sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
               size="large"
-              onClick={() => addItems(item)}
+              onClick={() => handleOpenOptions(item)}
             >
               {item.friendlyName}
             </Button>
@@ -753,7 +675,7 @@ export default function App() {
                 height: 60,
               }}
               size="large"
-              onClick={() => setOptions(false)}
+              onClick={() => addItems()}
             >
               Confirm This Item
             </Button>
@@ -764,9 +686,18 @@ export default function App() {
     return <></>;
   };
 
+  const testRender = (item: any) => {
+    console.log(item);
+    return item.map((item2: any) => (
+      <>
+        <ListItemText sx={{ overflowX: 'auto' }}>{item2}</ListItemText>
+      </>
+    ));
+  };
+
   //Render Current Selected food on left List
   const CurrentOrderItemsComponent = () => {
-    const listItems = currentOrder.map((item: any) => (
+    return currentOrder.map((item: any) => (
       <>
         <ListItem
           secondaryAction={
@@ -792,10 +723,17 @@ export default function App() {
             </ListItemText>
           </ListItemButton>
         </ListItem>
+
+        <ListItem>
+          <ListItemButton sx={{ pl: 4 }}>
+            <ListItemText sx={{ overflowX: 'auto' }}>
+              {testRender(item.selectedOptions)}
+            </ListItemText>
+          </ListItemButton>
+        </ListItem>
         <Divider></Divider>
       </>
     ));
-    return <>{listItems}</>;
   };
 
   const CurrentOrderDrinksComponent = () => {

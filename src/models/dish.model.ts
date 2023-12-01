@@ -87,6 +87,10 @@ const DishSchema = new Schema(
       type: [String],
       requried: true,
     },
+    selectedOptions: {
+      type: [String],
+      requried: false,
+    },
     categories: {
       // e.g. food, drink, special
       type: [String],
@@ -126,6 +130,9 @@ const DishSchema = new Schema(
       },
       byTags(tags: string[]) {
         return this.where('tags').in(tags);
+      },
+      bySelectedOptions(selectedOptions: string[]) {
+        return this.where('selectedOptions').in(selectedOptions);
       },
       byCategories(categories: string[]) {
         return this.where('categories').in(categories);

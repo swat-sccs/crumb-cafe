@@ -1,5 +1,5 @@
 'use client';
-import { Button, Typography, Grid, Card, CardContent, CardActionArea } from '@mui/material';
+import { Stack, Typography, Grid, Card, CardContent, CardActionArea } from '@mui/material';
 import CrumbParticles from './components/particles';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
@@ -26,12 +26,13 @@ export default function Home() {
         container
         justifyContent="space-evenly"
         alignItems="center"
-        //direction="column"
-        direction={{ xs: 'column', sm: 'column', md: 'row' }}
-        columnSpacing={{ sm: '2', lg: '5' }}
-        sx={{ marginTop: '2%', height: '80vh' }}
+        direction={{ xs: 'row', sm: 'row', md: 'row', lg: 'row', xl: 'row' }}
+        spacing={{ xs: 1, sm: 1, md: 3 }}
+        columns={{ xs: 1, sm: 10, md: 11, lg: 12 }}
+        columnSpacing={{ xs: 12, sm: 1, md: 1, lg: 5 }}
+        sx={{ marginTop: '0%', height: '85vh', backgroundColor: '' }}
       >
-        <Grid item xs={1} sm={2} lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
+        <Grid item xs={5} sm={3} md={3} lg={3} sx={{ backgroundColor: '' }}>
           <Card
             className={styles.box}
             sx={{
@@ -40,7 +41,7 @@ export default function Home() {
               backgroundColor: 'rgb(49, 66, 95, 0.7)',
               textAlign: 'center',
               borderRadius: '50px',
-              marginTop: '50%',
+              marginTop: '20%',
             }}
             onClick={() => router.push('/admin')}
           >
@@ -61,7 +62,7 @@ export default function Home() {
           </Card>
         </Grid>
 
-        <Grid item xs={1} sm={2} lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
+        <Grid item xs={5} sm={3} md={3} lg={3} sx={{ backgroundColor: '' }}>
           <Card
             className={styles.box}
             sx={{
@@ -70,7 +71,7 @@ export default function Home() {
               backgroundColor: 'rgb(49, 66, 95, 0.7)',
               textAlign: 'center',
               borderRadius: '50px',
-              marginTop: '50%',
+              marginTop: '20%',
             }}
             onClick={() => router.push('/point_of_service')}
           >
@@ -88,7 +89,7 @@ export default function Home() {
           </Card>
         </Grid>
 
-        <Grid item xs={1} sm={2} lg={3} sx={{ backgroundColor: '' }} height={'100%'}>
+        <Grid item xs={5} sm={3} md={3} lg={3} sx={{ backgroundColor: '' }}>
           <Card
             className={styles.box}
             sx={{
@@ -97,7 +98,7 @@ export default function Home() {
               backgroundColor: 'rgb(49, 66, 95, 0.7)',
               textAlign: 'center',
               borderRadius: '50px',
-              marginTop: '50%',
+              marginTop: '20%',
             }}
             onClick={() => router.push('/order_display')}
           >
