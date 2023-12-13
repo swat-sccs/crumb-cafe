@@ -19,7 +19,7 @@ import {
   ListItemText,
   Drawer,
 } from '@mui/material';
-// import { NavigateBeforeIcon, NavigateNextIcon, } from '@mui/icons-material';
+import { NavigateBeforeIcon, Close } from '@mui/icons-material';
 import CardContent from '@mui/material/CardContent';
 import styles from '../page.module.css';
 import axios from 'axios';
@@ -79,6 +79,10 @@ export default function Home() {
                   </Typography>
                   <Options options={item.options}></Options>
                 </CardContent>
+
+                <Button fullWidth>
+                  <Close />
+                </Button>
               </Card>
             </Grid>
           </>,
@@ -165,7 +169,7 @@ export default function Home() {
 
         <Grid item xs={10}>
           <Container sx={{ overflow: 'auto', height: '90vh' }}>
-            <Grid container direction="row" justifyContent="flex-start" columnGap={10} spacing={2}>
+            <Grid container direction="row" justifyContent="flex-start" columnGap={2} spacing={2}>
               <OrderCard></OrderCard>
             </Grid>
           </Container>

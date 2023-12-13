@@ -11,14 +11,17 @@ export default function sideBar({ children }: { children: React.ReactNode }) {
       <Grid container>
         <AppBar position="static">
           <Toolbar>
-            <Navigation></Navigation>
+            <Grid container>
+              <Grid item xs={1}>
+                <Navigation></Navigation>
+              </Grid>
+            </Grid>
             <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
               Order 021
             </Typography>
             <Button color="inherit">Login</Button>
           </Toolbar>
         </AppBar>
-
         <Container sx={{ marginTop: '2%' }}>{children}</Container>
       </Grid>
     </section>

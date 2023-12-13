@@ -165,19 +165,44 @@ export default function App() {
     //console.log('props to follow');
     //console.log(props);
     let rt = runningTotal;
-    let temp = currentOrder;
+    let temp = Object.assign([], currentOrder);
     //this finds the first match, but we want it to delete current item!
     //fix later by making sure ALL fields match
 
     for (const thing of currentOrder) {
-      if (thing.friendlyName == props.friendlyName) {
+      if (thing == props) {
         rt -= thing.basePrice;
         let index = temp.indexOf(thing);
         temp.splice(index, 1);
         setOptions(false);
         console.log('options set to false');
+        break;
       }
     }
+    setRunningTotal(rt);
+    setCurrentOrder(temp);
+  };
+
+  const removeOption = (item: any, option: any) => {
+    let itemToRemoveFrom = item;
+    let optionToRemove = option;
+    //let rt = runningTotal;
+
+    let temp = Object.assign([], currentOrder);
+    let rt = runningTotal;
+
+    for (const thing of temp) {
+      if (thing.friendlyName == item.friendlyName && thing.selectedOptions.indexOf(option) > -1) {
+        console.log('splicing things');
+        let index = thing.selectedOptions.indexOf(option);
+        thing.selectedOptions.splice(index, 1);
+        thing.basePrice -= option.price;
+        rt -= option.price;
+      }
+    }
+    console.log(temp);
+    console.log(currentOrder);
+
     setRunningTotal(rt);
     setCurrentOrder(temp);
   };
@@ -224,7 +249,7 @@ export default function App() {
       const thing1 = {
         customerName: name,
         dish: order._id,
-        options: order.options,
+        options: { 'flavor-shots': ['apple', 'lychee'] },
         notes: 'Once apon a time',
         customDishOptions: {
           friendlyName: order.friendlyName,
@@ -233,7 +258,8 @@ export default function App() {
         },
       };
 
-      //Upon order completion, reset all states
+      console.log(thing1);
+
       await axios.post('/api/orders', thing1).then((response) => {
         console.log(response.status, response.data.token);
         if (response.status == 200) {
@@ -338,7 +364,7 @@ export default function App() {
 
     theOptions = Object.assign([], currentDish.selectedOptions);
 
-    theOptions.push(name);
+    theOptions.push({ name: name, price: price, id: theOptions.length });
 
     //const editedDish = currentDish;
     const editedDish = Object.assign({}, currentDish);
@@ -502,7 +528,7 @@ export default function App() {
 
       return food.map((item: any) => (
         <>
-          <Grid item xs={4}>
+          <Grid item xs={4} key={item.id}>
             <Button
               sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
               size="large"
@@ -686,17 +712,31 @@ export default function App() {
     return <></>;
   };
 
-  const testRender = (item: any) => {
-    console.log(item);
-    return item.map((item2: any) => (
+  const RenderSelectedOptions = (props: any) => {
+    console.log(props.options);
+    return props.options.map((option: any) => (
       <>
-        <ListItemText sx={{ overflowX: 'auto' }}>{item2}</ListItemText>
+        <ListItem>
+          <ListItemButton sx={{ pl: 2 }} onClick={() => removeOption(props.item, option)}>
+            <Grid container direction="row" justifyContent="space-between" alignItems="center">
+              <Grid item>
+                <ListItemText sx={{ overflowX: 'auto' }}>{option.name}</ListItemText>
+              </Grid>
+              <Grid item>
+                <ListItemText sx={{ overflowX: 'auto' }}>
+                  + ${Number.parseFloat(option.price).toFixed(2)}
+                </ListItemText>
+              </Grid>
+            </Grid>
+          </ListItemButton>
+        </ListItem>
       </>
     ));
   };
 
   //Render Current Selected food on left List
   const CurrentOrderItemsComponent = () => {
+    console.log(currentOrder);
     return currentOrder.map((item: any) => (
       <>
         <ListItem
@@ -723,54 +763,11 @@ export default function App() {
             </ListItemText>
           </ListItemButton>
         </ListItem>
+        <RenderSelectedOptions options={item.selectedOptions} item={item}></RenderSelectedOptions>
 
-        <ListItem>
-          <ListItemButton sx={{ pl: 4 }}>
-            <ListItemText sx={{ overflowX: 'auto' }}>
-              {testRender(item.selectedOptions)}
-            </ListItemText>
-          </ListItemButton>
-        </ListItem>
         <Divider></Divider>
       </>
     ));
-  };
-
-  const CurrentOrderDrinksComponent = () => {
-    let selectedItems = [];
-    for (const prop of drinks) {
-      if (prop.qty > 0) {
-        selectedItems.push(prop);
-      }
-    }
-    const listItems = selectedItems.map((item) => (
-      <>
-        <ListItemButton>
-          <ListItemText style={{ textAlign: 'left' }}>
-            <Grid container direction="row" justifyContent="space-between" alignItems="center">
-              <Grid item sm={4}>
-                <Typography variant="h5">{item.name}</Typography>
-              </Grid>
-              <Grid item sm={5}>
-                <Typography textAlign="center" variant="h5">
-                  {item.qty}
-                </Typography>
-              </Grid>
-              <Grid item sm={3}>
-                <Typography textAlign="right" variant="h5">
-                  ${Number.parseFloat(item.price.toString()).toFixed(2)}
-                </Typography>
-              </Grid>
-            </Grid>
-          </ListItemText>
-          <IconButton edge="end" aria-label="delete" onClick={() => removeDrink(item)}>
-            <DeleteIcon />
-          </IconButton>
-        </ListItemButton>
-        <hr />
-      </>
-    ));
-    return <>{listItems}</>;
   };
 
   useEffect(() => {
@@ -824,7 +821,6 @@ export default function App() {
             <Grid item>
               <List sx={{ overflow: 'auto', height: '60vh' }}>
                 <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
-                <CurrentOrderDrinksComponent></CurrentOrderDrinksComponent>
               </List>
             </Grid>
           </Grid>
@@ -843,7 +839,7 @@ export default function App() {
         </Grid>
       </Box>
       <Grid sx={{ marginTop: '5%', backgroundColor: '' }}>
-        <Grid container spacing={3}>
+        <Grid container spacing={2}>
           <Grid item xs={6}>
             <CancelOrderComponent></CancelOrderComponent>
             <ConfirmOrderComponent></ConfirmOrderComponent>

@@ -106,6 +106,19 @@ export default function Navigation() {
             <ListItemButton
               divider
               onClick={() => {
+                router.push('/admin/menu');
+              }}
+              sx={{ width: '100%' }}
+            >
+              <Insights fontSize="large"></Insights>
+              <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
+                Menu
+              </Typography>
+            </ListItemButton>
+
+            <ListItemButton
+              divider
+              onClick={() => {
                 router.push('/admin/analytics');
               }}
               sx={{ width: '100%' }}
