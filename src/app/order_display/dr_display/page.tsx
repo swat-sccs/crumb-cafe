@@ -19,26 +19,27 @@ import {
   ListItemText,
   Drawer,
 } from '@mui/material';
-import { NavigateBeforeIcon, Close } from '@mui/icons-material';
+import { Close, Update } from '@mui/icons-material';
 import CardContent from '@mui/material/CardContent';
 import styles from '../page.module.css';
 import axios from 'axios';
 
 import useSWR from 'swr';
+import { gridColumnGroupsLookupSelector } from '@mui/x-data-grid';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function Home() {
-  const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 5000 });
+  const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 1000 });
   //axios.get('/api/dishes').then((reponse) => console.log(reponse));
 
   const OrderCard = () => {
     if (isLoading) {
       return <></>;
     } else {
-      //const item = item.order.filter((dish: any) => item.order);
+      const filteredOrders = data.orders.filter((dish: any) => dish.hidden == false);
       const orders = [];
-      for (const item of data.orders) {
+      for (const item of filteredOrders) {
         const status = item.status;
         let statusColor = 'grey';
 
@@ -50,7 +51,7 @@ export default function Home() {
           statusColor = 'grey';
         }
 
-        console.log(item);
+        //console.log(item);
         orders.push(
           <>
             <Grid item>
@@ -58,6 +59,7 @@ export default function Home() {
                 sx={{
                   borderRadius: '10px',
                   borderColor: 'black',
+                  minHeight: '100px',
                   border: 1,
                   width: 200,
                 }}
@@ -77,12 +79,36 @@ export default function Home() {
                   <Typography variant="h6" textAlign={'left'}>
                     {item.dish}
                   </Typography>
-                  <Options options={item.options}></Options>
                 </CardContent>
 
-                <Button fullWidth>
-                  <Close />
-                </Button>
+                <Grid
+                  container
+                  direction="column"
+                  justifyContent="space-between"
+                  alignItems="center"
+                >
+                  <Grid item>
+                    <Grid container justifyContent="flex-start" direction="column">
+                      <Options options={item.options}></Options>
+                    </Grid>
+                  </Grid>
+
+                  <Grid item sx={{ mt: '10%' }}>
+                    <Grid container direction="row" width="100%">
+                      <Grid item>
+                        <Button fullWidth onClick={() => updateOrder(item)}>
+                          <Update />
+                        </Button>
+                      </Grid>
+
+                      <Grid item>
+                        <Button fullWidth onClick={() => completeOrder()}>
+                          <Close />
+                        </Button>
+                      </Grid>
+                    </Grid>
+                  </Grid>
+                </Grid>
               </Card>
             </Grid>
           </>,
@@ -97,39 +123,45 @@ export default function Home() {
     const options = [];
     const specific = [];
 
-    for (const thing in props.options) {
-      for (const x of props.options[thing]) {
-        //console.log(x);
-        specific.push(
-          <>
-            <Grid container justifyContent="flex-start" direction="row">
-              <Grid item sx={{ m: 1 }}>
-                <Chip
-                  label={x}
-                  color="primary"
-                  sx={{
-                    fontSize: '120%',
-                    height: 'auto',
-                    '& .MuiChip-label': {
-                      display: 'block',
-                      whiteSpace: 'normal',
-                    },
-                  }}
-                ></Chip>
-              </Grid>
-            </Grid>
-          </>,
-        );
-      }
-      options.push(
-        <Typography variant="body1" textAlign="center" sx={{ marginTop: '10%' }}>
-          {specific}
-        </Typography>,
-      );
-      //console.log(thing);
+    for (const key in props.options) {
+      return props.options[key].map((option: any) => (
+        <>
+          <Grid item sx={{ m: 1 }}>
+            <Chip
+              label={option}
+              color="primary"
+              sx={{
+                fontSize: '120%',
+                '& .MuiChip-label': {
+                  whiteSpace: 'normal',
+                },
+              }}
+            ></Chip>
+          </Grid>
+        </>
+      ));
     }
+  };
 
-    return <>{options}</>;
+  const completeOrder = () => {
+    console.log('complete!');
+  };
+
+  const updateOrder = async (item: any) => {
+    const url = '/api/orders/' + item._id;
+    let theitem = Object.assign({}, item);
+
+    const update = { status: 'in_progress' };
+
+    theitem['status'] = 'in_progress';
+    console.log(theitem);
+    const config = { headers: { 'Content-Type': 'application/json' } };
+
+    await axios.put(url, update).then((response) => {
+      console.log(response);
+    });
+
+    console.log('complete!');
   };
 
   return (
@@ -140,41 +172,18 @@ export default function Home() {
         </Typography>
       </Card>
 
-      <Grid container direction="row" justifyContent="flex-start">
-        <Grid item xs={1.5}>
-          <Card sx={{ width: '10vw', m: 0, height: '90vh' }}>
-            <Typography variant="h5" textAlign="left" sx={{ marginTop: '10%', m: 2 }}>
-              Total:
-            </Typography>
-            <List>
-              <ListItem>
-                <ListItemText>
-                  <Typography variant="body1" textAlign="left">
-                    4 Tacos
-                  </Typography>
-                  <Typography variant="body1" textAlign="left">
-                    3 Burgers
-                  </Typography>
-                  <Typography variant="body1" textAlign="left">
-                    2 Fries
-                  </Typography>
-                  <Typography variant="body1" textAlign="left">
-                    10 Pepsis
-                  </Typography>
-                </ListItemText>
-              </ListItem>
-            </List>
-          </Card>
+      <Container sx={{ mt: 5 }}>
+        <Grid
+          container
+          direction="row"
+          justifyContent="flex-start"
+          sx={{ overflowY: 'scroll', height: '85vh' }}
+          columnGap={2}
+          spacing={2}
+        >
+          <OrderCard></OrderCard>
         </Grid>
-
-        <Grid item xs={10}>
-          <Container sx={{ overflow: 'auto', height: '90vh' }}>
-            <Grid container direction="row" justifyContent="flex-start" columnGap={2} spacing={2}>
-              <OrderCard></OrderCard>
-            </Grid>
-          </Container>
-        </Grid>
-      </Grid>
+      </Container>
     </div>
   );
 }

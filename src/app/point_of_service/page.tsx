@@ -19,8 +19,7 @@ import {
   Tabs,
   Tab,
   IconButton,
-  Toolbar,
-  Backdrop,
+  Alert,
   InputBase,
   Modal,
   Fade,
@@ -46,10 +45,16 @@ export default function App() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
+  const [Success, setSuccess] = React.useState(false);
+  const handleSuccess = () => setSuccess(false);
+  const [Failure, setFailure] = React.useState(false);
+  const handleFailure = () => setFailure(false);
 
   const [name, setName] = React.useState('');
+
   function handleNameChange(e: any) {
-    setName(e.target.value);
+    console.log(e);
+    //setName(e.target.value);
   }
 
   const [currentDish, setCurrentDish] = useState({
@@ -60,7 +65,7 @@ export default function App() {
     categories: ['breakfast'],
     isOrderable: true,
     isArchived: false,
-    selectedOptions: [],
+    selectedOptions: {},
     options: [
       {
         _id: 'toppings',
@@ -96,23 +101,6 @@ export default function App() {
 
   const [currentOrder, setCurrentOrder]: any[] = useState([]); //Keeps Track of current running order
 
-  /*
-  const foodItems: any = {
-    1: { name: 'Simple Quesadilla', price: 5.25 },
-    2: { name: 'Loaded Quesadilla!', price: 5.0 },
-    3: { name: 'Avo-Goat-O', price: 5.0 },
-    4: { name: 'Avocado Toast', price: 5.0 },
-    5: { name: 'Grilled Cheese', price: 5.0 },
-    6: { name: 'Caprese', price: 5.0 },
-    7: { name: 'Chips and Guac', price: 5.0 },
-    8: { name: 'Chips and Salsa', price: 5.0 },
-    9: { name: 'Cheese Fries', price: 5.0 },
-    10: { name: 'Pancakes', price: 5.0 },
-    11: { name: 'French Toast', price: 5.0 },
-    12: { name: 'Nachos', price: 5.0 },
-    13: { name: 'Dumplings', price: 5.0 },
-  };
-*/
   const [runningTotal, setRunningTotal] = useState(0);
   //const [foodOdrink, setfoodOdrink] = useState('food');
   const [foodOdrink, setfoodOdrink] = React.useState<string | null>('food');
@@ -161,7 +149,7 @@ export default function App() {
   };
 
   const removeItem = (props: any) => {
-    setOptions(false);
+    //setOptions(false);
     //console.log('props to follow');
     //console.log(props);
     let rt = runningTotal;
@@ -170,7 +158,7 @@ export default function App() {
     //fix later by making sure ALL fields match
 
     for (const thing of currentOrder) {
-      if (thing == props) {
+      if (thing == props && options == false) {
         rt -= thing.basePrice;
         let index = temp.indexOf(thing);
         temp.splice(index, 1);
@@ -179,7 +167,9 @@ export default function App() {
         break;
       }
     }
+
     setRunningTotal(rt);
+
     setCurrentOrder(temp);
   };
 
@@ -192,8 +182,8 @@ export default function App() {
     let rt = runningTotal;
 
     for (const thing of temp) {
+      //console.log(thing.selectedOptions[0]);
       if (thing.friendlyName == item.friendlyName && thing.selectedOptions.indexOf(option) > -1) {
-        console.log('splicing things');
         let index = thing.selectedOptions.indexOf(option);
         thing.selectedOptions.splice(index, 1);
         thing.basePrice -= option.price;
@@ -241,57 +231,63 @@ export default function App() {
     //console.log(runningTotal);
   };
 
-  const confirmOrder = async () => {
+  const confirmOrder = async (name: string) => {
     console.log('order confirmed!: ' + name);
     handleClose();
 
     for (const order of currentOrder) {
-      const thing1 = {
-        customerName: name,
-        dish: order._id,
-        options: { 'flavor-shots': ['apple', 'lychee'] },
-        notes: 'Once apon a time',
-        customDishOptions: {
-          friendlyName: order.friendlyName,
-          description: 'It is soda',
-          price: order.basePrice,
-        },
-      };
+      // { 'flavor-shots': ['apple', 'lychee'] }
+      //let options = { test: ['hello'], test2: ['things'] };
+      let thing1 = {};
+      if (order.selectedOptions) {
+        thing1 = {
+          customerName: name,
+          dish: order._id,
+          //options: { 'flavor-shots': ['apple', 'lychee'] },
+          options: order.selectedOptions,
+          hidden: false,
+          notes: 'A note',
+          customDishOptions: {
+            friendlyName: order.friendlyName,
+            description: 'It is soda',
+            price: order.basePrice,
+          },
+        };
+      } else {
+        thing1 = {
+          customerName: name,
+          dish: order._id,
+          //options: { 'flavor-shots': ['apple', 'lychee'] },
+          options: {},
+          hidden: false,
+          notes: 'A note',
+          customDishOptions: {
+            friendlyName: order.friendlyName,
+            description: 'It is soda',
+            price: order.basePrice,
+          },
+        };
+      }
 
       console.log(thing1);
 
       await axios.post('/api/orders', thing1).then((response) => {
-        console.log(response.status, response.data.token);
+        //console.log(response.status, response.data.token);
         if (response.status == 200) {
+          setSuccess(true);
+          setTimeout(handleSuccess, 3000);
           setCurrentOrder([]);
           setName('');
           setRunningTotal(0);
           setOptions(false);
+        } else {
+          console.log('failed');
+          setFailure(true);
+          setTimeout(handleFailure, 3000);
         }
       });
     }
   };
-
-  // const renderDrinkButtons = () => {
-  //   const buttons = [];
-  //   for (const prop of drinks) {
-  //     const currentDrink = prop;
-  //     buttons.push(
-  //       <Grid item xs={4}>
-  //         <Button
-  //           sx={{ m: 1, width: '100%', height: '100%', fontSize: '120%', fontWeight: 'bold' }}
-  //           size="large"
-  //           onClick={() => addDrinks(currentDrink)}
-  //         >
-  //           {currentDrink.name}
-  //         </Button>
-  //       </Grid>,
-  //     );
-  //     //console.log(dict[prop].name);
-  //   }
-  //   return buttons;
-  // };
-
   /*
   RenderOptions
 
@@ -338,13 +334,19 @@ export default function App() {
     const specific = [];
 
     for (const optionType of props.options) {
+      const multi = optionType.allowMultipleSelections;
       for (const subOption of optionType.options) {
         specific.push(
           <>
             <Grid item sx={{ m: 1 }}>
               <Button
                 onClick={() =>
-                  addOption(subOption.friendlyName, subOption.extraPrice, optionType.friendlyName)
+                  addOption(
+                    subOption.friendlyName,
+                    subOption.extraPrice,
+                    optionType.friendlyName,
+                    multi,
+                  )
                 }
                 size="large"
               >
@@ -359,15 +361,28 @@ export default function App() {
     return <>{specific}</>;
   };
 
-  const addOption = (name: string, price: number, optionType: string) => {
-    let theOptions: any = [];
+  const addOption = (name: string, price: number, optionType: string, multi: boolean) => {
+    const dict = {
+      [optionType]: [name],
+    };
 
-    theOptions = Object.assign([], currentDish.selectedOptions);
+    let theOptions: any = {};
+    theOptions = Object.assign({}, currentDish.selectedOptions);
 
-    theOptions.push({ name: name, price: price, id: theOptions.length });
+    if (theOptions[optionType] != undefined) {
+      console.log('things already there');
+      let temp = theOptions[optionType];
+      temp.push(name);
+      theOptions[optionType] = temp;
+    } else {
+      theOptions = dict;
+    }
 
+    //theOptions.push({ name: name, price: price, id: theOptions.length });
+
+    //console.log(theOptions);
     //const editedDish = currentDish;
-    const editedDish = Object.assign({}, currentDish);
+    const editedDish = Object.assign([], currentDish);
     editedDish['basePrice'] = currentDish.basePrice + price;
     editedDish['selectedOptions'] = theOptions;
     setCurrentDish(editedDish);
@@ -375,7 +390,6 @@ export default function App() {
     const editedOrder = Object.assign([], currentOrder);
     editedOrder[currentOrder.length - 1] = editedDish;
     setCurrentOrder(editedOrder);
-    //addItems();
   };
 
   const NamePopUp = () => {
@@ -395,8 +409,6 @@ export default function App() {
       <Modal
         //disableEnforceFocus
         disableScrollLock
-        aria-labelledby="transition-modal-title"
-        aria-describedby="transition-modal-description"
         open={open}
         onClose={handleClose}
         closeAfterTransition
@@ -405,36 +417,43 @@ export default function App() {
           <Typography id="transition-modal-title" variant="h3" align="center">
             Order Name
           </Typography>
-
-          <Grid container direction="column" justifyContent="space-evenly">
-            <Grid container direction="row" justifyContent="center" sx={{ marginTop: '7%' }}>
-              <Box
-                sx={{
-                  borderRadius: 10,
-                  width: '20vw',
-                  height: '10vh',
-                  outlineColor: 'white',
-                  outlineStyle: 'solid',
-                }}
-              >
-                <InputBase
-                  autoFocus
-                  autoComplete="off"
-                  inputProps={{ style: { textAlign: 'center' } }}
-                  id="filled-basic"
-                  placeholder="Name"
-                  value={name}
-                  onChange={handleNameChange}
-                  sx={{ fontSize: '250%', padding: 1, ml: 1, flex: 1 }}
-                />
-              </Box>
-            </Grid>
-            <Button sx={{ marginTop: 2 }} onClick={() => confirmOrder()}>
-              Submit
-            </Button>
-          </Grid>
+          <InputComponent />
         </Box>
       </Modal>
+    );
+  };
+  const InputComponent = () => {
+    return (
+      <>
+        <Grid container direction="column" justifyContent="space-evenly">
+          <Grid container direction="row" justifyContent="center" sx={{ marginTop: '7%' }}>
+            <Box
+              sx={{
+                borderRadius: 10,
+                width: '20vw',
+                height: '10vh',
+                outlineColor: 'white',
+                outlineStyle: 'solid',
+              }}
+            >
+              {' '}
+              <InputBase
+                autoFocus
+                autoComplete="off"
+                inputProps={{ style: { textAlign: 'center' } }}
+                id="filled-basic"
+                placeholder="Name"
+                value={name}
+                onChange={handleNameChange}
+                sx={{ fontSize: '250%', padding: 1, ml: 1, flex: 1 }}
+              />
+            </Box>
+          </Grid>
+          <Button sx={{ marginTop: 2 }} onClick={() => confirmOrder(name)}>
+            Submit
+          </Button>
+        </Grid>
+      </>
     );
   };
 
@@ -605,6 +624,24 @@ export default function App() {
     }
   };
 */
+  const AlertComponent = () => {
+    if (Success) {
+      return (
+        <Alert sx={{ display: 'flex', width: '50%' }} severity="success" variant="outlined">
+          Success — Order Confirmed!
+        </Alert>
+      );
+    }
+    if (Failure) {
+      return (
+        <Alert sx={{ display: 'flex', width: '50%' }} severity="error" variant="outlined">
+          Error — Something went wrong!
+        </Alert>
+      );
+    } else {
+      return <></>;
+    }
+  };
   const CancelOrderComponent = () => {
     return (
       <>
@@ -713,30 +750,30 @@ export default function App() {
   };
 
   const RenderSelectedOptions = (props: any) => {
-    console.log(props.options);
-    return props.options.map((option: any) => (
-      <>
-        <ListItem>
-          <ListItemButton sx={{ pl: 2 }} onClick={() => removeOption(props.item, option)}>
-            <Grid container direction="row" justifyContent="space-between" alignItems="center">
-              <Grid item>
-                <ListItemText sx={{ overflowX: 'auto' }}>{option.name}</ListItemText>
+    for (const key in props.options) {
+      return props.options[key].map((option: any) => (
+        <>
+          <ListItem>
+            <ListItemButton sx={{ pl: 2 }} onClick={() => removeOption(props.item, option)}>
+              <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                <Grid item>
+                  <ListItemText sx={{ overflowX: 'auto' }}>{option}</ListItemText>
+                </Grid>
+                <Grid item></Grid>
               </Grid>
-              <Grid item>
-                <ListItemText sx={{ overflowX: 'auto' }}>
-                  + ${Number.parseFloat(option.price).toFixed(2)}
-                </ListItemText>
-              </Grid>
-            </Grid>
-          </ListItemButton>
-        </ListItem>
-      </>
-    ));
+            </ListItemButton>
+          </ListItem>
+        </>
+      ));
+    }
   };
+  /*<ListItemText sx={{ overflowX: 'auto' }}>
+                    + ${Number.parseFloat(option.price).toFixed(2)}
+                  </ListItemText>*/
 
   //Render Current Selected food on left List
   const CurrentOrderItemsComponent = () => {
-    console.log(currentOrder);
+    //(currentOrder);
     return currentOrder.map((item: any) => (
       <>
         <ListItem
@@ -839,12 +876,15 @@ export default function App() {
         </Grid>
       </Box>
       <Grid sx={{ marginTop: '5%', backgroundColor: '' }}>
-        <Grid container spacing={2}>
+        <Grid container spacing={2} direction="row">
           <Grid item xs={6}>
             <CancelOrderComponent></CancelOrderComponent>
             <ConfirmOrderComponent></ConfirmOrderComponent>
           </Grid>
+
           <Grid item xs={6}>
+            <Fade in={false}>{<AlertComponent />}</Fade>
+
             <DeleteConfirmCustomComponent></DeleteConfirmCustomComponent>
           </Grid>
         </Grid>

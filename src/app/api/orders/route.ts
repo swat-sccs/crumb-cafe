@@ -17,6 +17,7 @@ const Counter = mongoose.model(
 
 const orderQuerySchema = z.object({
   status: z.enum(['new', 'in_progress', 'completed']).optional(),
+  hidden: z.boolean().optional(),
   customerName: z.string().optional(),
   createdBefore: z.coerce.date().optional(),
   createdAfter: z.coerce.date().optional(),
@@ -28,6 +29,7 @@ const newOrderSchema = z.object({
   customerName: z.string(), //not optional
   dish: z.string(),
   options: z.record(z.array(z.string())).optional(),
+  hidden: z.boolean().optional(),
   notes: z.string().optional(),
   customDishOptions: z.object({
     friendlyName: z.string(),
@@ -49,6 +51,9 @@ export async function GET(request: NextRequest) {
 
   if (data.status) {
     query = query.byStatus(data.status);
+  }
+  if (data.hidden) {
+    query = query.byHidden(data.hidden);
   }
 
   if (data.customerName) {

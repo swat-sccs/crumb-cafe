@@ -35,9 +35,10 @@ export async function POST(_request: NextRequest) {
 
 export async function PUT(_request: NextRequest, { params }: { params: { orderId: string } }) {
   await dbConnect();
-  const order = _request.json();
+
   try {
-    const updatedOrder = await OrderModel.findByIdAndUpdate(params.orderId, order);
+    const order = _request.json();
+    const updatedOrder = await OrderModel.findByIdAndUpdate(params.orderId, order, { new: true });
 
     if (!updatedOrder) {
       return new NextResponse('Order not found', { status: 404 });

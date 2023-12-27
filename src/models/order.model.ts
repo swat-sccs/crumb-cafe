@@ -35,6 +35,21 @@ const CustomDishOptionsSchema = new Schema({
   },
 });
 
+const OptionsSchema = new Schema({
+  name: {
+    type: String,
+    required: true,
+  },
+  id: {
+    type: Number,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+  },
+});
+
 export type CustomDishOptions = InferSchemaType<typeof CustomDishOptionsSchema>;
 
 const OrderSchema = new Schema(
@@ -52,6 +67,10 @@ const OrderSchema = new Schema(
       enum: ['new', 'in_progress', 'completed'],
       required: true,
     },
+    hidden: {
+      type: Boolean,
+      required: true,
+    },
     dish: {
       // see https://mongoosejs.com/docs/populate.html
       // see https://mongoosejs.com/docs/typescript/populate.html
@@ -64,7 +83,7 @@ const OrderSchema = new Schema(
     options: {
       type: Map,
       of: [String],
-      required: true,
+      required: false,
     },
     notes: {
       type: String,
@@ -84,6 +103,9 @@ const OrderSchema = new Schema(
       },
       byStatus(status: string) {
         return this.where('status').equals(status);
+      },
+      byHidden(hidden: boolean) {
+        return this.where('hidden').equals(hidden);
       },
       createdBefore(timestamp: Date) {
         return this.lt('createdAt', timestamp);
