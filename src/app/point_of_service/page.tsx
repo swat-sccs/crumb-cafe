@@ -1,7 +1,4 @@
-'use client'; // dont know why this is here, to catch error:
-//You're importing a component that needs useEffect. It only works in a Client Component but none of its parents are marked with "use client", so they're Server Components by default.
-//Learn more: https://nextjs.org/docs/getting-started/react-essentials
-
+'use client';
 import {
   Box,
   Card,
@@ -53,8 +50,7 @@ export default function App() {
   const [name, setName] = React.useState('');
 
   function handleNameChange(e: any) {
-    console.log(e);
-    //setName(e.target.value);
+    setName(e.target.value);
   }
 
   const [currentDish, setCurrentDish] = useState({
@@ -299,7 +295,7 @@ export default function App() {
     //console.log(currentDish);
     return (
       <Grid container direction="column" justifyContent="flex-start" sx={{ height: '90vh' }}>
-        <Grid item xs={2}>
+        <Grid item xs={2} sx={{ mt: '5%' }}>
           <Grid container direction="row" justifyContent="center">
             <Grid item xs={6}>
               <Card
@@ -310,7 +306,7 @@ export default function App() {
                   height: '100%',
                 }}
               >
-                <CardContent sx={{ marginTop: 'auto', marginBottom: 'auto' }}>
+                <CardContent>
                   <Typography fontSize="180%" textAlign="center">
                     {currentDish.friendlyName}
                   </Typography>

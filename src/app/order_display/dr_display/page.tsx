@@ -102,7 +102,7 @@ export default function Home() {
                       </Grid>
 
                       <Grid item>
-                        <Button fullWidth onClick={() => completeOrder()}>
+                        <Button fullWidth onClick={() => completeOrder(item)}>
                           <Close />
                         </Button>
                       </Grid>
@@ -143,25 +143,41 @@ export default function Home() {
     }
   };
 
-  const completeOrder = () => {
-    console.log('complete!');
+  const completeOrder = async (item: any) => {
+    const url = '/api/orders/' + item._id;
+    let theitem = Object.assign({}, item);
+    theitem['hidden'] = 'true';
+
+    await axios.put(url, theitem).then((response) => {
+      console.log(response);
+    });
   };
 
   const updateOrder = async (item: any) => {
     const url = '/api/orders/' + item._id;
     let theitem = Object.assign({}, item);
-
-    const update = { status: 'in_progress' };
-
-    theitem['status'] = 'in_progress';
     console.log(theitem);
-    const config = { headers: { 'Content-Type': 'application/json' } };
 
-    await axios.put(url, update).then((response) => {
+    if (theitem['status'] == 'new') {
+      theitem['updates'].push({
+        _id: theitem['_id'],
+        newStatus: 'in_progress',
+        user: 'foo',
+      });
+      theitem['status'] = 'in_progress';
+    } else if (theitem['status'] == 'in_progress') {
+      theitem['updates'].push({
+        _id: theitem['_id'],
+        newStatus: 'completed',
+        user: 'foo',
+      });
+      theitem['status'] = 'completed';
+      theitem['hidden'] = 'true';
+    }
+
+    await axios.put(url, theitem).then((response) => {
       console.log(response);
     });
-
-    console.log('complete!');
   };
 
   return (
