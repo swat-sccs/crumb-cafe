@@ -9,6 +9,7 @@ import {
   TableHead,
   TableRow,
   Paper,
+  ButtonGroup,
   Button,
   Chip,
   Grid,
@@ -60,7 +61,7 @@ export default function Home() {
                   borderRadius: '10px',
                   borderColor: 'black',
                   minHeight: '100px',
-                  border: 1,
+                  //border: 1,
                   width: 200,
                 }}
                 key={item.customerName}
@@ -76,7 +77,7 @@ export default function Home() {
                 </Typography>
 
                 <CardContent>
-                  <Typography variant="h6" textAlign={'left'}>
+                  <Typography variant="h6" textAlign={'center'}>
                     {item.dish}
                   </Typography>
                 </CardContent>
@@ -86,6 +87,7 @@ export default function Home() {
                   direction="column"
                   justifyContent="space-between"
                   alignItems="center"
+                  sx={{ height: '100%' }}
                 >
                   <Grid item>
                     <Grid container justifyContent="flex-start" direction="column">
@@ -93,20 +95,15 @@ export default function Home() {
                     </Grid>
                   </Grid>
 
-                  <Grid item sx={{ mt: '10%' }}>
-                    <Grid container direction="row" width="100%">
-                      <Grid item>
-                        <Button fullWidth onClick={() => updateOrder(item)}>
-                          <Update />
-                        </Button>
-                      </Grid>
-
-                      <Grid item>
-                        <Button fullWidth onClick={() => completeOrder(item)}>
-                          <Close />
-                        </Button>
-                      </Grid>
-                    </Grid>
+                  <Grid container sx={{ mt: '10%' }} direction="row">
+                    <ButtonGroup fullWidth variant="contained">
+                      <Button fullWidth onClick={() => updateOrder(item)}>
+                        <Update></Update>
+                      </Button>
+                      <Button fullWidth onClick={() => completeOrder(item)}>
+                        <Close></Close>
+                      </Button>
+                    </ButtonGroup>
                   </Grid>
                 </Grid>
               </Card>
@@ -195,7 +192,7 @@ export default function Home() {
           justifyContent="flex-start"
           sx={{ overflowY: 'scroll', height: '85vh' }}
           columnGap={2}
-          spacing={2}
+          spacing={{ xs: 0, md: 1, lg: 2 }}
         >
           <OrderCard></OrderCard>
         </Grid>
