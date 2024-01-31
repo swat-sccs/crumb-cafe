@@ -25,7 +25,7 @@ export async function POST(_request: NextRequest) {
   await dbConnect();
 
   try {
-    const order = _request.json();
+    const order = await _request.json();
     await OrderModel.create(order);
     return new NextResponse('Order created successfully', { status: 201 });
   } catch (e) {
@@ -35,13 +35,15 @@ export async function POST(_request: NextRequest) {
 
 export async function PUT(_request: NextRequest, { params }: { params: { orderId: string } }) {
   await dbConnect();
-  const order = _request.json();
+
   try {
-    const updatedOrder = await OrderModel.findByIdAndUpdate(params.orderId, order);
+    const order = await _request.json();
+    const updatedOrder = await OrderModel.findByIdAndUpdate(params.orderId, order, { new: true });
 
     if (!updatedOrder) {
       return new NextResponse('Order not found', { status: 404 });
     }
+    //return NextResponse.json(order);
     return new NextResponse('Order updated successfully', { status: 200 });
   } catch (e) {
     return new NextResponse('Unable to update order', { status: 404 });

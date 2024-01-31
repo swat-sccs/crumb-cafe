@@ -7,6 +7,8 @@ import { parseQuery, parseBody } from '../parseQuery';
 const dishQuerySchema = z.object({
   isOrderable: z.boolean().optional(),
   friendlyName: z.string().optional(),
+  tags: z.array(z.string()).optional(),
+  selectedOptions: z.array(z.string()).optional(),
   categories: z.array(z.string()).optional(),
   createdBefore: z.coerce.date().optional(),
   createdAfter: z.coerce.date().optional(),
@@ -18,6 +20,8 @@ const newDishSchema = z.object({
   _id: z.string(),
   friendlyName: z.string(),
   basePrice: z.number(),
+  tags: z.array(z.string()),
+  selectedOptions: z.array(z.string()),
   categories: z.array(z.string()),
   isOrderable: z.boolean(),
   isArchived: z.boolean(),
@@ -60,6 +64,12 @@ export async function GET(request: NextRequest) {
     query = query.byFriendlyName(data.friendlyName);
   }
 
+  if (data.tags) {
+    query = query.byTags(data.tags);
+  }
+  if (data.selectedOptions) {
+    query = query.bySelectedOptions(data.selectedOptions);
+  }
   if (data.categories) {
     query = query.byCategories(data.categories);
   }
@@ -88,7 +98,8 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { ok, data } = parseBody(newDishSchema, request);
+  const { ok, data } = parseQuery(dishQuerySchema, request);
+  //const { data } = parseBody(newDishSchema, request);
 
   if (!ok) {
     return new NextResponse(data, { status: 400 });
@@ -96,12 +107,16 @@ export async function POST(request: NextRequest) {
 
   await dbConnect();
 
-  //some logic i guess, if dish already exists?? no need to post again
-  const dishCopy = await DishModel.findById(data._id);
+  //Broken for now will come back to fix
 
+  //some logic i guess, if dish already exists?? no need to post again
+  //const dishCopy = await DishModel.findById(data._id);
+  /*
   if (dishCopy) {
     return new NextResponse('Dish already exists', { status: 208 });
   }
+
+  */
 
   //end of logic
 

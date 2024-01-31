@@ -1,21 +1,24 @@
 'use client';
 import React from 'react';
 import { TextField, Button, Typography, Grid, Card } from '@mui/material';
+import styles from './page.module.css';
 
 const YourComponent = () => {
   return (
-    <div style={{
-      display: 'flex',
-      alignItems: 'center',
-      justifyContent: 'center',
-      flexDirection: 'column',
-      backgroundImage:
-        'url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/188d1124-068d-471a-97e1-25f02ffa310a/d8e6xr5-0ce7cd3f-1f63-49f8-b3b8-e1107ef85b55.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzE4OGQxMTI0LTA2OGQtNDcxYS05N2UxLTI1ZjAyZmZhMzEwYVwvZDhlNnhyNS0wY2U3Y2QzZi0xZjYzLTQ5ZjgtYjNiOC1lMTEwN2VmODViNTUuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.Wh7n0r-cFnXsIgxyXCPvD0w8wzSRsPJyApb2CkXFLmY")',
-      backgroundSize: 'cover',
-      backgroundPosition: 'center',
-      width: '100vw',
-      height: '100vh',
-    }}>
+    <div
+      style={{
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        flexDirection: 'column',
+        backgroundImage:
+          'url("https://images-wixmp-ed30a86b8c4ca887773594c2.wixmp.com/f/188d1124-068d-471a-97e1-25f02ffa310a/d8e6xr5-0ce7cd3f-1f63-49f8-b3b8-e1107ef85b55.jpg?token=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJ1cm46YXBwOjdlMGQxODg5ODIyNjQzNzNhNWYwZDQxNWVhMGQyNmUwIiwiaXNzIjoidXJuOmFwcDo3ZTBkMTg4OTgyMjY0MzczYTVmMGQ0MTVlYTBkMjZlMCIsIm9iaiI6W1t7InBhdGgiOiJcL2ZcLzE4OGQxMTI0LTA2OGQtNDcxYS05N2UxLTI1ZjAyZmZhMzEwYVwvZDhlNnhyNS0wY2U3Y2QzZi0xZjYzLTQ5ZjgtYjNiOC1lMTEwN2VmODViNTUuanBnIn1dXSwiYXVkIjpbInVybjpzZXJ2aWNlOmZpbGUuZG93bmxvYWQiXX0.Wh7n0r-cFnXsIgxyXCPvD0w8wzSRsPJyApb2CkXFLmY")',
+        backgroundSize: 'cover',
+        backgroundPosition: 'center',
+        width: '100vw',
+        height: '100vh',
+      }}
+    >
       <Typography
         sx={{
           marginTop: '15%',

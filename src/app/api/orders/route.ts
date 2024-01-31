@@ -2,6 +2,7 @@ import dbConnect from '@/app/lib/mongodb';
 //import * as mongoose from 'mongoose'; //for Schema and model
 import OrderModel from '@/models/order.model';
 import DishModel from '@/models/dish.model';
+import Counter2 from '@/models/dish.model';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
@@ -9,6 +10,7 @@ import { parseQuery, parseBody } from '../parseQuery';
 
 const orderQuerySchema = z.object({
   status: z.enum(['new', 'in_progress', 'completed']).optional(),
+  hidden: z.boolean().optional(),
   customerName: z.string().optional(),
   createdBefore: z.coerce.date().optional(),
   createdAfter: z.coerce.date().optional(),
@@ -19,7 +21,8 @@ const orderQuerySchema = z.object({
 const newOrderSchema = z.object({
   customerName: z.string(), //not optional
   dish: z.string(),
-  options: z.map(z.string(), z.array(z.string())),
+  options: z.record(z.array(z.string())).optional(),
+  hidden: z.boolean().optional(),
   notes: z.string().optional(),
   customDishOptions: z.object({
     friendlyName: z.string(),
@@ -41,6 +44,9 @@ export async function GET(request: NextRequest) {
 
   if (data.status) {
     query = query.byStatus(data.status);
+  }
+  if (data.hidden) {
+    query = query.byHidden(data.hidden);
   }
 
   if (data.customerName) {
@@ -71,7 +77,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { ok, data } = parseBody(newOrderSchema, request);
+  const { ok, data } = await parseBody(newOrderSchema, request);
 
   if (!ok) {
     return new NextResponse(data, { status: 400 });
@@ -79,18 +85,21 @@ export async function POST(request: NextRequest) {
 
   await dbConnect();
 
-  let currentCustomerNumber;
+  //assign unique ID, just going up
+  // const currentCustomerNumber = getNextCustomerNumber();
+  // let currentCustomerNumber2;
 
   const currentCustomerNumberSearch = await OrderModel.find({})
     .sort({ customerNumber: -1 })
     .limit(1)
     .exec();
 
-  if (currentCustomerNumberSearch.length == 0) {
-    currentCustomerNumber = 1; // no orders yet
-  } else {
-    currentCustomerNumber = currentCustomerNumberSearch[0].customerNumber + 1;
-  }
+  // if (currentCustomerNumberSearch.length == 0) {
+  //   currentCustomerNumber2 = null; // no orders yet
+  // }
+
+  const currentCustomerNumber = currentCustomerNumberSearch[0]?.customerNumber + 1 || 1;
+  console.log(currentCustomerNumber);
 
   //double check that 1) the dish exists, and 2) isOrderable
 

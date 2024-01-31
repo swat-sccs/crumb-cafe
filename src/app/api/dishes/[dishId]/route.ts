@@ -21,6 +21,24 @@ export async function GET(_request: NextRequest, { params }: { params: { dishId:
   }
 }
 
+export async function PUT(_request: NextRequest, { params }: { params: { dishId: string } }) {
+  await dbConnect();
+
+  try {
+    //const dish = await DishModel.findById(params.dishId);
+    const dish = await _request.json();
+    const updatedOrder = await DishModel.findByIdAndUpdate(params.dishId, dish, { new: true });
+
+    if (!updatedOrder) {
+      return new NextResponse('Dish not found', { status: 404 });
+    }
+    //return NextResponse.json(order);
+    return new NextResponse('Dish updated successfully', { status: 200 });
+  } catch (e) {
+    return new NextResponse('Unable to update Dish', { status: 404 });
+  }
+}
+
 export async function POST(_request: NextRequest) {
   await dbConnect();
 
@@ -30,21 +48,6 @@ export async function POST(_request: NextRequest) {
     return new NextResponse('Dish created successfully', { status: 201 });
   } catch (e) {
     return new NextResponse('Poor request', { status: 400 });
-  }
-}
-
-export async function PUT(_request: NextRequest, { params }: { params: { dishId: string } }) {
-  await dbConnect();
-  const dish = _request.json();
-  try {
-    const updatedDish = await DishModel.findByIdAndUpdate(params.dishId, dish);
-
-    if (!updatedDish) {
-      return new NextResponse('Dish not found', { status: 404 });
-    }
-    return new NextResponse('Dish updated successfully', { status: 200 });
-  } catch (e) {
-    return new NextResponse('Unable to update dish', { status: 404 });
   }
 }
 

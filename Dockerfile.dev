@@ -2,7 +2,6 @@ FROM node:lts-bullseye
 ENV NODE_ENV=production
 WORKDIR /usr/src/app
 EXPOSE 3000
-COPY . .
 RUN chown -R node /usr/src/app
 USER node
 CMD ["npm", "start"]

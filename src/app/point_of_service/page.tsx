@@ -1,7 +1,4 @@
-'use client'; // dont know why this is here, to catch error:
-//You're importing a component that needs useEffect. It only works in a Client Component but none of its parents are marked with "use client", so they're Server Components by default.
-//Learn more: https://nextjs.org/docs/getting-started/react-essentials
-
+'use client';
 import {
   Box,
   Card,
@@ -12,78 +9,104 @@ import {
   Grid,
   List,
   ListItemButton,
-  ListItemIcon,
+  CircularProgress,
   ListItemText,
   Divider,
-  ToggleButton,
-  ToggleButtonGroup,
+  ListItem,
+  Tabs,
+  Tab,
+  IconButton,
+  Alert,
+  InputBase,
+  Modal,
+  Fade,
 } from '@mui/material';
-import FolderIcon from '@mui/icons-material/Folder';
 import DeleteIcon from '@mui/icons-material/Delete';
 
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
-import MenuIcon from '@mui/icons-material/Menu';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { orange, cyan, blueGrey } from '@mui/material/colors';
 import React, { useState, useEffect } from 'react';
-import { LegendToggle } from '@mui/icons-material';
+import { BreakfastDiningOutlined, LegendToggle } from '@mui/icons-material';
 import { AnyKeys } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
-
-// import useSWR from 'swr';
+import axios from 'axios';
+import useSWR from 'swr';
+import { Dictionary } from '@fullcalendar/core/internal';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function App() {
-  //const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
+  const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
   const [user, setUser] = useState('izzy');
-  const [dish, setDish] = useState('Simple Quesadilla');
+  //Name PopUp Open and Close
+  const [open, setOpen] = React.useState(false);
+  const handleOpen = () => setOpen(true);
+  const handleClose = () => setOpen(false);
+  const [Success, setSuccess] = React.useState(false);
+  const handleSuccess = () => setSuccess(false);
+  const [Failure, setFailure] = React.useState(false);
+  const handleFailure = () => setFailure(false);
+
+  const [name, setName] = React.useState('');
+
+  function handleNameChange(e: any) {
+    setName(e.target.value);
+  }
+
+  const [currentDish, setCurrentDish] = useState({
+    _id: 'pancakes',
+    friendlyName: 'Pancakes',
+    basePrice: 1,
+    tags: ['food'],
+    categories: ['breakfast'],
+    isOrderable: true,
+    isArchived: false,
+    selectedOptions: {},
+    options: [
+      {
+        _id: 'toppings',
+        friendlyName: 'toppings',
+        allowMultipleSelections: true,
+        allowNoSelection: true,
+        options: [
+          {
+            _id: 'syrup',
+            friendlyName: 'maple syrup',
+            extraPrice: 0,
+            allowQuantity: false,
+            dependencies: [],
+          },
+          {
+            _id: 'berries',
+            friendlyName: 'berries',
+            extraPrice: 1,
+            allowQuantity: false,
+            dependencies: [],
+          },
+        ],
+        dependencies: [],
+      },
+    ],
+    dependencies: [],
+    __v: 0,
+  }); //when selected CurrentDish is updated to display correct options.
   const [flag, setFlag] = useState(true); //true is food, false is drink
+
+  //NEEDS TO BE CHANGED to; showOptions or something similar
   const [options, setOptions] = useState(false); //true is in (options/customization mode) false is normal menu
 
-  const dict: any = {
-    1: { id: 1, name: 'Simple Quesadilla' },
-    2: { id: 2, name: 'Loaded Quesadilla!' },
-    3: { id: 3, name: 'Avo-Goat-O' },
-    4: { id: 4, name: 'Avocado Toast' },
-    5: { id: 5, name: 'Grilled Cheese' },
-    6: { id: 6, name: 'Caprese' },
-    7: { id: 7, name: 'Chips and Guac' },
-    8: { id: 8, name: 'Chips and Salsa' },
-    9: { id: 9, name: 'Cheese Fries' },
-    10: { id: 10, name: 'Pancakes' },
-    11: { id: 11, name: 'French Toast' },
-    12: { id: 12, name: 'Nachos' },
-    13: { id: 13, name: 'Dumplings' },
-  };
+  const [currentOrder, setCurrentOrder]: any[] = useState([]); //Keeps Track of current running order
 
   const [runningTotal, setRunningTotal] = useState(0);
   //const [foodOdrink, setfoodOdrink] = useState('food');
   const [foodOdrink, setfoodOdrink] = React.useState<string | null>('food');
 
-  const handleAlignment = (event: React.MouseEvent<HTMLElement>, newAlignment: string | null) => {
+  const handleAlignment = (event: React.SyntheticEvent, newAlignment: string | null) => {
     //setfoodOdrink(newAlignment);
     if (newAlignment !== null) {
       setfoodOdrink(newAlignment);
     }
   };
-
-  const [items, setItems] = useState([
-    { name: 'Simple Quesadilla', qty: 0, price: 5.25 },
-    { name: 'Loaded Quesadilla!', qty: 0, price: 5.0 },
-    { name: 'Avo-Goat-O', qty: 0, price: 5.0 },
-    { name: 'Avocado Toast', qty: 0, price: 5.0 },
-    { name: 'Grilled Cheese', qty: 0, price: 5.0 },
-    { name: 'Caprese', qty: 0, price: 5.0 },
-    { name: 'Chips and Guac', qty: 0, price: 5.0 },
-    { name: 'Chips and Salsa', qty: 0, price: 5.0 },
-    { name: 'Cheese Fries', qty: 0, price: 5.0 },
-    { name: 'Pancakes', qty: 0, price: 5.0 },
-    { name: 'French Toast', qty: 0, price: 5.0 },
-    { name: 'Nachos', qty: 0, price: 5.0 },
-    { name: 'Dumplings', qty: 0, price: 5.0 },
-  ]);
 
   const [drinks, setDrinks] = useState([
     { name: 'Sprite', qty: 0, price: 1.25 },
@@ -97,54 +120,89 @@ export default function App() {
     { name: 'Chocky Milk', qty: 0, price: 1.0 },
   ]);
 
-  const addItems = (item: any) => {
+  const addItems = () => {
     let rt = runningTotal;
-    let temp = drinks;
-    items[item - 1].qty += 1;
-    rt += items[item - 1].price;
+    //setCurrentDish(item);
+    //console.log(currentDish);
+    // console.log(currentDish);
+    //setCurrentOrder([...currentOrder, currentDish]);
+    rt += currentDish.basePrice;
     setRunningTotal(rt);
-    setItems([...items]);
-    //console.log(items[item - 1].name);
-    setDish(items[item - 1].name);
+    setOptions(false);
+    //console.log(currentOrder);
+  };
+
+  const handleOpenOptions = (item: any) => {
+    //console.log(item);
+    setCurrentOrder([...currentOrder, item]);
+    setCurrentDish(item);
     setOptions(true);
+    //console.log(currentOrder);
   };
 
-  const addDrinks = (item: any) => {
-    let rt = runningTotal;
-    for (const thing of drinks) {
-      if (thing.name == item.name) {
-        thing.qty += 1;
-      }
-    }
-    rt += item.price;
-    setRunningTotal(rt);
-    setDrinks([...drinks]);
+  const updateOrder = () => {
+    console.log(currentDish);
   };
 
-  const removeItem = (item: any) => {
+  const removeItem = (props: any) => {
+    //setOptions(false);
+    //console.log('props to follow');
+    //console.log(props);
     let rt = runningTotal;
+    let temp = Object.assign([], currentOrder);
+    //this finds the first match, but we want it to delete current item!
+    //fix later by making sure ALL fields match
 
-    for (const thing of items) {
-      if (thing.name == item.name && thing.qty - 1 >= 0) {
-        thing.qty -= 1;
-        rt -= thing.price;
-        if (thing.qty == 0) {
-          setOptions(false);
-        }
+    for (const thing of currentOrder) {
+      if (thing == props && options == false) {
+        rt -= thing.basePrice;
+        let index = temp.indexOf(thing);
+        temp.splice(index, 1);
+        setOptions(false);
+        console.log('options set to false');
+        break;
       }
     }
 
     setRunningTotal(rt);
-    setItems([...items]);
+
+    setCurrentOrder(temp);
+  };
+
+  const removeOption = (item: any, option: any) => {
+    let itemToRemoveFrom = item;
+    let optionToRemove = option;
+    //let rt = runningTotal;
+
+    let temp = Object.assign([], currentOrder);
+    let rt = runningTotal;
+
+    for (const thing of temp) {
+      //console.log(thing.selectedOptions[0]);
+      if (thing.friendlyName == item.friendlyName && thing.selectedOptions.indexOf(option) > -1) {
+        let index = thing.selectedOptions.indexOf(option);
+        thing.selectedOptions.splice(index, 1);
+        thing.basePrice -= option.price;
+        rt -= option.price;
+      }
+    }
+    console.log(temp);
+    console.log(currentOrder);
+
+    setRunningTotal(rt);
+    setCurrentOrder(temp);
   };
 
   const showOptions = (item: any) => {
-    setDish(item.name);
-    if (item.qty == 0) {
-      setOptions(false);
-    } else {
-      setOptions(true);
-    }
+    console.log('selecting from list');
+    setCurrentDish(item);
+    // if (item.qty == 0) {
+    //   setOptions(false);
+    // } else {
+    //   setOptions(true);
+    // }
+    // setCurrentDish(item);
+    setOptions(true);
   };
 
   const removeDrink = (item: any) => {
@@ -159,64 +217,73 @@ export default function App() {
     setDrinks([...drinks]);
   };
 
-   const cancelOrder = () => {
-    console.log("order canceled");
-    for (const thing of items) {
-        thing.qty = 0;
+  const cancelOrder = () => {
+    setCurrentOrder([]);
+    for (const thing of drinks) {
+      thing.qty = 0;
     }
-    for (const thing of drinks){
-        thing.qty = 0;
-    }
-    console.log(runningTotal);
+    //console.log(runningTotal);
     setRunningTotal(0);
-    console.log(runningTotal);
-  }
+    //console.log(runningTotal);
+  };
 
-  const confirmOrder = () => {
-    console.log("order confirmed!");
-  }
+  const confirmOrder = async (name: string) => {
+    console.log('order confirmed!: ' + name);
+    handleClose();
 
-  // const renderFoodButtons = () => {
-  //   //console.log(data);
-  //   let buttons = [];
-  //   for (var prop in dict) {
-  //     let currentDish = prop;
-  //     buttons.push(
-  //       <Grid item xs={4}>
-  //         <Button
-  //           sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
-  //           size="large"
-  //           onClick={() => addItems(currentDish)}
-  //         >
-  //           {dict[prop].name}
-  //         </Button>
-  //       </Grid>,
-  //     );
-  //     //console.log(dict[prop].name);
-  //   }
-  //   return buttons;
-  // };
+    for (const order of currentOrder) {
+      // { 'flavor-shots': ['apple', 'lychee'] }
+      //let options = { test: ['hello'], test2: ['things'] };
+      let thing1 = {};
+      if (order.selectedOptions) {
+        thing1 = {
+          customerName: name,
+          dish: order._id,
+          //options: { 'flavor-shots': ['apple', 'lychee'] },
+          options: order.selectedOptions,
+          hidden: false,
+          notes: 'A note',
+          customDishOptions: {
+            friendlyName: order.friendlyName,
+            description: 'It is soda',
+            price: order.basePrice,
+          },
+        };
+      } else {
+        thing1 = {
+          customerName: name,
+          dish: order._id,
+          //options: { 'flavor-shots': ['apple', 'lychee'] },
+          options: {},
+          hidden: false,
+          notes: 'A note',
+          customDishOptions: {
+            friendlyName: order.friendlyName,
+            description: 'It is soda',
+            price: order.basePrice,
+          },
+        };
+      }
 
-  // const renderDrinkButtons = () => {
-  //   const buttons = [];
-  //   for (const prop of drinks) {
-  //     const currentDrink = prop;
-  //     buttons.push(
-  //       <Grid item xs={4}>
-  //         <Button
-  //           sx={{ m: 1, width: '100%', height: '100%', fontSize: '120%', fontWeight: 'bold' }}
-  //           size="large"
-  //           onClick={() => addDrinks(currentDrink)}
-  //         >
-  //           {currentDrink.name}
-  //         </Button>
-  //       </Grid>,
-  //     );
-  //     //console.log(dict[prop].name);
-  //   }
-  //   return buttons;
-  // };
+      console.log(thing1);
 
+      await axios.post('/api/orders', thing1).then((response) => {
+        //console.log(response.status, response.data.token);
+        if (response.status == 200) {
+          setSuccess(true);
+          setTimeout(handleSuccess, 3000);
+          setCurrentOrder([]);
+          setName('');
+          setRunningTotal(0);
+          setOptions(false);
+        } else {
+          console.log('failed');
+          setFailure(true);
+          setTimeout(handleFailure, 3000);
+        }
+      });
+    }
+  };
   /*
   RenderOptions
 
@@ -224,220 +291,403 @@ export default function App() {
   These options replace the menu items and give the user the oppourtunity to make additions
   or add and subtract the number of items being added. 
   */
-  const renderOptions = () => {
-    //Call to API/DB to pull options for current menu Item
-    var qty = 0;
-    for (const prop of items) {
-      if (prop.name == dish) {
-        qty = prop.qty;
-      }
-    }
-
-    var currentDishNum = '0';
-    var currentDish = {};
-    for (var prop in dict) {
-      if (dict[prop].name == dish) {
-        currentDishNum = prop;
-        currentDish = dict[prop];
-      }
-    }
-
+  const RenderOptions = () => {
+    //console.log(currentDish);
     return (
-      <Grid container direction="row" justifyContent="space-evenly" sx={{ height: '90vh' }}>
+      <Grid container direction="column" justifyContent="flex-start" sx={{ height: '90vh' }}>
+        <Grid item xs={2} sx={{ mt: '5%' }}>
+          <Grid container direction="row" justifyContent="center">
+            <Grid item xs={6}>
+              <Card
+                sx={{
+                  borderRadius: '10px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  height: '100%',
+                }}
+              >
+                <CardContent>
+                  <Typography fontSize="180%" textAlign="center">
+                    {currentDish.friendlyName}
+                  </Typography>
+                </CardContent>
+              </Card>
+            </Grid>
+          </Grid>
+        </Grid>
+
         <Grid item xs={6}>
-          <Card
-            sx={{
-              borderRadius: '10px',
-              display: 'flex',
-              flexDirection: 'column',
-              height: '30%',
-            }}
-          >
-            <CardContent sx={{ marginTop: 'auto', marginBottom: 'auto' }}>
-              <Typography fontSize="180%" textAlign="center">
-                {dish}
-              </Typography>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item xs={5}>
-          <Card
-            sx={{ borderRadius: '10px', display: 'flex', flexDirection: 'column', height: '30%' }}
-          >
-            <CardContent>
-              <Grid container direction="row" justifyContent="space-evenly" alignItems="center">
-                <Button onClick={() => removeItem(currentDish)} sx={{ fontSize: '200%' }}>
-                  -
-                </Button>
-                <Typography variant="h4">{qty}</Typography>
-                <Button onClick={() => addItems(currentDishNum)} sx={{ fontSize: '200%' }}>
-                  +
-                </Button>
-              </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
-
-        <Grid item>
-          <Typography variant="h2" sx={{ marginLeft: '5%' }}>
-            Options will be rendered here
-          </Typography>
+          <Grid container direction="row" justifyContent="center" alignItems="center">
+            <OptionsComponent options={currentDish.options}></OptionsComponent>
+          </Grid>
         </Grid>
       </Grid>
     );
   };
 
-  // const DrinkButtonComponent = () => {
-  //   return <React.Fragment>{renderDrinkButtons()}</React.Fragment>;
-  // };
+  const OptionsComponent = (props: any) => {
+    const options = [];
+    const specific = [];
 
-  const DrinkButtonComponent = () => {
-    const buttons = [];
-    for (const prop of drinks) {
-      const currentDrink = prop;
-      buttons.push(
-        <Grid item xs={4}>
-          <Button
-            sx={{ m: 1, width: '100%', height: '100%', fontSize: '120%', fontWeight: 'bold' }}
-            size="large"
-            onClick={() => addDrinks(currentDrink)}
-          >
-            {currentDrink.name}
-          </Button>
-        </Grid>,
-      );
+    for (const optionType of props.options) {
+      const multi = optionType.allowMultipleSelections;
+      for (const subOption of optionType.options) {
+        specific.push(
+          <>
+            <Grid item sx={{ m: 1 }}>
+              <Button
+                onClick={() =>
+                  addOption(
+                    subOption.friendlyName,
+                    subOption.extraPrice,
+                    optionType.friendlyName,
+                    multi,
+                  )
+                }
+                size="large"
+              >
+                {subOption.friendlyName}
+              </Button>
+            </Grid>
+          </>,
+        );
+      }
     }
-      //console.log(dict[prop].name);
+
+    return <>{specific}</>;
+  };
+
+  const addOption = (name: string, price: number, optionType: string, multi: boolean) => {
+    const dict = {
+      [optionType]: [name],
+    };
+
+    let theOptions: any = {};
+    theOptions = Object.assign({}, currentDish.selectedOptions);
+
+    if (theOptions[optionType] != undefined) {
+      console.log('things already there');
+      let temp = theOptions[optionType];
+      temp.push(name);
+      theOptions[optionType] = temp;
+    } else {
+      theOptions = dict;
+    }
+
+    //theOptions.push({ name: name, price: price, id: theOptions.length });
+
+    //console.log(theOptions);
+    //const editedDish = currentDish;
+    const editedDish = Object.assign([], currentDish);
+    editedDish['basePrice'] = currentDish.basePrice + price;
+    editedDish['selectedOptions'] = theOptions;
+    setCurrentDish(editedDish);
+
+    const editedOrder = Object.assign([], currentOrder);
+    editedOrder[currentOrder.length - 1] = editedDish;
+    setCurrentOrder(editedOrder);
+  };
+
+  const NamePopUp = () => {
+    const style = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '30vw',
+      bgcolor: 'background.paper',
+      border: '2px solid #000',
+      boxShadow: 24,
+      p: 4,
+    };
+
+    return (
+      <Modal
+        //disableEnforceFocus
+        disableScrollLock
+        open={open}
+        onClose={handleClose}
+        closeAfterTransition
+      >
+        <Box sx={style}>
+          <Typography id="transition-modal-title" variant="h3" align="center">
+            Order Name
+          </Typography>
+          <InputComponent />
+        </Box>
+      </Modal>
+    );
+  };
+  const InputComponent = () => {
     return (
       <>
-      {buttons}
+        <Grid container direction="column" justifyContent="space-evenly">
+          <Grid container direction="row" justifyContent="center" sx={{ marginTop: '7%' }}>
+            <Box
+              sx={{
+                borderRadius: 10,
+                width: '20vw',
+                height: '10vh',
+                outlineColor: 'white',
+                outlineStyle: 'solid',
+              }}
+            >
+              {' '}
+              <InputBase
+                autoFocus
+                autoComplete="off"
+                inputProps={{ style: { textAlign: 'center' } }}
+                id="filled-basic"
+                placeholder="Name"
+                value={name}
+                onChange={handleNameChange}
+                sx={{ fontSize: '250%', padding: 1, ml: 1, flex: 1 }}
+              />
+            </Box>
+          </Grid>
+          <Button sx={{ marginTop: 2 }} onClick={() => confirmOrder(name)}>
+            Submit
+          </Button>
+        </Grid>
       </>
     );
+  };
+
+  const DrinkButtonComponent = () => {
+    if (isLoading) {
+      return (
+        <Grid container justifyContent="center">
+          <CircularProgress />
+        </Grid>
+      );
+    }
+    if (error) {
+      return (
+        <Grid container justifyContent="center">
+          <div>Something went wrong: {error}</div>
+        </Grid>
+      );
+    } else {
+      const drinks = data.dishes.filter(
+        (drink: any) => drink.isOrderable == true && drink.tags.includes('drink'),
+      );
+      return drinks.map((item: any) => (
+        <>
+          <Grid item xs={4}>
+            <Button
+              sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
+              size="large"
+              onClick={() => handleOpenOptions(item)}
+            >
+              {item.friendlyName}
+            </Button>
+          </Grid>
+        </>
+      ));
+    }
   };
 
   // const FoodButtonComponent = () => {
   //   return <React.Fragment>{renderFoodButtons()}</React.Fragment>;
   // };
 
+  /*
   const FoodButtonComponent = () => {
     //console.log(data);
-    let buttons = [];
-    for (var prop in dict) {
-      let currentDish = prop;
-      buttons.push(
-        <Grid item xs={4}>
-          <Button
-            sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
-            size="large"
-            onClick={() => addItems(currentDish)}
-          >
-            {dict[prop].name}
-          </Button>
-        </Grid>,
+    if (isLoading) {
+      return (
+        <Grid container justifyContent="center">
+          <CircularProgress />
+        </Grid>
       );
-      //console.log(dict[prop].name);
+    } else {
+      let buttons = [];
+      for (var prop in foodItems) {
+        let currentDish = prop;
+        buttons.push(
+          <Grid item xs={4}>
+            <Button
+              sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
+              size="large"
+              onClick={() => addItems(currentDish)}
+            >
+              {foodItems[prop].name}
+            </Button>
+          </Grid>,
+        );
+      }
+      return <>{buttons}</>;
     }
-    return (
-      <>
-      {buttons}
-      </>
-    );
+  };
+
+  */
+
+  const FoodButtonComponent = () => {
+    if (isLoading) {
+      return (
+        <Grid container justifyContent="center">
+          <CircularProgress />
+        </Grid>
+      );
+    }
+    if (error) {
+      return (
+        <Grid container justifyContent="center">
+          <div>Something went wrong: {error}</div>
+        </Grid>
+      );
+    } else {
+      const food = data.dishes.filter(
+        (dish: any) => dish.isOrderable == true && dish.tags.includes('food'),
+      );
+
+      return food.map((item: any) => (
+        <>
+          <Grid item xs={4} key={item.id}>
+            <Button
+              sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
+              size="large"
+              onClick={() => handleOpenOptions(item)}
+            >
+              {item.friendlyName}
+            </Button>
+          </Grid>
+        </>
+      ));
+    }
   };
 
   //RENDER ITEMS CONDITIONALLY based on selection of Food or Drink
   //Customization Tab (Extra ingredients/ notes etc)
   const OrderComponent = () => {
     if (options) {
-      return <React.Fragment>{renderOptions()}</React.Fragment>;
+      return <>{RenderOptions()}</>;
     } else {
       if (foodOdrink == 'food') {
-        return <React.Fragment>{FoodButtonComponent()}</React.Fragment>;
+        return <>{FoodButtonComponent()}</>;
       } else if (foodOdrink == 'drink') {
-        return <React.Fragment>{DrinkButtonComponent()}</React.Fragment>;
+        return <>{DrinkButtonComponent()}</>;
       }
     }
-    return <React.Fragment>{FoodButtonComponent()}</React.Fragment>;
+    return <></>;
   };
 
   const ToggleComponent = () => {
     if (!options) {
       return (
-        <ToggleButtonGroup
-          value={foodOdrink}
-          exclusive
-          onChange={handleAlignment}
-          aria-label="text alignment"
-          sx={{ marginBottom: '10%' }}
-          fullWidth
-        >
-          <ToggleButton value="food" aria-label="left aligned">
-            FOOD
-          </ToggleButton>
-          <ToggleButton value="drink" aria-label="centered">
-            DRINK
-          </ToggleButton>
-        </ToggleButtonGroup>
+        <>
+          <Tabs
+            value={foodOdrink}
+            //exclusive
+            aria-label="text alignment"
+            sx={{ marginBottom: '10%' }}
+            onChange={handleAlignment}
+            variant="fullWidth"
+          >
+            <Tab value="food" aria-label="left aligned" label="Food" />
+            <Tab value="drink" aria-label="centered" label="Drink" />
+          </Tabs>
+        </>
       );
     } else {
       return <React.Fragment></React.Fragment>;
     }
   };
-
-  const renderCancelOrderComponent = () => {
-    return (
-      <Button
-        sx={{
-          m: 1,
-          width: '47%',
-          height: 60,
-          lineHeight: 1.4,
-        }}
-        size="large"
-        onClick={() => cancelOrder()}
-      >
-        CANCEL
-        <br />
-        ORDER
-      </Button>
-    );
+  /*
+  const ToggleComponent = () => {
+    if (!options) {
+      return (
+        <>
+          <ToggleButtonGroup
+            value={foodOdrink}
+            exclusive
+            onChange={handleAlignment}
+            aria-label="text alignment"
+            sx={{ marginBottom: '10%' }}
+            fullWidth
+          >
+            <ToggleButton value="food" aria-label="left aligned">
+              FOOD
+            </ToggleButton>
+            <ToggleButton value="drink" aria-label="centered">
+              DRINK
+            </ToggleButton>
+          </ToggleButtonGroup>
+        </>
+      );
+    } else {
+      return <React.Fragment></React.Fragment>;
+    }
   };
-
+*/
+  const AlertComponent = () => {
+    if (Success) {
+      return (
+        <Alert sx={{ display: 'flex', width: '50%' }} severity="success" variant="outlined">
+          Success — Order Confirmed!
+        </Alert>
+      );
+    }
+    if (Failure) {
+      return (
+        <Alert sx={{ display: 'flex', width: '50%' }} severity="error" variant="outlined">
+          Error — Something went wrong!
+        </Alert>
+      );
+    } else {
+      return <></>;
+    }
+  };
   const CancelOrderComponent = () => {
-    return <React.Fragment>{renderCancelOrderComponent()}</React.Fragment>;
-  };
-
-  const renderConfirmOrderComponent = () => {
     return (
-      <Button
-        sx={{
-          m: 1,
-          width: '47%',
-          height: 60,
-          lineHeight: 1.4,
-        }}
-        size="large"
-        onClick={() => confirmOrder()}
-      >
-        <Grid container direction="row" justifyContent="space-around" alignItems="center">
-          <Grid item xs={3}>
-            CONFIRM
-            <br />
-            ORDER
-          </Grid>
-
-          <Grid item xs={5}>
-            <Typography fontSize="200%">
-              (${Number.parseFloat(runningTotal.toString()).toFixed(2)})
-            </Typography>
-          </Grid>
-        </Grid>
-      </Button>
+      <>
+        <Button
+          sx={{
+            m: 1,
+            width: '47%',
+            height: 60,
+            lineHeight: 1.4,
+          }}
+          size="large"
+          onClick={() => cancelOrder()}
+        >
+          CANCEL
+          <br />
+          ORDER
+        </Button>
+      </>
     );
   };
 
   const ConfirmOrderComponent = () => {
-    return <React.Fragment>{renderConfirmOrderComponent()}</React.Fragment>;
+    return (
+      <>
+        <Button
+          sx={{
+            m: 1,
+            width: '47%',
+            height: 60,
+            lineHeight: 1.4,
+          }}
+          size="large"
+          onClick={() => handleOpen()}
+        >
+          <Grid container direction="row" justifyContent="space-around" alignItems="center">
+            <Grid item xs={3}>
+              CONFIRM
+              <br />
+              ORDER
+            </Grid>
+
+            <Grid item xs={5}>
+              <Typography fontSize="200%">
+                (${Number.parseFloat(runningTotal.toString()).toFixed(2)})
+              </Typography>
+            </Grid>
+          </Grid>
+        </Button>
+      </>
+    );
   };
 
   /*
@@ -446,139 +696,109 @@ export default function App() {
   Three buttons names describe function
   
   */
-  const renderDeleteConfirmCustomComponent = () => {
+  const DeleteConfirmCustomComponent = () => {
     if (options) {
       return (
-        <Grid>
-          {' '}
-          <Button
-            sx={{
-              m: 1,
-              width: '30%',
-              height: 60,
-              fontSize: 12,
-            }}
-            size="large"
-            onClick={() => setOptions(false)}
-          >
-            Delete This Item
-          </Button>
-          <Button
-            sx={{
-              m: 1,
-              width: '30%',
-              fontSize: 12,
-              height: 60,
-            }}
-            size="large"
-          >
-            Custom Item
-          </Button>
-          <Button
-            sx={{
-              m: 1,
-              width: '30%',
-              fontSize: 12,
-              height: 60,
-            }}
-            size="large"
-            onClick={() => setOptions(false)}
-          >
-            Confirm This Item
-          </Button>
-        </Grid>
+        <>
+          <Grid>
+            {' '}
+            <Button
+              sx={{
+                m: 1,
+                width: '30%',
+                height: 60,
+                fontSize: 12,
+              }}
+              size="large"
+              //come back here IZZY
+              onClick={() => removeItem(currentDish)}
+            >
+              Delete This Item
+            </Button>
+            <Button
+              sx={{
+                m: 1,
+                width: '30%',
+                fontSize: 12,
+                height: 60,
+              }}
+              size="large"
+            >
+              Custom Item
+            </Button>
+            <Button
+              sx={{
+                m: 1,
+                width: '30%',
+                fontSize: 12,
+                height: 60,
+              }}
+              size="large"
+              onClick={() => addItems()}
+            >
+              Confirm This Item
+            </Button>
+          </Grid>
+        </>
       );
     }
+    return <></>;
   };
 
-  const DeleteConfirmCustomComponent = () => {
-    return <React.Fragment>{renderDeleteConfirmCustomComponent()}</React.Fragment>;
+  const RenderSelectedOptions = (props: any) => {
+    for (const key in props.options) {
+      return props.options[key].map((option: any) => (
+        <>
+          <ListItem>
+            <ListItemButton sx={{ pl: 2 }} onClick={() => removeOption(props.item, option)}>
+              <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                <Grid item>
+                  <ListItemText sx={{ overflowX: 'auto' }}>{option}</ListItemText>
+                </Grid>
+                <Grid item></Grid>
+              </Grid>
+            </ListItemButton>
+          </ListItem>
+        </>
+      ));
+    }
   };
-
-  //adds to current order side
-  const CurrentOrderItemsComponent = () => {
-    return <React.Fragment>{renderCurrentItems()}</React.Fragment>;
-  };
+  /*<ListItemText sx={{ overflowX: 'auto' }}>
+                    + ${Number.parseFloat(option.price).toFixed(2)}
+                  </ListItemText>*/
 
   //Render Current Selected food on left List
-  const renderCurrentItems = () => {
-    let selectedItems = [];
-
-    for (const prop of items) {
-      if (prop.qty > 0) {
-        selectedItems.push(prop);
-      }
-    }
-
-    return selectedItems.map((item: any) => (
+  const CurrentOrderItemsComponent = () => {
+    //(currentOrder);
+    return currentOrder.map((item: any) => (
       <>
-        <ListItemButton onClick={() => showOptions(item)} key={item.name}>
-          <ListItemText style={{ textAlign: 'left' }}>
-            <Grid container direction="row" justifyContent="space-between" alignItems="center">
-              <Grid item sm={4}>
-                <Typography variant="h5">{item.name}</Typography>
-              </Grid>
-              <Grid item sm={5}>
-                <Typography textAlign="center" variant="h5">
-                  {item.qty}
-                </Typography>
-              </Grid>
+        <ListItem
+          secondaryAction={
+            <IconButton edge="end" aria-label="delete" onClick={() => removeItem(item)}>
+              <DeleteIcon />
+            </IconButton>
+          }
+          disablePadding
+        >
+          <ListItemButton key={item.friendlyName} onClick={() => showOptions(item)}>
+            <ListItemText style={{ textAlign: 'left' }}>
+              <Grid container direction="row" justifyContent="space-between" alignItems="center">
+                <Grid item sm={4}>
+                  <Typography variant="h5">{item.friendlyName}</Typography>
+                </Grid>
 
-              <Grid item sm={3}>
-                <Typography textAlign="right" variant="h5">
-                  ${Number.parseFloat(item.price).toFixed(2)}
-                </Typography>
+                <Grid item sm={3}>
+                  <Typography textAlign="right" variant="h5">
+                    ${Number.parseFloat(item.basePrice).toFixed(2)}
+                  </Typography>
+                </Grid>
               </Grid>
-            </Grid>
-          </ListItemText>
-          <IconButton edge="end" aria-label="delete" onClick={() => removeItem(item)}>
-            <DeleteIcon />
-          </IconButton>
-        </ListItemButton>
-        <hr />
-      </>
-    ));
-  };
+            </ListItemText>
+          </ListItemButton>
+        </ListItem>
+        <RenderSelectedOptions options={item.selectedOptions} item={item}></RenderSelectedOptions>
 
-  //Same as above but for drinks
-  const CurrentOrderDrinksComponent = () => {
-    return <React.Fragment>{renderCurrentDrinks()}</React.Fragment>;
-  };
-
-  const renderCurrentDrinks = () => {
-    let selectedItems = [];
-
-    for (const prop of drinks) {
-      if (prop.qty > 0) {
-        selectedItems.push(prop);
-      }
-    }
-
-    return selectedItems.map((item: any) => (
-      <>
-        <ListItemButton>
-          <ListItemText style={{ textAlign: 'left' }}>
-            <Grid container direction="row" justifyContent="space-between" alignItems="center">
-              <Grid item sm={4}>
-                <Typography variant="h5">{item.name}</Typography>
-              </Grid>
-              <Grid item sm={5}>
-                <Typography textAlign="center" variant="h5">
-                  {item.qty}
-                </Typography>
-              </Grid>
-              <Grid item sm={3}>
-                <Typography textAlign="right" variant="h5">
-                  ${Number.parseFloat(item.price).toFixed(2)}
-                </Typography>
-              </Grid>
-            </Grid>
-          </ListItemText>
-          <IconButton edge="end" aria-label="delete" onClick={() => removeDrink(item)}>
-            <DeleteIcon />
-          </IconButton>
-        </ListItemButton>
-        <hr />
+        <Divider></Divider>
       </>
     ));
   };
@@ -586,10 +806,11 @@ export default function App() {
   useEffect(() => {
     //runs after first and every render
     console.log('page loaded');
-    logUser();
+    //logUser();
     logDish();
   }, []);
 
+  /*
   async function logUser() {
     const response = await fetch('http://localhost:3000/api/hello');
     const users = await response.json();
@@ -598,36 +819,43 @@ export default function App() {
     setUser(users.name);
     console.log(user);
   }
+  */
 
   async function logDish() {
-    //const response = await fetch("http://localhost:3000/api/dishes/[[...params]]");
-    //const dishes = await response.json();
-    //console.log(dish);
-    //console.log('dish ' + dish);
+    // const response = await fetch("http://localhost:3000/api/dishes");
+    // const dishes = await response.json();
+    // console.log(dishes);
+    // console.log('dish ' + dish);
     //setUser(dishes);
     //console.log(dishes);
   }
 
   return (
     <Container sx={{}}>
+      <NamePopUp></NamePopUp>
       <Box>
         <Grid container spacing={12} rowSpacing={10} columnSpacing={{ xs: 5, sm: 2, md: 2 }}>
           <Grid item sm={6}>
-            <Grid container direction="row" alignContent="center" justifyContent="space-between">
+            <Grid
+              container
+              direction="row"
+              alignContent="center"
+              justifyContent="space-between"
+              sx={{ p: 2 }}
+            >
               <Typography variant="h6" textAlign="left">
                 Item
               </Typography>
-              <Typography variant="h6" textAlign="center">
-                Qty
-              </Typography>
+
               <Typography variant="h6" textAlign="right">
                 Price
               </Typography>
             </Grid>
-            <List sx={{ overflow: 'auto', height: '60vh' }}>
-              <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
-              <CurrentOrderDrinksComponent></CurrentOrderDrinksComponent>
-            </List>
+            <Grid item>
+              <List sx={{ overflow: 'auto', height: '60vh' }}>
+                <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
+              </List>
+            </Grid>
           </Grid>
 
           <Grid item xs={6}>
@@ -644,12 +872,15 @@ export default function App() {
         </Grid>
       </Box>
       <Grid sx={{ marginTop: '5%', backgroundColor: '' }}>
-        <Grid container spacing={3}>
+        <Grid container spacing={2} direction="row">
           <Grid item xs={6}>
             <CancelOrderComponent></CancelOrderComponent>
             <ConfirmOrderComponent></ConfirmOrderComponent>
           </Grid>
+
           <Grid item xs={6}>
+            <Fade in={false}>{<AlertComponent />}</Fade>
+
             <DeleteConfirmCustomComponent></DeleteConfirmCustomComponent>
           </Grid>
         </Grid>

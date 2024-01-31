@@ -26,8 +26,11 @@ export function parseQuery<T>(schema: z.ZodSchema<T>, req: NextRequest): ParseQu
   }
 }
 
-export function parseBody<T>(schema: z.ZodSchema<T>, req: NextRequest): ParseQueryReturnType<T> {
-  const parsed = schema.safeParse(req.json());
+export async function parseBody<T>(
+  schema: z.ZodSchema<T>,
+  req: NextRequest,
+): Promise<ParseQueryReturnType<T>> {
+  const parsed = schema.safeParse(await req.json());
 
   if (parsed.success) {
     return {

@@ -8,6 +8,7 @@ db.orders.insertMany([
     customerName: 'customer1',
     customerNumber: 1,
     status: 'completed',
+    hidden: 'true',
     // italian soda
     dish: 'italian-soda',
     // lychee and apple shots
@@ -38,6 +39,7 @@ db.orders.insertMany([
     customerName: 'customer2',
     customerNumber: 2,
     status: 'in_progress',
+    hidden: 'false',
     dish: 'custom',
     options: {},
     updates: [
@@ -64,6 +66,7 @@ db.orders.insertMany([
     customerName: 'customer3',
     customerNumber: 3,
     status: 'new',
+    hidden: 'false',
     dish: 'pancakes',
     options: {
       toppings: ['syrup'],
@@ -93,11 +96,13 @@ db.orders.insertMany([
 db.dishes.insertMany([
   {
     _id: 'pancakes',
-    friendlyName: 'pancakes',
+    friendlyName: 'Pancakes',
     basePrice: 1,
+    tags: ['food'],
     categories: ['breakfast'],
     isOrderable: true,
     isArchived: false,
+    selectedOptions: {},
     options: [
       {
         _id: 'toppings',
@@ -133,12 +138,86 @@ db.dishes.insertMany([
     __v: 0,
   },
   {
+    _id: 'loaded-quesadilla',
+    friendlyName: 'Loaded Quesadilla',
+    basePrice: 1,
+    tags: ['food'],
+    categories: ['breakfast'],
+    isOrderable: true,
+    isArchived: false,
+    selectedOptions: {},
+    options: [
+      {
+        _id: 'toppings',
+        friendlyName: 'toppings',
+        allowMultipleSelections: true,
+        allowNoSelection: true,
+        options: [
+          {
+            _id: 'sour-cream',
+            friendlyName: 'Sour Cream',
+            extraPrice: 0,
+            allowQuantity: false,
+            dependencies: [],
+          },
+        ],
+        dependencies: [],
+      },
+    ],
+    dependencies: [],
+    createdAt: {
+      $date: '2023-09-18T24:05:50.607Z',
+    },
+    updatedAt: {
+      $date: '2023-09-18T24:05:50.607Z',
+    },
+    __v: 0,
+  },
+  {
+    _id: 'swat-fil-a',
+    friendlyName: 'Swat-Fil-A',
+    basePrice: 1,
+    tags: ['food'],
+    categories: ['lunch'],
+    isOrderable: true,
+    isArchived: false,
+    selectedOptions: {},
+    options: [
+      {
+        _id: 'toppings',
+        friendlyName: 'toppings',
+        allowMultipleSelections: true,
+        allowNoSelection: true,
+        options: [
+          {
+            _id: 'pickles',
+            friendlyName: 'Pickles',
+            extraPrice: 0,
+            allowQuantity: false,
+            dependencies: [],
+          },
+        ],
+        dependencies: [],
+      },
+    ],
+    dependencies: [],
+    createdAt: {
+      $date: '2023-09-18T24:05:50.607Z',
+    },
+    updatedAt: {
+      $date: '2023-09-18T24:05:50.607Z',
+    },
+    __v: 0,
+  },
+  {
     _id: 'italian-soda',
-    friendlyName: 'italian soda',
+    friendlyName: 'Italian Soda',
     basePrice: 5,
+    tags: ['drink'],
     categories: ['drinks'],
     isOrderable: true,
     isArchived: false,
+    selectedOptions: {},
     options: [
       {
         _id: 'flavor-shots',
@@ -156,6 +235,56 @@ db.dishes.insertMany([
           {
             _id: 'lychee',
             friendlyName: 'lychee',
+            extraPrice: 1,
+            allowQuantity: true,
+            dependencies: [],
+          },
+        ],
+        dependencies: [],
+      },
+    ],
+    dependencies: [],
+    createdAt: {
+      $date: '2023-09-20T21:05:50.607Z',
+    },
+    updatedAt: {
+      $date: '2023-09-20T21:05:50.607Z',
+    },
+    __v: 0,
+  },
+  {
+    _id: 'milkshake',
+    friendlyName: 'Milkshake',
+    basePrice: 5,
+    tags: ['drink'],
+    categories: ['drinks'],
+    isOrderable: true,
+    isArchived: false,
+    selectedOptions: {},
+    options: [
+      {
+        _id: 'flavors',
+        friendlyName: 'fllavors',
+        allowMultipleSelections: false,
+        allowNoSelection: false,
+        options: [
+          {
+            _id: 'oreo',
+            friendlyName: 'oreo',
+            extraPrice: 0,
+            allowQuantity: true,
+            dependencies: [],
+          },
+          {
+            _id: 'vanilla',
+            friendlyName: 'vanilla',
+            extraPrice: 1,
+            allowQuantity: true,
+            dependencies: [],
+          },
+          {
+            _id: 'chocolate',
+            friendlyName: 'chocolate',
             extraPrice: 1,
             allowQuantity: true,
             dependencies: [],
