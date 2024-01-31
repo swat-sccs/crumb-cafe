@@ -21,6 +21,24 @@ export async function GET(_request: NextRequest, { params }: { params: { dishId:
   }
 }
 
+export async function PUT(_request: NextRequest, { params }: { params: { dishId: string } }) {
+  await dbConnect();
+
+  try {
+    //const dish = await DishModel.findById(params.dishId);
+    const dish = await _request.json();
+    const updatedOrder = await DishModel.findByIdAndUpdate(params.dishId, dish, { new: true });
+
+    if (!updatedOrder) {
+      return new NextResponse('Dish not found', { status: 404 });
+    }
+    //return NextResponse.json(order);
+    return new NextResponse('Dish updated successfully', { status: 200 });
+  } catch (e) {
+    return new NextResponse('Unable to update Dish', { status: 404 });
+  }
+}
+
 export async function DELETE(_request: NextRequest, { params }: { params: { dishId: string } }) {
   await dbConnect();
 
