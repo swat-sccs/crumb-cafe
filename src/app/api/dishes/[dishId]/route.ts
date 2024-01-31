@@ -39,6 +39,18 @@ export async function PUT(_request: NextRequest, { params }: { params: { dishId:
   }
 }
 
+export async function POST(_request: NextRequest) {
+  await dbConnect();
+
+  try {
+    const dish = _request.json();
+    await DishModel.create(dish);
+    return new NextResponse('Dish created successfully', { status: 201 });
+  } catch (e) {
+    return new NextResponse('Poor request', { status: 400 });
+  }
+}
+
 export async function DELETE(_request: NextRequest, { params }: { params: { dishId: string } }) {
   await dbConnect();
 

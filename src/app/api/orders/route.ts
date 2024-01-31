@@ -8,13 +8,6 @@ import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
 import { parseQuery, parseBody } from '../parseQuery';
 
-/*
-const Counter = mongoose.model(
-  'Counter',
-  new mongoose.Schema({ id: Number }, { collection: 'counter' }),
-);
-*/
-
 const orderQuerySchema = z.object({
   status: z.enum(['new', 'in_progress', 'completed']).optional(),
   hidden: z.boolean().optional(),
