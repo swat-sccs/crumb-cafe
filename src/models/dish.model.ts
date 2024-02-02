@@ -79,6 +79,10 @@ const DishSchema = new Schema(
       type: String,
       required: true,
     },
+    dotw: {
+      type: [String],
+      required: false,
+    },
     basePrice: {
       type: Number,
       required: true,
@@ -127,6 +131,9 @@ const DishSchema = new Schema(
       },
       byFriendlyName(friendlyName: string) {
         return this.where('friendlyName').equals(friendlyName);
+      },
+      byDotw(dotw: string[]) {
+        return this.where('dotw').in(dotw);
       },
       byTags(tags: string[]) {
         return this.where('tags').in(tags);

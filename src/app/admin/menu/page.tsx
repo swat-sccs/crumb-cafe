@@ -18,31 +18,24 @@ import {
   Divider,
   InputAdornment,
   Box,
+  Fab,
+  FormControl,
+  OutlinedInput,
+  Chip,
+  InputLabel,
+  Select,
+  MenuItem,
   ListItemAvatar,
   CircularProgress,
   Button,
+  SelectChangeEvent,
 } from '@mui/material';
 import styles from './page.module.css';
 import React, { useState, useEffect } from 'react';
-import { Folder, Delete } from '@mui/icons-material';
+import { Folder, Delete, Add } from '@mui/icons-material';
 
 import LabelAvatar from '../../components/labelAvatar';
-import {
-  DataGrid,
-  GridRowsProp,
-  GridColDef,
-  gridClasses,
-  GridToolbar,
-  GridToolbarColumnsButton,
-  GridToolbarContainer,
-  GridToolbarExport,
-  GridCsvExportOptions,
-  GridRowId,
-  GridRowModel,
-  GridRowEditStopReasons,
-  GridEventListener,
-  GridToolbarDensitySelector,
-} from '@mui/x-data-grid';
+
 import useSWR from 'swr';
 import axios from 'axios';
 
@@ -66,49 +59,19 @@ export default function Home() {
 
   const theme = useTheme();
 
-  /*
-  {
-    "_id": "pancakes",
-    "friendlyName": "Pancakes",
-    "basePrice": 1,
-    "tags": [
-        "food"
-    ],
-    "categories": [
-        "breakfast"
-    ],
-    "isOrderable": true,
-    "isArchived": false,
-    "options": [
-        {
-            "_id": "toppings",
-            "friendlyName": "toppings",
-            "allowMultipleSelections": true,
-            "allowNoSelection": true,
-            "options": [
-                {
-                    "_id": "syrup",
-                    "friendlyName": "maple syrup",
-                    "extraPrice": 0,
-                    "allowQuantity": false,
-                    "dependencies": []
-                },
-                {
-                    "_id": "berries",
-                    "friendlyName": "berries",
-                    "extraPrice": 1,
-                    "allowQuantity": false,
-                    "dependencies": []
-                }
-            ],
-            "dependencies": []
-        }
-    ],
-    "dependencies": [],
-    "__v": 0
-}
+  const DOTW = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const [personName, setPersonName] = React.useState<string[]>([]);
 
-  */
+  const handleChange = (event: SelectChangeEvent<typeof personName>) => {
+    const {
+      target: { value },
+    } = event;
+
+    setSelectedItem({
+      ...SelectedItem,
+      dotw: typeof value === 'string' ? value.split(',') : value,
+    });
+  };
 
   const update = async () => {
     const url = '/api/dishes/' + SelectedItem._id;
@@ -118,6 +81,7 @@ export default function Home() {
       console.log(response);
       if (response.status == 200) {
         handleClose();
+        console.log(response.data);
       } else {
       }
     });
@@ -138,10 +102,11 @@ export default function Home() {
                 title={option.friendlyName}
                 subheader={'$' + Number.parseFloat(option.basePrice).toFixed(2)}
               />
+
               <Divider variant="middle" />
-              <CardContent>
+              <CardContent sx={{ mt: '-5%' }}>
                 <List key={option._id}>
-                  <OptionsComponent options={option.options} sx={{ ml: '5%' }} />
+                  <OptionsComponent options={option.options} sx={{ ml: '2%' }} />
                 </List>
 
                 <Divider />
@@ -231,13 +196,30 @@ export default function Home() {
                   size="small"
                   value={subOption.friendlyName}
                   onChange={(event) => {
-                    handleOptionsUpdate(event.target.value, subOption._id);
+                    //handleOptionsUpdate(event.target.value, subOption._id);
                     //console.log(event);
 
-                    subOption.friendlyName = event.target.value;
-                    //console.log(subOption);
-                    //setSelectedItem({ ...SelectedItem, friendlyName: event.target.value });
+                    console.log(
+                      SelectedItem.options.map((options: any) => ({
+                        ...options,
+                        options: options.options.map((thing: any) => {
+                          if (thing._id == subOption._id) {
+                            return {
+                              ...thing,
+                              friendlyName: event.target.value,
+                            };
+                          }
+                        }),
+                      })),
+                    );
                   }}
+
+                  /*
+
+                          ...thing,
+                          friendlyName: event.target.value,
+
+                  */
                 />
                 <TextField
                   id="price"
@@ -245,7 +227,7 @@ export default function Home() {
                   variant="outlined"
                   size="small"
                   type="number"
-                  value={subOption.extraPrice}
+                  value={subOption.extraPrice.toFixed(2)}
                 />
               </ListItem>
               <Divider variant="fullWidth"></Divider>
@@ -269,6 +251,9 @@ export default function Home() {
         spacing={2}
       >
         <RenderCards></RenderCards>
+        <Fab color="primary" aria-label="add" sx={{ position: 'absolute', bottom: 20, right: 20 }}>
+          <Add />
+        </Fab>
       </Grid>
 
       {open ? (
@@ -288,7 +273,7 @@ export default function Home() {
           <Card
             sx={{
               width: '50%',
-              height: '75%',
+              minHeight: '50%',
               position: 'absolute',
               top: '50%',
               left: '50%',
@@ -296,21 +281,31 @@ export default function Home() {
             }}
           >
             <CardHeader title="Edit Item"></CardHeader>
-
             <Divider variant="middle" />
-            <CardContent>
+
+            <Grid
+              container
+              direction="row"
+              alignItems="center"
+              justifyContent="center"
+              sx={{ mt: '2%' }}
+            >
               <Grid
                 container
-                direction="row"
-                spacing={1}
-                alignItems="center"
+                item
+                direction="column"
                 justifyContent="center"
+                alignItems="center"
+                spacing={2}
+                xs={5}
               >
                 <Grid item>
                   <TextField
                     id="name"
                     label="Name"
-                    variant="filled"
+                    variant="outlined"
+                    fullWidth
+                    sx={{ width: '22ch' }}
                     value={SelectedItem.friendlyName}
                     onChange={(event) => {
                       setSelectedItem({ ...SelectedItem, friendlyName: event.target.value });
@@ -323,8 +318,10 @@ export default function Home() {
                     id="price"
                     label="Price"
                     type="number"
-                    variant="filled"
-                    value={SelectedItem.basePrice.toString()}
+                    variant="outlined"
+                    fullWidth
+                    sx={{ width: '22ch' }}
+                    value={SelectedItem.basePrice}
                     onChange={(event) => {
                       setSelectedItem({ ...SelectedItem, basePrice: event.target.value });
                     }}
@@ -335,39 +332,72 @@ export default function Home() {
                 </Grid>
               </Grid>
 
+              <Grid container item xs={5} justifyContent="center" alignItems="center">
+                <Grid item>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={SelectedItem.isOrderable}
+                        onChange={(event) => {
+                          setSelectedItem({ ...SelectedItem, isOrderable: event.target.checked });
+                        }}
+                      ></Checkbox>
+                    }
+                    label="Orderable"
+                  />
+                </Grid>
+                <Grid item>
+                  <FormControlLabel
+                    control={
+                      <Checkbox
+                        checked={SelectedItem.isArchived}
+                        onChange={(event) => {
+                          setSelectedItem({ ...SelectedItem, isArchived: event.target.checked });
+                        }}
+                      ></Checkbox>
+                    }
+                    label="Archived"
+                  />
+                </Grid>
+                <Grid container item justifyContent="center" alignItems="center">
+                  <FormControl sx={{ m: 1, width: 300 }}>
+                    <InputLabel id="demo-multiple-chip-label">Days</InputLabel>
+                    <Select
+                      labelId="demo-multiple-chip-label"
+                      id="demo-multiple-chip"
+                      multiple
+                      value={SelectedItem.dotw}
+                      onChange={handleChange}
+                      input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                      renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.map((value) => (
+                            <Chip key={value} label={value} />
+                          ))}
+                        </Box>
+                      )}
+                    >
+                      {DOTW.map((day) => (
+                        <MenuItem key={day} value={day}>
+                          {day}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+            </Grid>
+
+            <CardContent>
               <Container sx={{ mt: '5%', maxHeight: '50vh', overflowY: 'scroll' }}>
-                <Typography variant="h5">Options</Typography>
+                <EditOptionsComponent options={SelectedItem.options}></EditOptionsComponent>
               </Container>
 
-              <Typography variant="body1" color="text.secondary" sx={{ mt: '5%' }}>
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={SelectedItem.isOrderable}
-                      onChange={(event) => {
-                        setSelectedItem({ ...SelectedItem, isOrderable: event.target.checked });
-                      }}
-                    ></Checkbox>
-                  }
-                  label="Orderable"
-                />
-                <FormControlLabel
-                  control={
-                    <Checkbox
-                      checked={SelectedItem.isArchived}
-                      onChange={(event) => {
-                        setSelectedItem({ ...SelectedItem, isArchived: event.target.checked });
-                      }}
-                    ></Checkbox>
-                  }
-                  label="Archived"
-                />
-              </Typography>
-              <EditOptionsComponent options={SelectedItem.options}></EditOptionsComponent>
+              <Typography variant="body1" color="text.secondary" sx={{ mt: '5%' }}></Typography>
 
               <Grid container justifyContent="flex-end" spacing={2} sx={{ mt: '5%' }}>
                 <Grid item>
-                  <Button variant="outlined" onClick={handleClose}>
+                  <Button variant="contained" onClick={handleClose}>
                     Cancel
                   </Button>
                 </Grid>

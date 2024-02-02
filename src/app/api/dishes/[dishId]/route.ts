@@ -33,7 +33,7 @@ export async function PUT(_request: NextRequest, { params }: { params: { dishId:
       return new NextResponse('Dish not found', { status: 404 });
     }
     //return NextResponse.json(order);
-    return new NextResponse('Dish updated successfully', { status: 200 });
+    return new NextResponse('Dish updated successfully ', updatedOrder, { status: 200 });
   } catch (e) {
     return new NextResponse('Unable to update Dish', { status: 404 });
   }

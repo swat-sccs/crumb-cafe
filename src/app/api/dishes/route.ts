@@ -7,6 +7,7 @@ import { parseQuery, parseBody } from '../parseQuery';
 const dishQuerySchema = z.object({
   isOrderable: z.boolean().optional(),
   friendlyName: z.string().optional(),
+  dotw: z.array(z.string()).optional(),
   tags: z.array(z.string()).optional(),
   selectedOptions: z.array(z.string()).optional(),
   categories: z.array(z.string()).optional(),
@@ -20,6 +21,7 @@ const newDishSchema = z.object({
   _id: z.string(),
   friendlyName: z.string(),
   basePrice: z.number(),
+  dotw: z.array(z.string()),
   tags: z.array(z.string()),
   selectedOptions: z.array(z.string()),
   categories: z.array(z.string()),
@@ -63,6 +65,9 @@ export async function GET(request: NextRequest) {
   if (data.friendlyName) {
     query = query.byFriendlyName(data.friendlyName);
   }
+  if (data.dotw) {
+    query = query.byDotw(data.dotw);
+  }
 
   if (data.tags) {
     query = query.byTags(data.tags);
@@ -98,7 +103,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { ok, data } = parseQuery(dishQuerySchema, request);
+  const { ok, data } = parseQuery(newDishSchema, request);
   //const { data } = parseBody(newDishSchema, request);
 
   if (!ok) {
@@ -110,13 +115,11 @@ export async function POST(request: NextRequest) {
   //Broken for now will come back to fix
 
   //some logic i guess, if dish already exists?? no need to post again
-  //const dishCopy = await DishModel.findById(data._id);
-  /*
+  const dishCopy = await DishModel.findById(data._id);
+
   if (dishCopy) {
     return new NextResponse('Dish already exists', { status: 208 });
   }
-
-  */
 
   //end of logic
 

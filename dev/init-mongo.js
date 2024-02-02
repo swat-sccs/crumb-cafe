@@ -140,6 +140,7 @@ db.dishes.insertMany([
   {
     _id: 'loaded-quesadilla',
     friendlyName: 'Loaded Quesadilla',
+    dotw: ['Monday', 'Tuesday'],
     basePrice: 1,
     tags: ['food'],
     categories: ['breakfast'],
@@ -176,6 +177,7 @@ db.dishes.insertMany([
   {
     _id: 'swat-fil-a',
     friendlyName: 'Swat-Fil-A',
+    dotw: ['Monday', 'Tuesday'],
     basePrice: 1,
     tags: ['food'],
     categories: ['lunch'],
@@ -212,6 +214,7 @@ db.dishes.insertMany([
   {
     _id: 'italian-soda',
     friendlyName: 'Italian Soda',
+    dotw: ['Monday', 'Tuesday'],
     basePrice: 5,
     tags: ['drink'],
     categories: ['drinks'],
@@ -255,6 +258,7 @@ db.dishes.insertMany([
   {
     _id: 'milkshake',
     friendlyName: 'Milkshake',
+    dotw: ['Monday', 'Tuesday'],
     basePrice: 5,
     tags: ['drink'],
     categories: ['drinks'],
