@@ -47,7 +47,7 @@ import { useTheme } from '@mui/material/styles';
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function Home() {
-  const { data, error, isLoading } = useSWR('/api/dishes', fetcher, { refreshInterval: 2000 });
+  const { data, error, isLoading } = useSWR('/api/dishes', fetcher, { refreshInterval: 1000 });
   const [SelectedItem, setSelectedItem]: any[] = React.useState({});
 
   const [open, setOpen] = React.useState(false);
@@ -55,11 +55,17 @@ export default function Home() {
     setOpen(true);
     setSelectedItem(item);
   };
+
+  const handleNewOpen = () => {
+    setOpen(true);
+    setSelectedItem(blankDish);
+  };
   const handleClose = () => setOpen(false);
 
   const theme = useTheme();
 
   const DOTW = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const TAGS = ['food', 'drink'];
   const [personName, setPersonName] = React.useState<string[]>([]);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
@@ -73,16 +79,72 @@ export default function Home() {
     });
   };
 
+  const handleTagChange = (event: SelectChangeEvent<typeof personName>) => {
+    const {
+      target: { value },
+    } = event;
+
+    setSelectedItem({
+      ...SelectedItem,
+      tags: typeof value === 'string' ? value.split(',') : value,
+    });
+  };
+
+  const blankDish = {
+    _id: 'pancakes',
+    friendlyName: 'Pancakes',
+    basePrice: 1,
+    tags: ['food'],
+    categories: ['breakfast'],
+    isOrderable: true,
+    isArchived: false,
+    selectedOptions: {},
+    options: [
+      {
+        _id: 'toppings',
+        friendlyName: 'toppings',
+        allowMultipleSelections: true,
+        allowNoSelection: true,
+        options: [
+          {
+            _id: 'syrup',
+            friendlyName: 'maple syrup',
+            extraPrice: 0,
+            allowQuantity: false,
+            dependencies: [],
+          },
+          {
+            _id: 'berries',
+            friendlyName: 'berries',
+            extraPrice: 1,
+            allowQuantity: false,
+            dependencies: [],
+          },
+        ],
+        dependencies: [],
+      },
+    ],
+    dependencies: [],
+    createdAt: {
+      $date: '2023-09-18T24:05:50.607Z',
+    },
+    updatedAt: {
+      $date: '2023-09-18T24:05:50.607Z',
+    },
+    __v: 0,
+  };
+
   const update = async () => {
     const url = '/api/dishes/' + SelectedItem._id;
-    console.log(SelectedItem);
 
     await axios.put(url, SelectedItem).then((response) => {
+      console.log(SelectedItem);
       console.log(response);
       if (response.status == 200) {
         handleClose();
         console.log(response.data);
       } else {
+        console.log(response.data);
       }
     });
   };
@@ -161,83 +223,32 @@ export default function Home() {
     return <>{specific}</>;
   };
 
-  const handleOptionsUpdate = (text: any, id: any) => {
-    console.log(text, id);
-    for (const optionType in SelectedItem.options) {
-      for (const subOption in SelectedItem.options[optionType]) {
-      }
-    }
-  };
+  const handleSpecificOptionUpdate = (option_id: any, type_id: any, value: any, text: any) => {
+    let theItem = Object.assign([], SelectedItem);
 
-  const EditOptionsComponent = (props: any) => {
-    let theOptions = Object.assign([], props.options);
-    const specific = [];
+    let type_index = theItem.options.findIndex((item: any) => item._id == type_id);
 
-    for (const optionType of theOptions) {
-      for (const subOption of optionType.options) {
-        specific.push(
-          <>
-            <List key={subOption._id}>
-              <ListItem
-                secondaryAction={
-                  <IconButton edge="end" aria-label="delete">
-                    <Delete />
-                  </IconButton>
-                }
-              >
-                <ListItemAvatar>
-                  <Avatar>{subOption.friendlyName.charAt(0)}</Avatar>
-                </ListItemAvatar>
+    if (type_index != -1) {
+      for (const optionType of theItem.options) {
+        let option_index = optionType.options.findIndex((option: any) => option._id == option_id);
 
-                <TextField
-                  id="name"
-                  label="Name"
-                  variant="outlined"
-                  size="small"
-                  value={subOption.friendlyName}
-                  onChange={(event) => {
-                    //handleOptionsUpdate(event.target.value, subOption._id);
-                    //console.log(event);
-
-                    console.log(
-                      SelectedItem.options.map((options: any) => ({
-                        ...options,
-                        options: options.options.map((thing: any) => {
-                          if (thing._id == subOption._id) {
-                            return {
-                              ...thing,
-                              friendlyName: event.target.value,
-                            };
-                          }
-                        }),
-                      })),
-                    );
-                  }}
-
-                  /*
-
-                          ...thing,
-                          friendlyName: event.target.value,
-
-                  */
-                />
-                <TextField
-                  id="price"
-                  label="Price"
-                  variant="outlined"
-                  size="small"
-                  type="number"
-                  value={subOption.extraPrice.toFixed(2)}
-                />
-              </ListItem>
-              <Divider variant="fullWidth"></Divider>
-            </List>
-          </>,
-        );
+        if (option_index != -1) {
+          if (value == 'friendlyName') {
+            theItem.options[type_index].options[option_index] = {
+              ...theItem.options[type_index].options[option_index],
+              [value]: text,
+            };
+          } else if (value == 'extraPrice') {
+            theItem.options[type_index].options[option_index] = {
+              ...theItem.options[type_index].options[option_index],
+              [value]: Number(text),
+            };
+          }
+        }
       }
     }
 
-    return <>{specific}</>;
+    setSelectedItem({ ...SelectedItem, theItem });
   };
 
   return (
@@ -251,7 +262,12 @@ export default function Home() {
         spacing={2}
       >
         <RenderCards></RenderCards>
-        <Fab color="primary" aria-label="add" sx={{ position: 'absolute', bottom: 20, right: 20 }}>
+        <Fab
+          color="primary"
+          aria-label="add"
+          sx={{ position: 'absolute', bottom: 20, right: 20 }}
+          onClick={handleNewOpen}
+        >
           <Add />
         </Fab>
       </Grid>
@@ -280,7 +296,10 @@ export default function Home() {
               transform: 'translate(-50%, -50%)',
             }}
           >
-            <CardHeader title="Edit Item"></CardHeader>
+            <CardHeader
+              titleTypographyProps={{ variant: 'h4', fontWeight: 'bold' }}
+              title="Edit Item"
+            ></CardHeader>
             <Divider variant="middle" />
 
             <Grid
@@ -288,7 +307,7 @@ export default function Home() {
               direction="row"
               alignItems="center"
               justifyContent="center"
-              sx={{ mt: '2%' }}
+              sx={{ mt: '5%' }}
             >
               <Grid
                 container
@@ -329,6 +348,32 @@ export default function Home() {
                       startAdornment: <InputAdornment position="start">$</InputAdornment>,
                     }}
                   />
+                </Grid>
+                <Grid item>
+                  <FormControl sx={{ width: '22ch' }}>
+                    <InputLabel id="demo-multiple-chip-label">Tags</InputLabel>
+                    <Select
+                      labelId="demo-multiple-chip-label"
+                      id="demo-multiple-chip"
+                      multiple
+                      value={SelectedItem.tags}
+                      onChange={handleTagChange}
+                      input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                      renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.map((value) => (
+                            <Chip key={value} label={value} />
+                          ))}
+                        </Box>
+                      )}
+                    >
+                      {TAGS.map((day) => (
+                        <MenuItem key={day} value={day}>
+                          {day}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
                 </Grid>
               </Grid>
 
@@ -390,7 +435,56 @@ export default function Home() {
 
             <CardContent>
               <Container sx={{ mt: '5%', maxHeight: '50vh', overflowY: 'scroll' }}>
-                <EditOptionsComponent options={SelectedItem.options}></EditOptionsComponent>
+                {SelectedItem.options.map((optionType: any) =>
+                  optionType.options.map((subOption: any) => (
+                    <List key={subOption._id}>
+                      <ListItem
+                        secondaryAction={
+                          <IconButton edge="end" aria-label="delete">
+                            <Delete />
+                          </IconButton>
+                        }
+                      >
+                        <ListItemAvatar>
+                          <Avatar>{subOption.friendlyName.charAt(0)}</Avatar>
+                        </ListItemAvatar>
+
+                        <TextField
+                          id="name"
+                          label="Name"
+                          variant="outlined"
+                          size="small"
+                          value={subOption.friendlyName}
+                          onChange={(event) => {
+                            handleSpecificOptionUpdate(
+                              subOption._id,
+                              optionType._id,
+                              'friendlyName',
+                              event.target.value,
+                            );
+                          }}
+                        />
+                        <TextField
+                          id="price"
+                          label="Price"
+                          variant="outlined"
+                          size="small"
+                          type="number"
+                          value={subOption.extraPrice}
+                          onChange={(event) => {
+                            handleSpecificOptionUpdate(
+                              subOption._id,
+                              optionType._id,
+                              'extraPrice',
+                              event.target.value,
+                            );
+                          }}
+                        />
+                      </ListItem>
+                      <Divider variant="fullWidth"></Divider>
+                    </List>
+                  )),
+                )}
               </Container>
 
               <Typography variant="body1" color="text.secondary" sx={{ mt: '5%' }}></Typography>

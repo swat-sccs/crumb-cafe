@@ -29,6 +29,8 @@ export async function PUT(_request: NextRequest, { params }: { params: { dishId:
     const dish = await _request.json();
     const updatedOrder = await DishModel.findByIdAndUpdate(params.dishId, dish, { new: true });
 
+    console.log(updatedOrder);
+
     if (!updatedOrder) {
       return new NextResponse('Dish not found', { status: 404 });
     }
