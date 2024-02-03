@@ -97,6 +97,7 @@ db.dishes.insertMany([
   {
     _id: 'pancakes',
     friendlyName: 'Pancakes',
+    dotw: ['Monday', 'Tuesday'],
     basePrice: 1,
     tags: ['food'],
     categories: ['breakfast'],

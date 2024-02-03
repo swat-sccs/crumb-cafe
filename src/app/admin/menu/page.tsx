@@ -47,25 +47,27 @@ import { useTheme } from '@mui/material/styles';
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function Home() {
+  const theme = useTheme();
   const { data, error, isLoading } = useSWR('/api/dishes', fetcher, { refreshInterval: 1000 });
   const [SelectedItem, setSelectedItem]: any[] = React.useState({});
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = (item: any) => {
     setOpen(true);
+    setWindowTitle('Edit Item');
     setSelectedItem(item);
   };
 
   const handleNewOpen = () => {
     setOpen(true);
+    setWindowTitle('New Item');
     setSelectedItem(blankDish);
   };
   const handleClose = () => setOpen(false);
 
-  const theme = useTheme();
-
   const DOTW = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
   const TAGS = ['food', 'drink'];
+  const [windowTitle, setWindowTitle] = React.useState('Edit Item');
   const [personName, setPersonName] = React.useState<string[]>([]);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
@@ -91,11 +93,12 @@ export default function Home() {
   };
 
   const blankDish = {
-    _id: 'pancakes',
-    friendlyName: 'Pancakes',
+    _id: '',
+    friendlyName: '',
     basePrice: 1,
-    tags: ['food'],
+    tags: [],
     categories: ['breakfast'],
+    dotw: [],
     isOrderable: true,
     isArchived: false,
     selectedOptions: {},
@@ -107,17 +110,10 @@ export default function Home() {
         allowNoSelection: true,
         options: [
           {
-            _id: 'syrup',
-            friendlyName: 'maple syrup',
+            _id: '',
+            friendlyName: '',
             extraPrice: 0,
-            allowQuantity: false,
-            dependencies: [],
-          },
-          {
-            _id: 'berries',
-            friendlyName: 'berries',
-            extraPrice: 1,
-            allowQuantity: false,
+            allowQuantity: true,
             dependencies: [],
           },
         ],
@@ -135,18 +131,33 @@ export default function Home() {
   };
 
   const update = async () => {
-    const url = '/api/dishes/' + SelectedItem._id;
+    if (windowTitle == 'Edit Item') {
+      const url = '/api/dishes/' + SelectedItem._id;
 
-    await axios.put(url, SelectedItem).then((response) => {
-      console.log(SelectedItem);
-      console.log(response);
-      if (response.status == 200) {
-        handleClose();
-        console.log(response.data);
-      } else {
-        console.log(response.data);
-      }
-    });
+      await axios.put(url, SelectedItem).then((response) => {
+        console.log(SelectedItem);
+        console.log(response);
+        if (response.status == 200) {
+          handleClose();
+          console.log(response.data);
+        } else {
+          console.log(response.data);
+        }
+      });
+    } else if (windowTitle == 'New Item') {
+      const url = '/api/dishes/' + SelectedItem._id;
+
+      await axios.post(url, SelectedItem).then((response) => {
+        console.log(SelectedItem);
+        console.log(response);
+        if (response.status == 200) {
+          handleClose();
+          console.log(response.data);
+        } else {
+          console.log(response.data);
+        }
+      });
+    }
   };
 
   const RenderCards = () => {
@@ -251,6 +262,20 @@ export default function Home() {
     setSelectedItem({ ...SelectedItem, theItem });
   };
 
+  const handleSpecificOptionDelete = (option_id: any, type_id: any) => {
+    let theItem = Object.assign([], SelectedItem);
+
+    let type_index = theItem.options.findIndex((item: any) => item._id == type_id);
+
+    if (type_index != -1) {
+      for (const optionType of theItem.options) {
+        let option_index = optionType.options.findIndex((option: any) => option._id == option_id);
+        theItem.options[type_index].options.splice(option_index, 1);
+      }
+    }
+    setSelectedItem({ ...SelectedItem, theItem });
+  };
+
   return (
     <Container className={styles.topBar} sx={{ backgroundColor: '', width: '100vw' }}>
       <LabelAvatar title="Menu" />
@@ -262,14 +287,16 @@ export default function Home() {
         spacing={2}
       >
         <RenderCards></RenderCards>
-        <Fab
-          color="primary"
-          aria-label="add"
-          sx={{ position: 'absolute', bottom: 20, right: 20 }}
-          onClick={handleNewOpen}
-        >
-          <Add />
-        </Fab>
+        {!open ? (
+          <Fab
+            color="primary"
+            aria-label="add"
+            sx={{ position: 'absolute', bottom: 20, right: 20 }}
+            onClick={handleNewOpen}
+          >
+            <Add />
+          </Fab>
+        ) : null}
       </Grid>
 
       {open ? (
@@ -297,10 +324,10 @@ export default function Home() {
             }}
           >
             <CardHeader
+              style={{ backgroundColor: theme.palette.primary.main }}
               titleTypographyProps={{ variant: 'h4', fontWeight: 'bold' }}
-              title="Edit Item"
+              title={windowTitle}
             ></CardHeader>
-            <Divider variant="middle" />
 
             <Grid
               container
@@ -349,8 +376,11 @@ export default function Home() {
                     }}
                   />
                 </Grid>
+              </Grid>
+
+              <Grid container item xs={5} justifyContent="center" alignItems="center">
                 <Grid item>
-                  <FormControl sx={{ width: '22ch' }}>
+                  <FormControl sx={{ width: '25ch' }}>
                     <InputLabel id="demo-multiple-chip-label">Tags</InputLabel>
                     <Select
                       labelId="demo-multiple-chip-label"
@@ -375,9 +405,42 @@ export default function Home() {
                     </Select>
                   </FormControl>
                 </Grid>
-              </Grid>
 
-              <Grid container item xs={5} justifyContent="center" alignItems="center">
+                <Grid container item justifyContent="center" alignItems="center">
+                  <FormControl sx={{ m: 1, width: '25ch' }}>
+                    <InputLabel id="demo-multiple-chip-label">Days</InputLabel>
+                    <Select
+                      labelId="demo-multiple-chip-label"
+                      id="demo-multiple-chip"
+                      multiple
+                      value={SelectedItem.dotw}
+                      onChange={handleChange}
+                      input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
+                      renderValue={(selected) => (
+                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
+                          {selected.map((value) => (
+                            <Chip key={value} label={value} />
+                          ))}
+                        </Box>
+                      )}
+                    >
+                      {DOTW.map((day) => (
+                        <MenuItem key={day} value={day}>
+                          {day}
+                        </MenuItem>
+                      ))}
+                    </Select>
+                  </FormControl>
+                </Grid>
+              </Grid>
+              <Grid
+                container
+                item
+                direction="row"
+                justifyContent="center"
+                alignItems="center"
+                xs={12}
+              >
                 <Grid item>
                   <FormControlLabel
                     control={
@@ -404,32 +467,6 @@ export default function Home() {
                     label="Archived"
                   />
                 </Grid>
-                <Grid container item justifyContent="center" alignItems="center">
-                  <FormControl sx={{ m: 1, width: 300 }}>
-                    <InputLabel id="demo-multiple-chip-label">Days</InputLabel>
-                    <Select
-                      labelId="demo-multiple-chip-label"
-                      id="demo-multiple-chip"
-                      multiple
-                      value={SelectedItem.dotw}
-                      onChange={handleChange}
-                      input={<OutlinedInput id="select-multiple-chip" label="Chip" />}
-                      renderValue={(selected) => (
-                        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-                          {selected.map((value) => (
-                            <Chip key={value} label={value} />
-                          ))}
-                        </Box>
-                      )}
-                    >
-                      {DOTW.map((day) => (
-                        <MenuItem key={day} value={day}>
-                          {day}
-                        </MenuItem>
-                      ))}
-                    </Select>
-                  </FormControl>
-                </Grid>
               </Grid>
             </Grid>
 
@@ -440,7 +477,13 @@ export default function Home() {
                     <List key={subOption._id}>
                       <ListItem
                         secondaryAction={
-                          <IconButton edge="end" aria-label="delete">
+                          <IconButton
+                            edge="end"
+                            aria-label="delete"
+                            onClick={() =>
+                              handleSpecificOptionDelete(subOption._id, optionType._id)
+                            }
+                          >
                             <Delete />
                           </IconButton>
                         }
@@ -448,40 +491,45 @@ export default function Home() {
                         <ListItemAvatar>
                           <Avatar>{subOption.friendlyName.charAt(0)}</Avatar>
                         </ListItemAvatar>
-
-                        <TextField
-                          id="name"
-                          label="Name"
-                          variant="outlined"
-                          size="small"
-                          value={subOption.friendlyName}
-                          onChange={(event) => {
-                            handleSpecificOptionUpdate(
-                              subOption._id,
-                              optionType._id,
-                              'friendlyName',
-                              event.target.value,
-                            );
-                          }}
-                        />
-                        <TextField
-                          id="price"
-                          label="Price"
-                          variant="outlined"
-                          size="small"
-                          type="number"
-                          value={subOption.extraPrice}
-                          onChange={(event) => {
-                            handleSpecificOptionUpdate(
-                              subOption._id,
-                              optionType._id,
-                              'extraPrice',
-                              event.target.value,
-                            );
-                          }}
-                        />
+                        <Grid container spacing={2}>
+                          <Grid item>
+                            {' '}
+                            <TextField
+                              id="name"
+                              label="Name"
+                              variant="outlined"
+                              size="small"
+                              value={subOption.friendlyName}
+                              onChange={(event) => {
+                                handleSpecificOptionUpdate(
+                                  subOption._id,
+                                  optionType._id,
+                                  'friendlyName',
+                                  event.target.value,
+                                );
+                              }}
+                            />
+                          </Grid>
+                          <Grid item>
+                            <TextField
+                              id="price"
+                              label="Price"
+                              variant="outlined"
+                              size="small"
+                              type="number"
+                              value={subOption.extraPrice}
+                              onChange={(event) => {
+                                handleSpecificOptionUpdate(
+                                  subOption._id,
+                                  optionType._id,
+                                  'extraPrice',
+                                  event.target.value,
+                                );
+                              }}
+                            />
+                          </Grid>
+                        </Grid>
                       </ListItem>
-                      <Divider variant="fullWidth"></Divider>
                     </List>
                   )),
                 )}
