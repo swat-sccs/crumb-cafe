@@ -8,7 +8,7 @@ export default function sideBar({ children }: { children: React.ReactNode }) {
           item
           xs={1}
           sm={1}
-          md={1.2}
+          md={1}
           lg={1}
           xl={1}
           justifyContent="center"
@@ -21,7 +21,7 @@ export default function sideBar({ children }: { children: React.ReactNode }) {
           item
           xs={10}
           sm={10}
-          md={10.8}
+          md={10}
           lg={10}
           xl={10}
           justifyContent="flex-start"

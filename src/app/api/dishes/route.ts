@@ -27,23 +27,28 @@ const newDishSchema = z.object({
   categories: z.array(z.string()),
   isOrderable: z.boolean(),
   isArchived: z.boolean(),
-  options: z.object({
-    //dish GROUP SCHEMA
-    _id: z.string(),
-    friendlyName: z.string(),
-    allowMultipleSelections: z.boolean(),
-    allowNoSelection: z.boolean(),
-    allowQuantity: z.boolean(),
-    options: z.object({
-      //ITEM SCHEMA
+  options: z.array(
+    z.object({
+      //dish GROUP SCHEMA
       _id: z.string(),
       friendlyName: z.string(),
-      extraPrice: z.number(),
+      allowMultipleSelections: z.boolean(),
+      allowNoSelection: z.boolean(),
       allowQuantity: z.boolean(),
-      dependencies: z.array(z.string()), //empty array for now
+      options: z.array(
+        z.object({
+          //ITEM SCHEMA
+          _id: z.string(),
+          friendlyName: z.string(),
+          extraPrice: z.number(),
+          allowQuantity: z.boolean(),
+          dependencies: z.array(z.string()), //empty array for now
+        }),
+      ),
+      dependencies: z.array(z.string()), //empty array
     }),
-    dependencies: z.array(z.string()), //empty array
-  }),
+  ),
+
   dependencies: z.array(z.string()), //empty array
 });
 
@@ -103,7 +108,7 @@ export async function GET(request: NextRequest) {
 }
 
 export async function POST(request: NextRequest) {
-  const { ok, data } = parseQuery(newDishSchema, request);
+  const { ok, data } = await parseBody(newDishSchema, request);
   //const { data } = parseBody(newDishSchema, request);
 
   if (!ok) {
@@ -123,7 +128,7 @@ export async function POST(request: NextRequest) {
 
   //end of logic
 
-  const newOrder = new DishModel(data);
+  const newOrder = await new DishModel(data);
   const savedOrder = await newOrder.save();
 
   return NextResponse.json({

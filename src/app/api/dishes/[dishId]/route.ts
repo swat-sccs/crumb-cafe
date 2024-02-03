@@ -45,7 +45,7 @@ export async function POST(_request: NextRequest) {
   await dbConnect();
 
   try {
-    const dish = _request.json();
+    const dish = await _request.json();
     await DishModel.create(dish);
     return new NextResponse('Dish created successfully', { status: 201 });
   } catch (e) {

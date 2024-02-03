@@ -103,7 +103,7 @@ db.dishes.insertMany([
     categories: ['breakfast'],
     isOrderable: true,
     isArchived: false,
-    selectedOptions: {},
+    selectedOptions: [],
     options: [
       {
         _id: 'toppings',
@@ -147,7 +147,7 @@ db.dishes.insertMany([
     categories: ['breakfast'],
     isOrderable: true,
     isArchived: false,
-    selectedOptions: {},
+    selectedOptions: [],
     options: [
       {
         _id: 'toppings',
@@ -184,7 +184,7 @@ db.dishes.insertMany([
     categories: ['lunch'],
     isOrderable: true,
     isArchived: false,
-    selectedOptions: {},
+    selectedOptions: [],
     options: [
       {
         _id: 'toppings',
@@ -221,7 +221,7 @@ db.dishes.insertMany([
     categories: ['drinks'],
     isOrderable: true,
     isArchived: false,
-    selectedOptions: {},
+    selectedOptions: [],
     options: [
       {
         _id: 'flavor-shots',
@@ -265,7 +265,7 @@ db.dishes.insertMany([
     categories: ['drinks'],
     isOrderable: true,
     isArchived: false,
-    selectedOptions: {},
+    selectedOptions: [],
     options: [
       {
         _id: 'flavors',

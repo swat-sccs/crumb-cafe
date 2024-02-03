@@ -58,10 +58,22 @@ export default function Home() {
     setSelectedItem(item);
   };
 
+  const deleteItem = async () => {
+    const url = '/api/dishes/' + SelectedItem._id;
+    await axios.delete(url, SelectedItem).then((response) => {
+      if (response.status == 200) {
+        handleClose();
+        console.log(response.data);
+      } else {
+        console.log(response.data);
+      }
+    });
+  };
+
   const handleNewOpen = () => {
+    setSelectedItem(blankDish);
     setOpen(true);
     setWindowTitle('New Item');
-    setSelectedItem(blankDish);
   };
   const handleClose = () => setOpen(false);
 
@@ -95,19 +107,20 @@ export default function Home() {
   const blankDish = {
     _id: '',
     friendlyName: '',
-    basePrice: 1,
-    tags: [],
-    categories: ['breakfast'],
-    dotw: [],
+    dotw: ['Monday'],
+    basePrice: 5,
+    tags: ['food'],
+    categories: ['food'],
     isOrderable: true,
     isArchived: false,
-    selectedOptions: {},
+    selectedOptions: [],
     options: [
       {
-        _id: 'toppings',
-        friendlyName: 'toppings',
+        _id: 'options',
+        friendlyName: 'Options',
         allowMultipleSelections: true,
-        allowNoSelection: true,
+        allowNoSelection: false,
+        allowQuantity: true,
         options: [
           {
             _id: '',
@@ -121,22 +134,14 @@ export default function Home() {
       },
     ],
     dependencies: [],
-    createdAt: {
-      $date: '2023-09-18T24:05:50.607Z',
-    },
-    updatedAt: {
-      $date: '2023-09-18T24:05:50.607Z',
-    },
     __v: 0,
   };
 
   const update = async () => {
     if (windowTitle == 'Edit Item') {
       const url = '/api/dishes/' + SelectedItem._id;
-
+      console.log(SelectedItem);
       await axios.put(url, SelectedItem).then((response) => {
-        console.log(SelectedItem);
-        console.log(response);
         if (response.status == 200) {
           handleClose();
           console.log(response.data);
@@ -145,16 +150,17 @@ export default function Home() {
         }
       });
     } else if (windowTitle == 'New Item') {
-      const url = '/api/dishes/' + SelectedItem._id;
+      const id = await SelectedItem.friendlyName.replace(/\s+/g, '-').toLowerCase();
+      setSelectedItem({
+        ...SelectedItem,
+        _id: id,
+      });
 
-      await axios.post(url, SelectedItem).then((response) => {
-        console.log(SelectedItem);
-        console.log(response);
-        if (response.status == 200) {
+      console.log(SelectedItem);
+      await axios.post('/api/dishes', SelectedItem).then((response) => {
+        if (response.status === 200) {
           handleClose();
-          console.log(response.data);
         } else {
-          console.log(response.data);
         }
       });
     }
@@ -164,8 +170,8 @@ export default function Home() {
     if (isLoading == false) {
       return data.dishes.map((option: any) => (
         <>
-          <Grid item xs={3}>
-            <Card sx={{ minWidth: '50%', minHeight: '20%' }}>
+          <Grid item md={4} lg={3}>
+            <Card sx={{ minWidth: '50%', height: '100%' }}>
               <CardHeader
                 action={
                   <IconButton aria-label="settings" onClick={() => handleOpen(option)}>
@@ -235,7 +241,7 @@ export default function Home() {
   };
 
   const handleSpecificOptionUpdate = (option_id: any, type_id: any, value: any, text: any) => {
-    let theItem = Object.assign([], SelectedItem);
+    let theItem = Object.assign({}, SelectedItem);
 
     let type_index = theItem.options.findIndex((item: any) => item._id == type_id);
 
@@ -248,6 +254,7 @@ export default function Home() {
             theItem.options[type_index].options[option_index] = {
               ...theItem.options[type_index].options[option_index],
               [value]: text,
+              _id: text.replace(/\s+/g, '-').toLowerCase(),
             };
           } else if (value == 'extraPrice') {
             theItem.options[type_index].options[option_index] = {
@@ -259,25 +266,34 @@ export default function Home() {
       }
     }
 
-    setSelectedItem({ ...SelectedItem, theItem });
+    console.log(theItem);
+    setSelectedItem(theItem);
   };
 
   const handleSpecificOptionDelete = (option_id: any, type_id: any) => {
-    let theItem = Object.assign([], SelectedItem);
+    const theItem = Object.assign([], SelectedItem);
 
-    let type_index = theItem.options.findIndex((item: any) => item._id == type_id);
+    const type_index = theItem.options.findIndex((item: any) => item._id == type_id);
 
     if (type_index != -1) {
       for (const optionType of theItem.options) {
-        let option_index = optionType.options.findIndex((option: any) => option._id == option_id);
+        const option_index = optionType.options.findIndex((option: any) => option._id == option_id);
         theItem.options[type_index].options.splice(option_index, 1);
       }
     }
     setSelectedItem({ ...SelectedItem, theItem });
   };
 
+  /*
+  Object.entries(blankDish.options).map(([key, value]) => {
+    console.log(value);
+    // Pretty straightforward - use key for the key and value for the value.
+    // Just to clarify: unlike object destructuring, the parameter names don't matter here.
+  });
+  */
+
   return (
-    <Container className={styles.topBar} sx={{ backgroundColor: '', width: '100vw' }}>
+    <Container className={styles.topBar} sx={{ backgroundColor: '', width: '80vw' }}>
       <LabelAvatar title="Menu" />
 
       <Grid
@@ -287,6 +303,7 @@ export default function Home() {
         spacing={2}
       >
         <RenderCards></RenderCards>
+
         {!open ? (
           <Fab
             color="primary"
@@ -471,10 +488,10 @@ export default function Home() {
             </Grid>
 
             <CardContent>
-              <Container sx={{ mt: '5%', maxHeight: '50vh', overflowY: 'scroll' }}>
-                {SelectedItem.options.map((optionType: any) =>
-                  optionType.options.map((subOption: any) => (
-                    <List key={subOption._id}>
+              <Container sx={{ mt: '0%', maxHeight: '50vh', overflowY: 'scroll' }}>
+                {Object.values(SelectedItem.options).map((optionType: any) =>
+                  Object.values(optionType.options).map((subOption: any) => (
+                    <List key={optionType._id}>
                       <ListItem
                         secondaryAction={
                           <IconButton
@@ -534,10 +551,23 @@ export default function Home() {
                   )),
                 )}
               </Container>
+              <Grid container justifyContent={'center'} alignItems="center">
+                <Grid item xs={10}>
+                  <Button fullWidth variant="outlined" color="primary">
+                    +
+                  </Button>
+                </Grid>
+              </Grid>
 
               <Typography variant="body1" color="text.secondary" sx={{ mt: '5%' }}></Typography>
 
               <Grid container justifyContent="flex-end" spacing={2} sx={{ mt: '5%' }}>
+                <Grid item>
+                  <Button variant="outlined" color="warning" onClick={deleteItem}>
+                    Delete
+                  </Button>
+                </Grid>
+
                 <Grid item>
                   <Button variant="contained" onClick={handleClose}>
                     Cancel
