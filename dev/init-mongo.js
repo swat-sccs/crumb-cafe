@@ -12,9 +12,15 @@ db.orders.insertMany([
     // italian soda
     dish: 'italian-soda',
     // lychee and apple shots
-    options: {
-      'flavor-shots': ['apple', 'lychee'],
-    },
+    options: [
+      {
+        _id: 'sour-cream',
+        friendlyName: 'Sour Cream',
+        extraPrice: 0,
+        allowQuantity: false,
+        dependencies: [],
+      },
+    ],
     updates: [
       {
         newStatus: 'new',
@@ -41,7 +47,15 @@ db.orders.insertMany([
     status: 'in_progress',
     hidden: 'false',
     dish: 'custom',
-    options: {},
+    options: [
+      {
+        _id: 'sour-cream',
+        friendlyName: 'Sour Cream',
+        extraPrice: 0,
+        allowQuantity: false,
+        dependencies: [],
+      },
+    ],
     updates: [
       {
         newStatus: 'new',
@@ -68,9 +82,15 @@ db.orders.insertMany([
     status: 'new',
     hidden: 'false',
     dish: 'pancakes',
-    options: {
-      toppings: ['syrup'],
-    },
+    options: [
+      {
+        _id: 'sour-cream',
+        friendlyName: 'Sour Cream',
+        extraPrice: 0,
+        allowQuantity: false,
+        dependencies: [],
+      },
+    ],
     updates: [
       {
         newStatus: 'new',
@@ -106,30 +126,21 @@ db.dishes.insertMany([
     selectedOptions: [],
     options: [
       {
-        _id: 'toppings',
-        friendlyName: 'toppings',
-        allowMultipleSelections: true,
-        allowNoSelection: true,
-        options: [
-          {
-            _id: 'syrup',
-            friendlyName: 'maple syrup',
-            extraPrice: 0,
-            allowQuantity: false,
-            dependencies: [],
-          },
-          {
-            _id: 'berries',
-            friendlyName: 'berries',
-            extraPrice: 1,
-            allowQuantity: false,
-            dependencies: [],
-          },
-        ],
+        _id: 'syrup',
+        friendlyName: 'maple syrup',
+        extraPrice: 0,
+        allowQuantity: false,
+        dependencies: [],
+      },
+      {
+        _id: 'berries',
+        friendlyName: 'berries',
+        extraPrice: 1,
+        allowQuantity: false,
         dependencies: [],
       },
     ],
-    dependencies: [],
+
     createdAt: {
       $date: '2023-09-18T24:05:50.607Z',
     },
@@ -150,56 +161,10 @@ db.dishes.insertMany([
     selectedOptions: [],
     options: [
       {
-        _id: 'toppings',
-        friendlyName: 'toppings',
-        allowMultipleSelections: true,
-        allowNoSelection: true,
-        options: [
-          {
-            _id: 'sour-cream',
-            friendlyName: 'Sour Cream',
-            extraPrice: 0,
-            allowQuantity: false,
-            dependencies: [],
-          },
-        ],
-        dependencies: [],
-      },
-    ],
-    dependencies: [],
-    createdAt: {
-      $date: '2023-09-18T24:05:50.607Z',
-    },
-    updatedAt: {
-      $date: '2023-09-18T24:05:50.607Z',
-    },
-    __v: 0,
-  },
-  {
-    _id: 'swat-fil-a',
-    friendlyName: 'Swat-Fil-A',
-    dotw: ['Monday', 'Tuesday'],
-    basePrice: 1,
-    tags: ['food'],
-    categories: ['lunch'],
-    isOrderable: true,
-    isArchived: false,
-    selectedOptions: [],
-    options: [
-      {
-        _id: 'toppings',
-        friendlyName: 'toppings',
-        allowMultipleSelections: true,
-        allowNoSelection: true,
-        options: [
-          {
-            _id: 'pickles',
-            friendlyName: 'Pickles',
-            extraPrice: 0,
-            allowQuantity: false,
-            dependencies: [],
-          },
-        ],
+        _id: 'sour-cream',
+        friendlyName: 'Sour Cream',
+        extraPrice: 0,
+        allowQuantity: false,
         dependencies: [],
       },
     ],
@@ -224,26 +189,17 @@ db.dishes.insertMany([
     selectedOptions: [],
     options: [
       {
-        _id: 'flavor-shots',
-        friendlyName: 'flavor shots',
-        allowMultipleSelections: true,
-        allowNoSelection: false,
-        options: [
-          {
-            _id: 'apple',
-            friendlyName: 'apple',
-            extraPrice: 0,
-            allowQuantity: true,
-            dependencies: [],
-          },
-          {
-            _id: 'lychee',
-            friendlyName: 'lychee',
-            extraPrice: 1,
-            allowQuantity: true,
-            dependencies: [],
-          },
-        ],
+        _id: 'apple',
+        friendlyName: 'apple',
+        extraPrice: 0,
+        allowQuantity: true,
+        dependencies: [],
+      },
+      {
+        _id: 'lychee',
+        friendlyName: 'lychee',
+        extraPrice: 1,
+        allowQuantity: true,
         dependencies: [],
       },
     ],
@@ -268,33 +224,24 @@ db.dishes.insertMany([
     selectedOptions: [],
     options: [
       {
-        _id: 'flavors',
-        friendlyName: 'fllavors',
-        allowMultipleSelections: false,
-        allowNoSelection: false,
-        options: [
-          {
-            _id: 'oreo',
-            friendlyName: 'oreo',
-            extraPrice: 0,
-            allowQuantity: true,
-            dependencies: [],
-          },
-          {
-            _id: 'vanilla',
-            friendlyName: 'vanilla',
-            extraPrice: 1,
-            allowQuantity: true,
-            dependencies: [],
-          },
-          {
-            _id: 'chocolate',
-            friendlyName: 'chocolate',
-            extraPrice: 1,
-            allowQuantity: true,
-            dependencies: [],
-          },
-        ],
+        _id: 'oreo',
+        friendlyName: 'oreo',
+        extraPrice: 0,
+        allowQuantity: true,
+        dependencies: [],
+      },
+      {
+        _id: 'vanilla',
+        friendlyName: 'vanilla',
+        extraPrice: 1,
+        allowQuantity: true,
+        dependencies: [],
+      },
+      {
+        _id: 'chocolate',
+        friendlyName: 'chocolate',
+        extraPrice: 1,
+        allowQuantity: true,
         dependencies: [],
       },
     ],

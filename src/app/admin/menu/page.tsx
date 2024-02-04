@@ -31,7 +31,7 @@ import {
   SelectChangeEvent,
 } from '@mui/material';
 import styles from './page.module.css';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { Folder, Delete, Add } from '@mui/icons-material';
 
 import LabelAvatar from '../../components/labelAvatar';
@@ -50,6 +50,17 @@ export default function Home() {
   const theme = useTheme();
   const { data, error, isLoading } = useSWR('/api/dishes', fetcher, { refreshInterval: 1000 });
   const [SelectedItem, setSelectedItem]: any[] = React.useState({});
+  const DOTW = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const TAGS = ['food', 'drink'];
+  const [windowTitle, setWindowTitle] = React.useState('Edit Item');
+  const [personName, setPersonName] = React.useState<string[]>([]);
+  const scrollRef = useRef<any>(null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behaviour: 'smooth' });
+    }
+  }, [SelectedItem.options]);
 
   const [open, setOpen] = React.useState(false);
   const handleOpen = (item: any) => {
@@ -77,11 +88,6 @@ export default function Home() {
   };
   const handleClose = () => setOpen(false);
 
-  const DOTW = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
-  const TAGS = ['food', 'drink'];
-  const [windowTitle, setWindowTitle] = React.useState('Edit Item');
-  const [personName, setPersonName] = React.useState<string[]>([]);
-
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
     const {
       target: { value },
@@ -104,6 +110,13 @@ export default function Home() {
     });
   };
 
+  const blankOption = {
+    _id: '',
+    friendlyName: '',
+    extraPrice: 0,
+    allowQuantity: true,
+    dependencies: [],
+  };
   const blankDish = {
     _id: '',
     friendlyName: '',
@@ -116,20 +129,10 @@ export default function Home() {
     selectedOptions: [],
     options: [
       {
-        _id: 'options',
-        friendlyName: 'Options',
-        allowMultipleSelections: true,
-        allowNoSelection: false,
+        _id: '',
+        friendlyName: '',
+        extraPrice: 0,
         allowQuantity: true,
-        options: [
-          {
-            _id: '',
-            friendlyName: '',
-            extraPrice: 0,
-            allowQuantity: true,
-            dependencies: [],
-          },
-        ],
         dependencies: [],
       },
     ],
@@ -150,20 +153,24 @@ export default function Home() {
         }
       });
     } else if (windowTitle == 'New Item') {
-      const id = await SelectedItem.friendlyName.replace(/\s+/g, '-').toLowerCase();
-      setSelectedItem({
-        ...SelectedItem,
-        _id: id,
-      });
+      let temp = Object.assign({}, SelectedItem);
+      temp._id = temp.friendlyName.replace(/\s+/g, '-').toLowerCase();
 
-      console.log(SelectedItem);
-      await axios.post('/api/dishes', SelectedItem).then((response) => {
+      await axios.post('/api/dishes', temp).then((response) => {
         if (response.status === 200) {
           handleClose();
         } else {
         }
       });
     }
+  };
+
+  const newOption = () => {
+    let temp = Object.assign([], SelectedItem.options);
+
+    temp.push(blankOption);
+
+    setSelectedItem({ ...SelectedItem, options: temp });
   };
 
   const RenderCards = () => {
@@ -219,49 +226,42 @@ export default function Home() {
     const options = [];
     const specific = [];
 
-    for (const optionType of props.options) {
-      for (const subOption of optionType.options) {
-        specific.push(
-          <>
-            <ListItem key={subOption._id}>
-              <ListItemIcon>
-                <Avatar>{subOption.friendlyName.charAt(0)}</Avatar>
-              </ListItemIcon>
-              <ListItemText
-                primary={subOption.friendlyName}
-                secondary={'$' + Number.parseFloat(subOption.extraPrice).toFixed(2)}
-              />
-            </ListItem>
-          </>,
-        );
-      }
+    for (const subOption of props.options) {
+      specific.push(
+        <>
+          <ListItem key={subOption._id}>
+            <ListItemIcon>
+              <Avatar>{subOption.friendlyName.charAt(0)}</Avatar>
+            </ListItemIcon>
+            <ListItemText
+              primary={subOption.friendlyName}
+              secondary={'$' + Number.parseFloat(subOption.extraPrice).toFixed(2)}
+            />
+          </ListItem>
+        </>,
+      );
     }
 
     return <>{specific}</>;
   };
 
-  const handleSpecificOptionUpdate = (option_id: any, type_id: any, value: any, text: any) => {
+  const handleSpecificOptionUpdate = (option_id: any, value: any, text: any) => {
     let theItem = Object.assign({}, SelectedItem);
+    let index = theItem.options.findIndex((option: any) => option._id == option_id);
 
-    let type_index = theItem.options.findIndex((item: any) => item._id == type_id);
-
-    if (type_index != -1) {
-      for (const optionType of theItem.options) {
-        let option_index = optionType.options.findIndex((option: any) => option._id == option_id);
-
-        if (option_index != -1) {
-          if (value == 'friendlyName') {
-            theItem.options[type_index].options[option_index] = {
-              ...theItem.options[type_index].options[option_index],
-              [value]: text,
-              _id: text.replace(/\s+/g, '-').toLowerCase(),
-            };
-          } else if (value == 'extraPrice') {
-            theItem.options[type_index].options[option_index] = {
-              ...theItem.options[type_index].options[option_index],
-              [value]: Number(text),
-            };
-          }
+    for (const option of theItem.options) {
+      if (index != -1) {
+        if (value == 'friendlyName') {
+          theItem.options[index] = {
+            ...theItem.options[index],
+            [value]: text,
+            _id: text.replace(/\s+/g, '-').toLowerCase(),
+          };
+        } else if (value == 'extraPrice') {
+          theItem.options[index] = {
+            ...theItem.options[index],
+            [value]: Number(text),
+          };
         }
       }
     }
@@ -270,17 +270,16 @@ export default function Home() {
     setSelectedItem(theItem);
   };
 
-  const handleSpecificOptionDelete = (option_id: any, type_id: any) => {
+  const handleSpecificOptionDelete = (option_id: any) => {
     const theItem = Object.assign([], SelectedItem);
 
-    const type_index = theItem.options.findIndex((item: any) => item._id == type_id);
-
-    if (type_index != -1) {
-      for (const optionType of theItem.options) {
-        const option_index = optionType.options.findIndex((option: any) => option._id == option_id);
-        theItem.options[type_index].options.splice(option_index, 1);
-      }
+    for (const optionType of theItem.options) {
+      const option_index = Object.values(optionType.options).findIndex(
+        (option: any) => option._id == option_id,
+      );
+      theItem.options.splice(option_index, 1);
     }
+
     setSelectedItem({ ...SelectedItem, theItem });
   };
 
@@ -334,6 +333,7 @@ export default function Home() {
             sx={{
               width: '50%',
               minHeight: '50%',
+              maxHeight: '80%',
               position: 'absolute',
               top: '50%',
               left: '50%',
@@ -380,13 +380,13 @@ export default function Home() {
                   <TextField
                     id="price"
                     label="Price"
-                    type="number"
                     variant="outlined"
+                    type="number"
                     fullWidth
                     sx={{ width: '22ch' }}
                     value={SelectedItem.basePrice}
                     onChange={(event) => {
-                      setSelectedItem({ ...SelectedItem, basePrice: event.target.value });
+                      setSelectedItem({ ...SelectedItem, basePrice: Number(event.target.value) });
                     }}
                     InputProps={{
                       startAdornment: <InputAdornment position="start">$</InputAdornment>,
@@ -488,72 +488,67 @@ export default function Home() {
             </Grid>
 
             <CardContent>
-              <Container sx={{ mt: '0%', maxHeight: '50vh', overflowY: 'scroll' }}>
-                {Object.values(SelectedItem.options).map((optionType: any) =>
-                  Object.values(optionType.options).map((subOption: any) => (
-                    <List key={optionType._id}>
-                      <ListItem
-                        secondaryAction={
-                          <IconButton
-                            edge="end"
-                            aria-label="delete"
-                            onClick={() =>
-                              handleSpecificOptionDelete(subOption._id, optionType._id)
-                            }
-                          >
-                            <Delete />
-                          </IconButton>
-                        }
-                      >
-                        <ListItemAvatar>
-                          <Avatar>{subOption.friendlyName.charAt(0)}</Avatar>
-                        </ListItemAvatar>
-                        <Grid container spacing={2}>
-                          <Grid item>
-                            {' '}
-                            <TextField
-                              id="name"
-                              label="Name"
-                              variant="outlined"
-                              size="small"
-                              value={subOption.friendlyName}
-                              onChange={(event) => {
-                                handleSpecificOptionUpdate(
-                                  subOption._id,
-                                  optionType._id,
-                                  'friendlyName',
-                                  event.target.value,
-                                );
-                              }}
-                            />
-                          </Grid>
-                          <Grid item>
-                            <TextField
-                              id="price"
-                              label="Price"
-                              variant="outlined"
-                              size="small"
-                              type="number"
-                              value={subOption.extraPrice}
-                              onChange={(event) => {
-                                handleSpecificOptionUpdate(
-                                  subOption._id,
-                                  optionType._id,
-                                  'extraPrice',
-                                  event.target.value,
-                                );
-                              }}
-                            />
-                          </Grid>
+              <Container sx={{ mt: '0%', maxHeight: '20vh', overflowY: 'scroll' }}>
+                {SelectedItem.options.map((subOption: any) => (
+                  <List key="_id">
+                    <ListItem
+                      ref={scrollRef}
+                      secondaryAction={
+                        <IconButton
+                          edge="end"
+                          aria-label="delete"
+                          onClick={() => handleSpecificOptionDelete(subOption._id)}
+                        >
+                          <Delete />
+                        </IconButton>
+                      }
+                    >
+                      <ListItemAvatar>
+                        <Avatar>{subOption.friendlyName.charAt(0)}</Avatar>
+                      </ListItemAvatar>
+                      <Grid container spacing={2}>
+                        <Grid item>
+                          {' '}
+                          <TextField
+                            id="name"
+                            label="Name"
+                            variant="outlined"
+                            size="small"
+                            value={subOption.friendlyName}
+                            onChange={(event) => {
+                              handleSpecificOptionUpdate(
+                                subOption._id,
+                                'friendlyName',
+                                event.target.value,
+                              );
+                            }}
+                          />
                         </Grid>
-                      </ListItem>
-                    </List>
-                  )),
-                )}
+                        <Grid item>
+                          <TextField
+                            id="price"
+                            label="Price"
+                            variant="outlined"
+                            size="small"
+                            type="number"
+                            value={subOption.extraPrice}
+                            onChange={(event) => {
+                              handleSpecificOptionUpdate(
+                                subOption._id,
+                                'extraPrice',
+                                event.target.value,
+                              );
+                            }}
+                          />
+                        </Grid>
+                      </Grid>
+                    </ListItem>
+                  </List>
+                ))}
               </Container>
               <Grid container justifyContent={'center'} alignItems="center">
                 <Grid item xs={10}>
-                  <Button fullWidth variant="outlined" color="primary">
+                  <Button fullWidth variant="outlined" color="primary" onClick={newOption}>
                     +
                   </Button>
                 </Grid>

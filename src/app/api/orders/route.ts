@@ -21,14 +21,18 @@ const orderQuerySchema = z.object({
 const newOrderSchema = z.object({
   customerName: z.string(), //not optional
   dish: z.string(),
-  options: z.record(z.array(z.string())).optional(),
+  options: z.array(
+    z.object({
+      //ITEM SCHEMA
+      _id: z.string(),
+      friendlyName: z.string(),
+      extraPrice: z.number(),
+      allowQuantity: z.boolean(),
+      dependencies: z.array(z.string()), //empty array for now
+    }),
+  ),
   hidden: z.boolean().optional(),
   notes: z.string().optional(),
-  customDishOptions: z.object({
-    friendlyName: z.string(),
-    description: z.string(),
-    price: z.number(),
-  }),
 });
 
 export async function GET(request: NextRequest) {

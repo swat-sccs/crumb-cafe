@@ -28,48 +28,6 @@ import useSWR from 'swr';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
-//if we want to use a table to display orders that are ready:
-// function createData(
-//   order_number: number,
-//   name: string,
-// ) {
-//   return { order_number, name };
-// }
-
-// const rows = [
-//   createData( 2, 'Summit'),
-//   createData( 3, 'Helen'),
-//   createData( 5, 'Tina'),
-// ];
-
-// function BasicTable() {
-//   return (
-//     <TableContainer component={Paper}>
-//       <Table sx={{ minWidth: 650 }} aria-label="simple table">
-//         <TableHead>
-//           <TableRow>
-//             <TableCell>Order Number</TableCell>
-//             <TableCell>Name</TableCell>
-//           </TableRow>
-//         </TableHead>
-//         <TableBody>
-//           {rows.map((row) => (
-//             <TableRow
-//               key={row.name}
-//               sx={{ '&:last-child td, &:last-child th': { border: 0 } }}
-//             >
-//               <TableCell component="th" scope="row">
-//                 {row.order_number}
-//               </TableCell>
-//               <TableCell>{row.name}</TableCell>
-//             </TableRow>
-//           ))}
-//         </TableBody>
-//       </Table>
-//     </TableContainer>
-//   );
-// }
-
 export default function Home() {
   const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 1000 });
 
@@ -77,7 +35,6 @@ export default function Home() {
     if (isLoading) {
       return <></>;
     } else {
-      console.log(data.orders);
       const filteredOrders = data.orders.filter(
         (dish: any) => dish.hidden == false && dish.status == 'in_progress',
       );

@@ -52,6 +52,40 @@ const OptionsSchema = new Schema({
 
 export type CustomDishOptions = InferSchemaType<typeof CustomDishOptionsSchema>;
 
+const DishOptionItemSchema = new Schema({
+  _id: {
+    type: String,
+    required: true,
+  },
+  // name that should be displayed in the UI
+  friendlyName: {
+    type: String,
+    required: true,
+  },
+  extraPrice: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  allowQuantity: {
+    // as in "2 shots" etc.
+    type: Boolean,
+    required: true,
+    default: false,
+  },
+  // if any of these are out-of-stock, we mark it out of stock
+  dependencies: {
+    type: [
+      {
+        type: String,
+        ref: 'Ingredient',
+      },
+    ],
+  },
+});
+
+export type DishOptionItem = InferSchemaType<typeof DishOptionItemSchema>;
+
 const OrderSchema = new Schema(
   {
     customerName: {
@@ -80,19 +114,12 @@ const OrderSchema = new Schema(
     },
     // map customization ID to an array of one or more customization option IDs
     // for multi-quantity options just repeat the ID a couple times
-    options: {
-      type: Map,
-      of: [String],
-      required: false,
-    },
+    options: [DishOptionItemSchema],
     notes: {
       type: String,
       required: false,
     },
-    customDishOptions: {
-      type: CustomDishOptionsSchema,
-      required: false,
-    },
+
     updates: [OrderUpdateSchema],
   },
   {

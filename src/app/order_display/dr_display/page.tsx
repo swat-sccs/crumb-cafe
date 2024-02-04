@@ -40,6 +40,7 @@ export default function Home() {
     } else {
       const filteredOrders = data.orders.filter((dish: any) => dish.hidden == false);
       const orders = [];
+
       for (const item of filteredOrders) {
         const status = item.status;
         let statusColor = 'grey';
@@ -119,13 +120,12 @@ export default function Home() {
   const Options = (props: any) => {
     const options = [];
     const specific = [];
-
-    for (const key in props.options) {
-      return props.options[key].map((option: any) => (
+    for (let item of props.options) {
+      options.push(
         <>
           <Grid item sx={{ m: 1 }}>
             <Chip
-              label={option}
+              label={item.friendlyName}
               color="primary"
               sx={{
                 fontSize: '120%',
@@ -135,14 +135,22 @@ export default function Home() {
               }}
             ></Chip>
           </Grid>
-        </>
-      ));
+        </>,
+      );
     }
+    return <>{options}</>;
   };
 
   const completeOrder = async (item: any) => {
     const url = '/api/orders/' + item._id;
     let theitem = Object.assign({}, item);
+
+    theitem['updates'].push({
+      _id: theitem['_id'],
+      newStatus: 'completed',
+      user: 'admin',
+    });
+    theitem['status'] = 'completed';
     theitem['hidden'] = 'true';
 
     await axios.put(url, theitem).then((response) => {
@@ -153,20 +161,19 @@ export default function Home() {
   const updateOrder = async (item: any) => {
     const url = '/api/orders/' + item._id;
     let theitem = Object.assign({}, item);
-    console.log(theitem);
 
     if (theitem['status'] == 'new') {
       theitem['updates'].push({
         _id: theitem['_id'],
         newStatus: 'in_progress',
-        user: 'foo',
+        user: 'admin',
       });
       theitem['status'] = 'in_progress';
     } else if (theitem['status'] == 'in_progress') {
       theitem['updates'].push({
         _id: theitem['_id'],
         newStatus: 'completed',
-        user: 'foo',
+        user: 'admin',
       });
       theitem['status'] = 'completed';
       theitem['hidden'] = 'true';

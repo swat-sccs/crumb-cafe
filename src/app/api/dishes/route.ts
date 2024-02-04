@@ -29,26 +29,14 @@ const newDishSchema = z.object({
   isArchived: z.boolean(),
   options: z.array(
     z.object({
-      //dish GROUP SCHEMA
+      //ITEM SCHEMA
       _id: z.string(),
       friendlyName: z.string(),
-      allowMultipleSelections: z.boolean(),
-      allowNoSelection: z.boolean(),
+      extraPrice: z.number(),
       allowQuantity: z.boolean(),
-      options: z.array(
-        z.object({
-          //ITEM SCHEMA
-          _id: z.string(),
-          friendlyName: z.string(),
-          extraPrice: z.number(),
-          allowQuantity: z.boolean(),
-          dependencies: z.array(z.string()), //empty array for now
-        }),
-      ),
-      dependencies: z.array(z.string()), //empty array
+      dependencies: z.array(z.string()), //empty array for now
     }),
   ),
-
   dependencies: z.array(z.string()), //empty array
 });
 

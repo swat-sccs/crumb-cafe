@@ -22,10 +22,9 @@ import {
   Fade,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
-
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { orange, cyan, blueGrey } from '@mui/material/colors';
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { BreakfastDiningOutlined, LegendToggle } from '@mui/icons-material';
 import { AnyKeys } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
@@ -46,56 +45,54 @@ export default function App() {
   const handleSuccess = () => setSuccess(false);
   const [Failure, setFailure] = React.useState(false);
   const handleFailure = () => setFailure(false);
-
   const [name, setName] = React.useState('');
+  const scrollRef = useRef<any>(null);
+
+  const scrollToElement = (id: any) => {
+    const current = document.getElementById(id);
+    if (current !== null) {
+      current.scrollIntoView({ behavior: 'smooth' });
+    }
+  };
 
   function handleNameChange(e: any) {
     setName(e.target.value);
   }
 
   const [currentDish, setCurrentDish] = useState({
-    _id: 'pancakes',
-    friendlyName: 'Pancakes',
-    basePrice: 1,
+    _id: '',
+    friendlyName: '',
+    dotw: ['Monday'],
+    basePrice: 5,
     tags: ['food'],
-    categories: ['breakfast'],
+    categories: ['food'],
     isOrderable: true,
     isArchived: false,
-    selectedOptions: {},
+    selectedOptions: [],
     options: [
       {
-        _id: 'toppings',
-        friendlyName: 'toppings',
-        allowMultipleSelections: true,
-        allowNoSelection: true,
-        options: [
-          {
-            _id: 'syrup',
-            friendlyName: 'maple syrup',
-            extraPrice: 0,
-            allowQuantity: false,
-            dependencies: [],
-          },
-          {
-            _id: 'berries',
-            friendlyName: 'berries',
-            extraPrice: 1,
-            allowQuantity: false,
-            dependencies: [],
-          },
-        ],
+        _id: '',
+        friendlyName: '',
+        extraPrice: 0,
+        allowQuantity: true,
         dependencies: [],
       },
     ],
     dependencies: [],
     __v: 0,
   }); //when selected CurrentDish is updated to display correct options.
+
   const [flag, setFlag] = useState(true); //true is food, false is drink
 
   //NEEDS TO BE CHANGED to; showOptions or something similar
   const [options, setOptions] = useState(false); //true is in (options/customization mode) false is normal menu
 
   const [currentOrder, setCurrentOrder]: any[] = useState([]); //Keeps Track of current running order
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollIntoView({ behaviour: 'smooth' });
+    }
+  }, [currentOrder]);
 
   const [runningTotal, setRunningTotal] = useState(0);
   //const [foodOdrink, setfoodOdrink] = useState('food');
@@ -107,18 +104,6 @@ export default function App() {
       setfoodOdrink(newAlignment);
     }
   };
-
-  const [drinks, setDrinks] = useState([
-    { name: 'Sprite', qty: 0, price: 1.25 },
-    { name: 'Pepsi', qty: 0, price: 1.0 },
-    { name: 'Coke', qty: 0, price: 1.0 },
-    { name: 'Fanta', qty: 0, price: 1.0 },
-    { name: 'Root Beer', qty: 0, price: 1.0 },
-    { name: 'Mountain Dew', qty: 0, price: 1.0 },
-    { name: 'Lemonade', qty: 0, price: 1.0 },
-    { name: 'WATER', qty: 0, price: 1.0 },
-    { name: 'Chocky Milk', qty: 0, price: 1.0 },
-  ]);
 
   const addItems = () => {
     let rt = runningTotal;
@@ -137,11 +122,8 @@ export default function App() {
     setCurrentOrder([...currentOrder, item]);
     setCurrentDish(item);
     setOptions(true);
+    scrollToElement(item._id);
     //console.log(currentOrder);
-  };
-
-  const updateOrder = () => {
-    console.log(currentDish);
   };
 
   const removeItem = (props: any) => {
@@ -169,25 +151,25 @@ export default function App() {
     setCurrentOrder(temp);
   };
 
-  const removeOption = (item: any, option: any) => {
-    let itemToRemoveFrom = item;
-    let optionToRemove = option;
+  const removeOption = (itemToRemoveFrom: any, optionToRemove: any) => {
     //let rt = runningTotal;
-
+    console.log(typeof currentOrder);
     let temp = Object.assign([], currentOrder);
     let rt = runningTotal;
 
     for (const thing of temp) {
-      //console.log(thing.selectedOptions[0]);
-      if (thing.friendlyName == item.friendlyName && thing.selectedOptions.indexOf(option) > -1) {
-        let index = thing.selectedOptions.indexOf(option);
+      if (
+        thing.friendlyName == itemToRemoveFrom.friendlyName &&
+        thing.selectedOptions.indexOf(optionToRemove) > -1
+      ) {
+        let index = thing.selectedOptions.indexOf(optionToRemove);
         thing.selectedOptions.splice(index, 1);
-        thing.basePrice -= option.price;
-        rt -= option.price;
+        thing.basePrice -= optionToRemove.extraPrice;
+        rt -= optionToRemove.extraPrice;
       }
     }
-    console.log(temp);
-    console.log(currentOrder);
+
+    console.log(rt);
 
     setRunningTotal(rt);
     setCurrentOrder(temp);
@@ -205,23 +187,9 @@ export default function App() {
     setOptions(true);
   };
 
-  const removeDrink = (item: any) => {
-    let rt = runningTotal;
-    for (const thing of drinks) {
-      if (thing.name == item.name) {
-        thing.qty -= 1;
-        rt -= thing.price;
-      }
-    }
-    setRunningTotal(rt);
-    setDrinks([...drinks]);
-  };
-
   const cancelOrder = () => {
     setCurrentOrder([]);
-    for (const thing of drinks) {
-      thing.qty = 0;
-    }
+
     //console.log(runningTotal);
     setRunningTotal(0);
     //console.log(runningTotal);
@@ -229,6 +197,7 @@ export default function App() {
 
   const confirmOrder = async (name: string) => {
     console.log('order confirmed!: ' + name);
+    console.log(currentOrder);
     handleClose();
 
     for (const order of currentOrder) {
@@ -239,29 +208,17 @@ export default function App() {
         thing1 = {
           customerName: name,
           dish: order._id,
-          //options: { 'flavor-shots': ['apple', 'lychee'] },
           options: order.selectedOptions,
           hidden: false,
           notes: 'A note',
-          customDishOptions: {
-            friendlyName: order.friendlyName,
-            description: 'It is soda',
-            price: order.basePrice,
-          },
         };
       } else {
         thing1 = {
           customerName: name,
           dish: order._id,
-          //options: { 'flavor-shots': ['apple', 'lychee'] },
           options: {},
           hidden: false,
           notes: 'A note',
-          customDishOptions: {
-            friendlyName: order.friendlyName,
-            description: 'It is soda',
-            price: order.basePrice,
-          },
         };
       }
 
@@ -326,66 +283,49 @@ export default function App() {
   };
 
   const OptionsComponent = (props: any) => {
-    const options = [];
     const specific = [];
 
-    for (const optionType of props.options) {
-      const multi = optionType.allowMultipleSelections;
-      for (const subOption of optionType.options) {
-        specific.push(
-          <>
-            <Grid item sx={{ m: 1 }}>
-              <Button
-                onClick={() =>
-                  addOption(
-                    subOption.friendlyName,
-                    subOption.extraPrice,
-                    optionType.friendlyName,
-                    multi,
-                  )
-                }
-                size="large"
-              >
-                {subOption.friendlyName}
-              </Button>
-            </Grid>
-          </>,
-        );
-      }
+    for (const subOption of props.options) {
+      const multi = subOption.allowQuantity;
+      console.log(subOption);
+      specific.push(
+        <>
+          <Grid item sx={{ m: 1 }}>
+            <Button onClick={() => addOption(subOption, multi)} size="large">
+              {subOption.friendlyName}
+            </Button>
+          </Grid>
+        </>,
+      );
     }
 
     return <>{specific}</>;
   };
 
-  const addOption = (name: string, price: number, optionType: string, multi: boolean) => {
-    const dict = {
-      [optionType]: [name],
-    };
+  const addOption = (option: any, multi: boolean) => {
+    let theOptions: any = [];
+    theOptions = Array.from(currentDish.selectedOptions);
 
-    let theOptions: any = {};
-    theOptions = Object.assign({}, currentDish.selectedOptions);
+    let exists = false;
 
-    if (theOptions[optionType] != undefined) {
-      console.log('things already there');
-      let temp = theOptions[optionType];
-      temp.push(name);
-      theOptions[optionType] = temp;
-    } else {
-      theOptions = dict;
+    for (const item of theOptions) {
+      if (item._id == option._id) {
+        exists = true;
+      }
     }
+    console.log(exists);
 
-    //theOptions.push({ name: name, price: price, id: theOptions.length });
+    theOptions.push(option);
 
-    //console.log(theOptions);
-    //const editedDish = currentDish;
-    const editedDish = Object.assign([], currentDish);
-    editedDish['basePrice'] = currentDish.basePrice + price;
+    const editedDish = Object.assign({}, currentDish);
+    editedDish['basePrice'] = currentDish.basePrice + option.extraPrice;
     editedDish['selectedOptions'] = theOptions;
     setCurrentDish(editedDish);
 
-    const editedOrder = Object.assign([], currentOrder);
+    const editedOrder = Array.from(currentOrder);
     editedOrder[currentOrder.length - 1] = editedDish;
     setCurrentOrder(editedOrder);
+    console.log(currentOrder);
   };
 
   const NamePopUp = () => {
@@ -401,22 +341,44 @@ export default function App() {
       p: 4,
     };
 
-    return (
-      <Modal
-        //disableEnforceFocus
-        disableScrollLock
-        open={open}
-        onClose={handleClose}
-        closeAfterTransition
-      >
-        <Box sx={style}>
-          <Typography id="transition-modal-title" variant="h3" align="center">
-            Order Name
-          </Typography>
-          <InputComponent />
-        </Box>
-      </Modal>
-    );
+    if (open) {
+      return (
+        <>
+          <Box
+            onClick={handleClose}
+            sx={{
+              width: '100%',
+              height: '100%',
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              backgroundColor: 'rgba(0,0,0,0.7)',
+              zIndex: '1',
+            }}
+          >
+            <Box
+              sx={{
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%, -50%)',
+                width: '30vw',
+                bgcolor: 'background.paper',
+                border: '2px solid #000',
+                boxShadow: 24,
+                p: 4,
+              }}
+            >
+              <Typography id="transition-modal-title" variant="h3" align="center">
+                Order Name
+              </Typography>
+              <InputComponent />
+            </Box>
+          </Box>
+        </>
+      );
+    }
+    return <></>;
   };
   const InputComponent = () => {
     return (
@@ -746,33 +708,32 @@ export default function App() {
   };
 
   const RenderSelectedOptions = (props: any) => {
-    for (const key in props.options) {
-      return props.options[key].map((option: any) => (
-        <>
-          <ListItem>
-            <ListItemButton sx={{ pl: 2 }} onClick={() => removeOption(props.item, option)}>
-              <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                <Grid item>
-                  <ListItemText sx={{ overflowX: 'auto' }}>{option}</ListItemText>
-                </Grid>
-                <Grid item></Grid>
+    return props.selectedOptions.map((option: any) => (
+      <>
+        <ListItem id={props.item._id}>
+          <ListItemButton sx={{ pl: 2 }} onClick={() => removeOption(props.item, option)}>
+            <Grid container direction="row" justifyContent="space-between" alignItems="center">
+              <Grid item>
+                <ListItemText sx={{ overflowX: 'auto' }}>{option.friendlyName}</ListItemText>
               </Grid>
-            </ListItemButton>
-          </ListItem>
-        </>
-      ));
-    }
+              <Grid item>
+                {option.extraPrice > 0 ? (
+                  <ListItemText>+ {option.extraPrice.toFixed(2)}</ListItemText>
+                ) : null}
+              </Grid>
+            </Grid>
+          </ListItemButton>
+        </ListItem>
+      </>
+    ));
   };
-  /*<ListItemText sx={{ overflowX: 'auto' }}>
-                    + ${Number.parseFloat(option.price).toFixed(2)}
-                  </ListItemText>*/
-
   //Render Current Selected food on left List
   const CurrentOrderItemsComponent = () => {
     //(currentOrder);
     return currentOrder.map((item: any) => (
       <>
         <ListItem
+          ref={scrollRef}
           secondaryAction={
             <IconButton edge="end" aria-label="delete" onClick={() => removeItem(item)}>
               <DeleteIcon />
@@ -796,7 +757,10 @@ export default function App() {
             </ListItemText>
           </ListItemButton>
         </ListItem>
-        <RenderSelectedOptions options={item.selectedOptions} item={item}></RenderSelectedOptions>
+        <RenderSelectedOptions
+          selectedOptions={item.selectedOptions}
+          item={item}
+        ></RenderSelectedOptions>
 
         <Divider></Divider>
       </>
@@ -836,21 +800,23 @@ export default function App() {
       <Box>
         <Grid container spacing={12} rowSpacing={10} columnSpacing={{ xs: 5, sm: 2, md: 2 }}>
           <Grid item sm={6}>
-            <Grid
-              container
-              direction="row"
-              alignContent="center"
-              justifyContent="space-between"
-              sx={{ p: 2 }}
-            >
-              <Typography variant="h6" textAlign="left">
-                Item
-              </Typography>
+            <Card>
+              <Grid
+                container
+                direction="row"
+                alignContent="center"
+                justifyContent="space-between"
+                sx={{ p: 2 }}
+              >
+                <Typography variant="h6" textAlign="left">
+                  Item
+                </Typography>
 
-              <Typography variant="h6" textAlign="right">
-                Price
-              </Typography>
-            </Grid>
+                <Typography variant="h6" textAlign="right">
+                  Price
+                </Typography>
+              </Grid>
+            </Card>
             <Grid item>
               <List sx={{ overflow: 'auto', height: '60vh' }}>
                 <CurrentOrderItemsComponent></CurrentOrderItemsComponent>

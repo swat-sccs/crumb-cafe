@@ -112,7 +112,7 @@ const DishSchema = new Schema(
       required: true,
       default: false,
     },
-    options: [DishOptionGroupSchema],
+    options: [DishOptionItemSchema],
     // if any of these are out-of-stock, we mark it out of stock
     dependencies: {
       type: [
