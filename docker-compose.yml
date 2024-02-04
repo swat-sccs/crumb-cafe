@@ -11,3 +11,23 @@ services:
       NODE_ENV: production
     ports:
       - 3000:3000
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik'
+      - 'traefik.http.routers.wsrn.entrypoints=https'
+      - 'traefik.http.routers.wsrn.rule=Host(`wsrn.sccs.swarthmore.edu`)'
+      - 'traefik.http.routers.wsrn.tls=true'
+      - 'traefik.http.routers.wsrn.tls.certresolver=letsEncrypt'
+      - 'traefik.http.services.wsrn.loadbalancer.server.port=3000'
+    container_name: wsrn-docker
+    command: npm run start
+    volumes:
+      - .:/app
+      - /app/node_modules
+    networks:
+      - traefik
+
+networks:
+  traefik:
+    external: true
+    driver: bridge
