@@ -39,6 +39,8 @@ services:
       - ./dev/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     ports:
       - 127.0.0.1:27018:27018
+    networks:
+      - traefik
 
 networks:
   traefik:
