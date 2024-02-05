@@ -18,7 +18,7 @@ services:
       - 'traefik.http.routers.crumb.rule=Host(`crumb.sccs.swarthmore.edu`)'
       - 'traefik.http.routers.crumb.tls=true'
       - 'traefik.http.routers.crumb.tls.certresolver=letsEncrypt'
-      - 'traefik.http.services.wsrn.loadbalancer.server.port=3434'
+      - 'traefik.http.services.crumb.loadbalancer.server.port=3434'
     container_name: crumb-docker
     command: npm run start
     volumes:
