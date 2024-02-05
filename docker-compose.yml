@@ -10,7 +10,7 @@ services:
     environment:
       NODE_ENV: production
       DOMAIN: https://crumb.sccs.swarthmore.edu/
-      MONGODB_URI: mongodb://db:27017
+      MONGODB_URI: mongodb://crumb-db:27017
       MONGODB_DB: crumb
     labels:
       - 'traefik.enable=true'
@@ -27,7 +27,8 @@ services:
       - traefik
 
   db:
-    image: mongo:latest
+    image: mongo:5.0.24-focal
+    hostname: crumb-db
     # first-time database initialization
     environment:
       MONGO_INITDB_DATABASE: crumb
