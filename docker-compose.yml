@@ -39,6 +39,14 @@ services:
       - ./dev/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     ports:
       - 127.0.0.1:27018:27017
+    labels:
+      - 'traefik.enable=true'
+      - 'traefik.docker.network=traefik'
+      - 'traefik.http.routers.mongo.entrypoints=https'
+      - 'traefik.http.routers.mongo.rule=Host(`crumb.sccs.swarthmore.edu`)'
+      - 'traefik.http.routers.mongo.tls=true'
+      - 'traefik.http.routers.mongo.tls.certresolver=letsEncrypt'
+      - 'traefik.http.services.mongo.loadbalancer.server.port=27018'
     networks:
       - traefik
 
