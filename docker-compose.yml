@@ -10,7 +10,7 @@ services:
     environment:
       NODE_ENV: production
     ports:
-      - 3434:3000
+      - 3434:3434
     labels:
       - 'traefik.enable=true'
       - 'traefik.docker.network=traefik'
