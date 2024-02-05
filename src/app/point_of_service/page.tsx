@@ -48,6 +48,8 @@ export default function App() {
   const [name, setName] = React.useState('');
   const scrollRef = useRef<any>(null);
 
+  const [editing, setEditing] = React.useState(false);
+
   const scrollToElement = (id: any) => {
     const current = document.getElementById(id);
     if (current !== null) {
@@ -87,7 +89,7 @@ export default function App() {
   //NEEDS TO BE CHANGED to; showOptions or something similar
   const [options, setOptions] = useState(false); //true is in (options/customization mode) false is normal menu
 
-  const [currentOrder, setCurrentOrder]: any[] = useState([]); //Keeps Track of current running order
+  const [currentOrder, setCurrentOrder] = React.useState<any>([]); //Keeps Track of current running order
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollIntoView({ behaviour: 'smooth' });
@@ -106,16 +108,30 @@ export default function App() {
   };
 
   const addItems = () => {
-    let rt = runningTotal;
     //setCurrentDish(item);
     //console.log(currentDish);
     // console.log(currentDish);
     //setCurrentOrder([...currentOrder, currentDish]);
-    rt += currentDish.basePrice;
-    setRunningTotal(rt);
     setOptions(false);
     //console.log(currentOrder);
   };
+
+  const calcTotal = () => {
+    let rt = 0;
+
+    for (const item of currentOrder) {
+      rt += item.basePrice;
+      for (const option of item.selectedOptions) {
+        rt += option.extraPrice;
+      }
+    }
+
+    setRunningTotal(rt);
+  };
+  useEffect(() => {
+    calcTotal();
+    //do operation on state change
+  }, [currentOrder]);
 
   const handleOpenOptions = (item: any) => {
     //console.log(item);
@@ -126,36 +142,33 @@ export default function App() {
     //console.log(currentOrder);
   };
 
-  const removeItem = (props: any) => {
+  const removeItem = async (props: any) => {
     //setOptions(false);
     //console.log('props to follow');
     //console.log(props);
-    let rt = runningTotal;
     let temp = Object.assign([], currentOrder);
     //this finds the first match, but we want it to delete current item!
     //fix later by making sure ALL fields match
-
-    for (const thing of currentOrder) {
-      if (thing == props && options == false) {
-        rt -= thing.basePrice;
-        let index = temp.indexOf(thing);
-        temp.splice(index, 1);
-        setOptions(false);
-        console.log('options set to false');
-        break;
+    if (options == false) {
+      for (const thing of currentOrder) {
+        if (thing == props) {
+          let index = temp.indexOf(thing);
+          temp.splice(index, 1);
+          //setOptions(false);
+          //console.log('options set to false');
+          break;
+        }
       }
+
+      setCurrentOrder(temp);
     }
-
-    setRunningTotal(rt);
-
-    setCurrentOrder(temp);
   };
 
-  const removeOption = (itemToRemoveFrom: any, optionToRemove: any) => {
+  const removeOption = async (itemToRemoveFrom: any, optionToRemove: any) => {
     //let rt = runningTotal;
-    console.log(typeof currentOrder);
+
     let temp = Object.assign([], currentOrder);
-    let rt = runningTotal;
+    //let rt = runningTotal;
 
     for (const thing of temp) {
       if (
@@ -164,14 +177,11 @@ export default function App() {
       ) {
         let index = thing.selectedOptions.indexOf(optionToRemove);
         thing.selectedOptions.splice(index, 1);
-        thing.basePrice -= optionToRemove.extraPrice;
-        rt -= optionToRemove.extraPrice;
+        //thing.basePrice -= optionToRemove.extraPrice;
+        //rt -= optionToRemove.extraPrice;
       }
     }
 
-    console.log(rt);
-
-    setRunningTotal(rt);
     setCurrentOrder(temp);
   };
 
@@ -287,7 +297,7 @@ export default function App() {
 
     for (const subOption of props.options) {
       const multi = subOption.allowQuantity;
-      console.log(subOption);
+
       specific.push(
         <>
           <Grid item sx={{ m: 1 }}>
@@ -313,19 +323,17 @@ export default function App() {
         exists = true;
       }
     }
-    console.log(exists);
 
     theOptions.push(option);
 
     const editedDish = Object.assign({}, currentDish);
-    editedDish['basePrice'] = currentDish.basePrice + option.extraPrice;
+    //editedDish['basePrice'] = currentDish.basePrice + option.extraPrice;
     editedDish['selectedOptions'] = theOptions;
     setCurrentDish(editedDish);
 
     const editedOrder = Array.from(currentOrder);
     editedOrder[currentOrder.length - 1] = editedDish;
     setCurrentOrder(editedOrder);
-    console.log(currentOrder);
   };
 
   const NamePopUp = () => {
@@ -662,7 +670,7 @@ export default function App() {
     if (options) {
       return (
         <>
-          <Grid>
+          <Grid container justifyContent="space-evenly">
             {' '}
             <Button
               sx={{
@@ -676,17 +684,6 @@ export default function App() {
               onClick={() => removeItem(currentDish)}
             >
               Delete This Item
-            </Button>
-            <Button
-              sx={{
-                m: 1,
-                width: '30%',
-                fontSize: 12,
-                height: 60,
-              }}
-              size="large"
-            >
-              Custom Item
             </Button>
             <Button
               sx={{
@@ -730,6 +727,8 @@ export default function App() {
   //Render Current Selected food on left List
   const CurrentOrderItemsComponent = () => {
     //(currentOrder);
+    console.log('Logging!');
+    console.log(currentOrder);
     return currentOrder.map((item: any) => (
       <>
         <ListItem
@@ -767,13 +766,6 @@ export default function App() {
     ));
   };
 
-  useEffect(() => {
-    //runs after first and every render
-    console.log('page loaded');
-    //logUser();
-    logDish();
-  }, []);
-
   /*
   async function logUser() {
     const response = await fetch('http://localhost:3000/api/hello');
@@ -784,15 +776,6 @@ export default function App() {
     console.log(user);
   }
   */
-
-  async function logDish() {
-    // const response = await fetch("http://localhost:3000/api/dishes");
-    // const dishes = await response.json();
-    // console.log(dishes);
-    // console.log('dish ' + dish);
-    //setUser(dishes);
-    //console.log(dishes);
-  }
 
   return (
     <Container sx={{}}>
