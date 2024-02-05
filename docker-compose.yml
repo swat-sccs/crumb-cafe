@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   crumb:
-    init: true
+    restart: unless-stopped
     image: crumb
     build:
       context: .
@@ -10,16 +10,16 @@ services:
     environment:
       NODE_ENV: production
     ports:
-      - 3000:3000
+      - 3434:3000
     labels:
       - 'traefik.enable=true'
       - 'traefik.docker.network=traefik'
-      - 'traefik.http.routers.wsrn.entrypoints=https'
-      - 'traefik.http.routers.wsrn.rule=Host(`wsrn.sccs.swarthmore.edu`)'
-      - 'traefik.http.routers.wsrn.tls=true'
-      - 'traefik.http.routers.wsrn.tls.certresolver=letsEncrypt'
-      - 'traefik.http.services.wsrn.loadbalancer.server.port=3000'
-    container_name: wsrn-docker
+      - 'traefik.http.routers.crumb.entrypoints=https'
+      - 'traefik.http.routers.crumb.rule=Host(`crumb.sccs.swarthmore.edu`)'
+      - 'traefik.http.routers.crumb.tls=true'
+      - 'traefik.http.routers.crumb.tls.certresolver=letsEncrypt'
+      - 'traefik.http.services.wsrn.loadbalancer.server.port=3434'
+    container_name: crumb-docker
     command: npm run start
     volumes:
       - .:/app
