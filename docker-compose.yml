@@ -9,6 +9,9 @@ services:
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
+      DOMAIN: http://127.0.0.1:3434/
+      MONGODB_URI: mongodb://db:27018
+      MONGODB_DB: crumb
     ports:
       - 3434:3434
     labels:
@@ -26,6 +29,16 @@ services:
       - /app/node_modules
     networks:
       - traefik
+
+  db:
+    image: mongo:latest
+    # first-time database initialization
+    environment:
+      MONGO_INITDB_DATABASE: crumb
+    volumes:
+      - ./dev/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+    ports:
+      - 127.0.0.1:27018:27018
 
 networks:
   traefik:
