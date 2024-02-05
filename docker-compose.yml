@@ -9,11 +9,9 @@ services:
       dockerfile: ./Dockerfile
     environment:
       NODE_ENV: production
-      DOMAIN: http://127.0.0.1:3434/
-      MONGODB_URI: http://localhost:27017
+      DOMAIN: https://crumb.sccs.swarthmore.edu/
+      MONGODB_URI: mongodb://db:27017
       MONGODB_DB: crumb
-    ports:
-      - 3434:3434
     labels:
       - 'traefik.enable=true'
       - 'traefik.docker.network=traefik'
@@ -40,7 +38,6 @@ services:
 
 networks:
   internal:
-    driver: bridge
   traefik:
     external: true
     driver: bridge
