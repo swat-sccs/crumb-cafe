@@ -14,7 +14,6 @@ services:
       MONGODB_DB: crumb
     ports:
       - 3434:3434
-      - 27018:27018
     labels:
       - 'traefik.enable=true'
       - 'traefik.docker.network=traefik'
@@ -39,7 +38,7 @@ services:
     volumes:
       - ./dev/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     ports:
-      - 127.0.0.1:27018:27018
+      - 127.0.0.1:27018:27017
     networks:
       - traefik
 
