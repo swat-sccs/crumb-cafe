@@ -2,8 +2,9 @@ import mongoose from 'mongoose';
 
 declare global {}
 
-const { MONGODB_URI, MONGODB_DB } = process.env;
-
+//const { MONGODB_URI, MONGODB_DB } = process.env.MONGODB_URI, process.env.MONGODB_DB;
+const MONGODB_URI = process.env.MONGODB_URI;
+const MONGODB_DB = process.env.MONGODB_DB;
 let cached = global.mongoose;
 
 if (!cached) {
