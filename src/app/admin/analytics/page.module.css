@@ -10,9 +10,6 @@
 }
 
 .info {
-  min-width: 505;
-  max-height: 140;
-
   animation-duration: 0.5s;
   animation-name: animate-fade;
   animation-delay: 0s;

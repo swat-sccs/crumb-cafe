@@ -9,6 +9,7 @@ db.orders.insertMany([
     customerNumber: 1,
     status: 'completed',
     hidden: 'true',
+    price: 5,
     // italian soda
     dish: 'italian-soda',
     // lychee and apple shots
@@ -45,6 +46,7 @@ db.orders.insertMany([
     customerName: 'customer2',
     customerNumber: 2,
     status: 'in_progress',
+    price: 5,
     hidden: 'false',
     dish: 'custom',
     options: [
@@ -79,6 +81,7 @@ db.orders.insertMany([
   {
     customerName: 'customer3',
     customerNumber: 3,
+    price: 5,
     status: 'new',
     hidden: 'false',
     dish: 'pancakes',

@@ -31,6 +31,7 @@ const newOrderSchema = z.object({
       dependencies: z.array(z.string()), //empty array for now
     }),
   ),
+  price: z.number(),
   hidden: z.boolean().optional(),
   notes: z.string().optional(),
 });

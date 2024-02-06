@@ -1,16 +1,20 @@
 //Side Bar
 'use client';
+
 import * as React from 'react';
 
 import {
   Box,
   Grid,
   ListItem,
-  Typography,
+  Divider,
   Drawer,
   ListItemButton,
-  Card,
+  ListItemIcon,
+  ListItemText,
+  List,
   Container,
+  IconButton,
 } from '@mui/material';
 
 import { useTheme } from '@mui/material/styles';
@@ -21,7 +25,7 @@ import {
   Settings,
   CalendarMonth,
   Home,
-  Person,
+  RestaurantMenu,
   ArrowBackIos,
 } from '@mui/icons-material';
 import { useRouter, usePathname } from 'next/navigation';
@@ -33,7 +37,6 @@ New box in the sub global on click fly out card with 3 sub links
 */
 
 export default function Navigation() {
-  const theme = useTheme();
   const router = useRouter();
 
   const [state, setState] = React.useState({
@@ -48,122 +51,89 @@ export default function Navigation() {
 
   return (
     <Container>
-      <Card
-        sx={{
-          backgroundColor: theme.palette.primary.main,
-          marginTop: '35%',
-          borderRadius: '10px',
-        }}
+      <IconButton
+        size="large"
+        edge="start"
+        color="inherit"
+        aria-label="menu"
+        sx={{ mr: 2 }}
+        onClick={toggleDrawer('open', true)}
       >
-        <Grid container alignContent="center" justifyContent="center">
-          <Menu sx={{ fontSize: '300%' }} onClick={toggleDrawer('open', true)}></Menu>
-        </Grid>
-      </Card>
+        <Menu />
+      </IconButton>
 
       <Drawer
         open={state['open']}
         onClose={toggleDrawer('open', false)}
         onClick={toggleDrawer('open', false)}
       >
-        <Box>
-          <Grid
-            container
-            direction="column"
-            justifyContent="space-evenly"
-            alignItems="center"
-            sx={{ minHeight: 500 }}
-          >
-            <ListItemButton
-              divider
-              sx={{ width: '100%' }}
-              onClick={() => {
-                router.push('/');
-              }}
-            >
-              <Grid container justifyContent="center">
-                <ArrowBackIos fontSize="large"></ArrowBackIos>
-                <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-                  Back
-                </Typography>
-              </Grid>
-            </ListItemButton>
+        <Box sx={{ width: 200 }} role="presentation">
+          <List>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  router.push('/');
+                }}
+              >
+                <ListItemIcon>
+                  <ArrowBackIos></ArrowBackIos>
+                </ListItemIcon>
+                <ListItemText primary={'Home'} />
+              </ListItemButton>
+            </ListItem>
+            <Divider></Divider>
 
-            <ListItem divider sx={{ minHeight: 100 }}></ListItem>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  router.push('/admin/menu');
+                }}
+              >
+                <ListItemIcon>
+                  <RestaurantMenu></RestaurantMenu>
+                </ListItemIcon>
+                <ListItemText primary={'Menu'} />
+              </ListItemButton>
+            </ListItem>
 
-            <ListItemButton
-              divider
-              sx={{ width: '100%' }}
-              onClick={() => {
-                router.push('/admin');
-              }}
-            >
-              <Home fontSize="large"></Home>
-              <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-                Home
-              </Typography>
-            </ListItemButton>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  router.push('/admin/analytics');
+                }}
+              >
+                <ListItemIcon>
+                  <Insights></Insights>
+                </ListItemIcon>
+                <ListItemText primary={'Analytics'} />
+              </ListItemButton>
+            </ListItem>
 
-            <ListItemButton
-              divider
-              onClick={() => {
-                router.push('/admin/menu');
-              }}
-              sx={{ width: '100%' }}
-            >
-              <Insights fontSize="large"></Insights>
-              <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-                Menu
-              </Typography>
-            </ListItemButton>
-
-            <ListItemButton
-              divider
-              onClick={() => {
-                router.push('/admin/analytics');
-              }}
-              sx={{ width: '100%' }}
-            >
-              <Insights fontSize="large"></Insights>
-              <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-                Analytics
-              </Typography>
-            </ListItemButton>
-
-            <ListItemButton
-              divider
-              onClick={() => {
-                router.push('/admin/calendar');
-              }}
-              sx={{ width: '100%' }}
-            >
-              <CalendarMonth fontSize="large"></CalendarMonth>
-              <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-                Calendar
-              </Typography>
-            </ListItemButton>
-
-            <ListItemButton
-              divider
-              onClick={() => {
-                router.push('/admin/staff');
-              }}
-              sx={{ width: '100%' }}
-            >
-              <Person fontSize="large"></Person>
-              <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-                Staff
-              </Typography>
-            </ListItemButton>
-
-            <ListItemButton sx={{ width: '100%' }}>
-              <Settings fontSize="large"></Settings>
-              <Typography sx={{ fontSize: 20 }} color="text.secondary" align="center">
-                Settings
-              </Typography>
-            </ListItemButton>
-          </Grid>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  router.push('/admin/calendar');
+                }}
+              >
+                <ListItemIcon>
+                  <CalendarMonth></CalendarMonth>
+                </ListItemIcon>
+                <ListItemText primary={'Calendar'} />
+              </ListItemButton>
+            </ListItem>
+          </List>
         </Box>
       </Drawer>
     </Container>
   );
 }
+
+//unused addresses
+/*
+/admin
+  - staff
+  - /
+  - settings
+
+
+*/

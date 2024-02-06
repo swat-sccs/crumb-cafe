@@ -218,6 +218,7 @@ export default function App() {
         thing1 = {
           customerName: name,
           dish: order._id,
+          price: order.basePrice,
           options: order.selectedOptions,
           hidden: false,
           notes: 'A note',
@@ -226,6 +227,7 @@ export default function App() {
         thing1 = {
           customerName: name,
           dish: order._id,
+          price: order.basePrice,
           options: {},
           hidden: false,
           notes: 'A note',

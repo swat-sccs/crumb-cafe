@@ -160,7 +160,7 @@ export default function Home() {
   }
 
   return (
-    <Container className={styles.topBar} sx={{ backgroundColor: '', width: '100vw' }}>
+    <Container>
       <LabelAvatar title="Staff" />
 
       <Grid container sx={{ marginTop: '2%;', height: '85vh' }}>

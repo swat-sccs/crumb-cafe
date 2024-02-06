@@ -7,6 +7,11 @@ import BasicCard from './card.js';
 import LabelAvatar from '../../components/labelAvatar.js';
 import { PieChart, pieArcLabelClasses, pieArcClasses } from '@mui/x-charts/PieChart';
 import { useTheme } from '@mui/material/styles';
+import React, { useState, useEffect, useRef } from 'react';
+
+import useSWR from 'swr';
+
+const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 const data2 = [
   { label: 'Quesadilla', value: 200 },
@@ -18,9 +23,19 @@ const data2 = [
 ];
 
 export default function Analytics() {
-  const theme = useTheme();
+  const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 1000 });
+
+  const calcNums = () => {
+    if (isLoading == false) {
+      console.log(data);
+    }
+  };
+  calcNums();
+  useEffect(() => {
+    calcNums();
+  });
   return (
-    <Container className={styles.topBar} sx={{ backgroundColor: '', width: '100vw' }}>
+    <Container>
       <LabelAvatar title="Analytics" />
 
       <Grid sx={{ backgroundColor: '' }} container>
@@ -49,43 +64,33 @@ export default function Analytics() {
                 fill: 'gray',
               },
             }}
-            height={450}
+            height={440}
             width={300}
             legend={{ hidden: true }}
-          />
-
-          <LineChart
-            xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-            series={[
-              {
-                data: [2, 5.5, 2, 8.5, 1.5, 10],
-              },
-            ]}
-            width={500}
-            height={300}
           />
         </Grid>
 
         <Grid
           container
+          item
           direction="row"
           justifyContent="space-evenly"
-          alignItems="flex-start"
-          sx={{ marginTop: '5%' }}
+          alignItems="center"
+          sx={{ marginTop: '3%' }}
         >
-          <Grid item>
+          <Grid item xs={2} lg={2.5}>
             <BasicCard title="Total Sales" data="$3.21" up={true}></BasicCard>
           </Grid>
 
-          <Grid item>
-            <BasicCard title="Current Sales" data="$500.00" up={false}></BasicCard>
+          <Grid item xs={2} lg={2.5}>
+            <BasicCard title="Current " data="$500.00" up={false}></BasicCard>
           </Grid>
 
-          <Grid item>
+          <Grid item xs={2} lg={2.5}>
             <BasicCard title="Total Orders" data="500" up={true}></BasicCard>
           </Grid>
 
-          <Grid item>
+          <Grid item xs={2} lg={2.5}>
             <BasicCard title="Daily Sales" data="$53k" up={true}></BasicCard>
           </Grid>
         </Grid>

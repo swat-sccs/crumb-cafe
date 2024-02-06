@@ -43,7 +43,7 @@ export default function Home() {
               borderRadius: '50px',
               marginTop: '20%',
             }}
-            onClick={() => router.push('/admin')}
+            onClick={() => router.push('/admin/menu')}
           >
             <Grid
               container

@@ -7,19 +7,10 @@ export default function LabelAvatar({ title }) {
   const theme = useTheme();
 
   return (
-    <Grid container direction="row" justifyContent="space-between">
-      <Typography
-        variant="h3"
-        style={{ color: 'white', marginTop: '', marginLeft: '2%' }}
-        align="left"
-      >
+    <>
+      <Typography variant="h3" sx={{ mt: '-2%', mb: '2%' }}>
         {title}
       </Typography>
-
-      <Avatar
-        sx={{ bgcolor: theme.palette.primary.light }}
-        src="https://assets.stickpng.com/images/61d183263a856e0004c6334a.png"
-      ></Avatar>
-    </Grid>
+    </>
   );
 }

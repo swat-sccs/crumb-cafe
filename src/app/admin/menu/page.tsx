@@ -292,15 +292,10 @@ export default function Home() {
   */
 
   return (
-    <Container className={styles.topBar} sx={{ backgroundColor: '', width: '80vw' }}>
+    <Box>
       <LabelAvatar title="Menu" />
 
-      <Grid
-        container
-        direction="row"
-        sx={{ height: '85vh', mt: '2%', overflowY: 'scroll' }}
-        spacing={2}
-      >
+      <Grid container direction="row" sx={{ height: '85vh', overflowY: 'scroll' }} spacing={2}>
         <RenderCards></RenderCards>
 
         {!open ? (
@@ -579,6 +574,6 @@ export default function Home() {
           </Card>
         </>
       ) : null}
-    </Container>
+    </Box>
   );
 }

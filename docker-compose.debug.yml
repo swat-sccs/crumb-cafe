@@ -2,33 +2,22 @@ version: '3.4'
 
 services:
   crumb:
-    restart: unless-stopped
-    image: crumb
+    init: true
     build:
       context: .
-      dockerfile: ./Dockerfile
+      dockerfile: ./Dockerfile.dev
+    volumes:
+      - .:/usr/src/app
     environment:
-      NODE_ENV: production
-      DOMAIN: http://127.0.0.1:3434/
-      MONGODB_URI: mongodb://db:2701
+      NODE_ENV: development
+      DOMAIN: http://127.0.0.1:3000/
+      MONGODB_URI: mongodb://db:27017
       MONGODB_DB: crumb
     ports:
-      - 3434:3434
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.docker.network=traefik'
-      - 'traefik.http.routers.crumb.entrypoints=https'
-      - 'traefik.http.routers.crumb.rule=Host(`crumb.sccs.swarthmore.edu`)'
-      - 'traefik.http.routers.crumb.tls=true'
-      - 'traefik.http.routers.crumb.tls.certresolver=letsEncrypt'
-      - 'traefik.http.services.crumb.loadbalancer.server.port=3434'
-    container_name: crumb-docker
-    command: npm run start
-    volumes:
-      - .:/app
-      - /app/node_modules
-    networks:
-      - internal
+      - 3000:3000
+      - 9229:9229
+      - 5555:5555
+    command: sh -c "npm install --silent && npm run dev "
 
   db:
     image: mongo:latest
@@ -38,12 +27,4 @@ services:
     volumes:
       - ./dev/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     ports:
-      - 127.0.0.1:27018:27017
-    networks:
-      - internal
-
-networks:
-  internal:
-  traefik:
-    external: true
-    driver: bridge
+      - 127.0.0.1:27017:27017
