@@ -25,6 +25,7 @@ import {
   Settings,
   CalendarMonth,
   Home,
+  PointOfSale,
   RestaurantMenu,
   ArrowBackIos,
 } from '@mui/icons-material';
@@ -82,6 +83,18 @@ export default function Navigation() {
               </ListItemButton>
             </ListItem>
             <Divider></Divider>
+            <ListItem disablePadding>
+              <ListItemButton
+                onClick={() => {
+                  router.push('/point_of_sale');
+                }}
+              >
+                <ListItemIcon>
+                  <PointOfSale></PointOfSale>
+                </ListItemIcon>
+                <ListItemText primary={'POS'} />
+              </ListItemButton>
+            </ListItem>
 
             <ListItem disablePadding>
               <ListItemButton

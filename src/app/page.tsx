@@ -1,5 +1,5 @@
 'use client';
-import { Stack, Typography, Grid, Card, CardContent, CardActionArea } from '@mui/material';
+import { Container, Typography, Grid, Card, CardContent, CardActionArea } from '@mui/material';
 import CrumbParticles from './components/particles';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
@@ -73,7 +73,7 @@ export default function Home() {
               borderRadius: '50px',
               marginTop: '20%',
             }}
-            onClick={() => router.push('/point_of_service')}
+            onClick={() => router.push('/point_of_sale')}
           >
             <Grid
               container
@@ -91,27 +91,55 @@ export default function Home() {
 
         <Grid item xs={5} sm={3} md={3} lg={3} sx={{ backgroundColor: '' }}>
           <Card
-            className={styles.box}
             sx={{
               width: '100%',
-              height: '50%',
-              backgroundColor: 'rgb(49, 66, 95, 0.7)',
+              height: '40vh',
               textAlign: 'center',
+              backgroundColor: 'rgb(49, 66, 95, 0)',
               borderRadius: '50px',
               marginTop: '20%',
             }}
-            onClick={() => router.push('/order_display')}
           >
-            <Grid
-              container
-              direction="column"
-              justifyContent="space-evenly"
-              alignItems="center"
-              sx={{ height: '40vh' }}
-            >
-              <Typography variant="h4" style={{ fontWeight: 'bold', color: 'white' }}>
-                Order Display
-              </Typography>
+            <Grid container justifyContent="center" spacing={0} alignItems="center">
+              <Grid item xs={12}>
+                <Card
+                  className={styles.box}
+                  sx={{
+                    width: '100%',
+                    height: '20vh',
+                    backgroundColor: 'rgb(49, 66, 95, 0.7)',
+                    textAlign: 'center',
+                  }}
+                  onClick={() => router.push('/order_display')}
+                >
+                  <Typography
+                    variant="h4"
+                    style={{ fontWeight: 'bold', color: 'white', marginTop: '20%' }}
+                  >
+                    Order Display
+                  </Typography>
+                </Card>
+              </Grid>
+              <Grid item xs={12}>
+                {' '}
+                <Card
+                  className={styles.box}
+                  sx={{
+                    width: '100%',
+                    height: '20vh',
+                    backgroundColor: 'rgb(49, 66, 95, 0.7)',
+                    textAlign: 'center',
+                  }}
+                  onClick={() => router.push('/kitchen_display')}
+                >
+                  <Typography
+                    variant="h4"
+                    style={{ fontWeight: 'bold', color: 'white', marginTop: '20%' }}
+                  >
+                    Kitchen Display
+                  </Typography>
+                </Card>
+              </Grid>
             </Grid>
           </Card>
         </Grid>

@@ -8,14 +8,15 @@ import LabelAvatar from '../../components/labelAvatar.js';
 import { PieChart, pieArcLabelClasses, pieArcClasses } from '@mui/x-charts/PieChart';
 import { useTheme } from '@mui/material/styles';
 import React, { useState, useEffect, useRef } from 'react';
+import moment from 'moment';
 
 import useSWR from 'swr';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
-const data2 = [
-  { label: 'Quesadilla', value: 200 },
-  { label: 'Burger and Fries', value: 100 },
+let data2 = [
+  { label: 'custom', value: 200 },
+  { label: 'italian-soda', value: 100 },
   { label: 'Oreo Milk Shake', value: 50 },
   { label: 'Chicken Tendies', value: 100 },
   { label: 'Dino Nuggies', value: 30 },
@@ -24,13 +25,31 @@ const data2 = [
 
 export default function Analytics() {
   const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 1000 });
+  const [totalSales, setTotalSales] = React.useState(0);
+  const [dailySales, setDailySales] = React.useState(0);
+  const [totalOrders, setTotalOrders] = React.useState(0);
+  const [dailyOrders, setDailyOrders] = React.useState(0);
 
   const calcNums = () => {
-    if (isLoading == false) {
-      console.log(data);
+    if (isLoading == false && !error) {
+      let tempTotal = 0;
+      let tempDaily = 0;
+      let tempDailyOrders = 0;
+
+      for (const order of data.orders) {
+        if (moment().isSame(order.createdAt, 'day')) {
+          tempDaily += order.price;
+          tempDailyOrders++;
+        }
+        tempTotal += order.price;
+      }
+      setTotalSales(tempTotal);
+      setDailySales(tempDaily);
+      setTotalOrders(data.orders.length);
+      setDailyOrders(tempDailyOrders);
     }
   };
-  calcNums();
+
   useEffect(() => {
     calcNums();
   });
@@ -38,8 +57,26 @@ export default function Analytics() {
     <Container>
       <LabelAvatar title="Analytics" />
 
-      <Grid sx={{ backgroundColor: '' }} container>
-        <Grid container direction="row" justifyContent="flex-start" alignItems="center">
+      <Grid sx={{ backgroundColor: '' }} container direction="column" spacing={2}>
+        <Grid container item direction="row" justifyContent="space-evenly" alignItems="center">
+          <Grid item xs={2} lg={2.5}>
+            <BasicCard title="Total Sales" data={'$' + totalSales.toFixed(2)} up={true}></BasicCard>
+          </Grid>
+
+          <Grid item xs={2} lg={2.5}>
+            <BasicCard title="Total Orders" data={totalOrders} up={true}></BasicCard>
+          </Grid>
+
+          <Grid item xs={2} lg={2.5}>
+            <BasicCard title="Daily Orders" data={dailyOrders} up={false}></BasicCard>
+          </Grid>
+
+          <Grid item xs={2} lg={2.5}>
+            <BasicCard title="Daily Sales" data={'$' + dailySales.toFixed(2)} up={true}></BasicCard>
+          </Grid>
+        </Grid>
+
+        <Grid container item direction="row" justifyContent="flex-start" alignItems="center">
           <PieChart
             series={[
               {
@@ -68,31 +105,6 @@ export default function Analytics() {
             width={300}
             legend={{ hidden: true }}
           />
-        </Grid>
-
-        <Grid
-          container
-          item
-          direction="row"
-          justifyContent="space-evenly"
-          alignItems="center"
-          sx={{ marginTop: '3%' }}
-        >
-          <Grid item xs={2} lg={2.5}>
-            <BasicCard title="Total Sales" data="$3.21" up={true}></BasicCard>
-          </Grid>
-
-          <Grid item xs={2} lg={2.5}>
-            <BasicCard title="Current " data="$500.00" up={false}></BasicCard>
-          </Grid>
-
-          <Grid item xs={2} lg={2.5}>
-            <BasicCard title="Total Orders" data="500" up={true}></BasicCard>
-          </Grid>
-
-          <Grid item xs={2} lg={2.5}>
-            <BasicCard title="Daily Sales" data="$53k" up={true}></BasicCard>
-          </Grid>
         </Grid>
       </Grid>
     </Container>
