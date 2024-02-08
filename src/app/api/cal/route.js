@@ -19,7 +19,7 @@ export async function GET(request) {
               date: '2020-01-01',
               daysOfWeek: ['4'],
             },*/
-  await axios.get('http://localhost:3000/api/dishes').then((res) => {
+  await axios.get(process.env.DOMAIN + '/api/dishes').then((res) => {
     data = res.data;
   });
 
