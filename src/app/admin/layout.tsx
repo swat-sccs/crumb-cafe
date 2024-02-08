@@ -1,5 +1,6 @@
 import { Grid, Toolbar, Typography, Button, Container } from '@mui/material';
 import Navigation from '../components/navBarExpanded';
+
 export default function sideBar({ children }: { children: React.ReactNode }) {
   return (
     <section>

@@ -326,7 +326,7 @@ export default function Home() {
           ></Box>
           <Card
             sx={{
-              width: '50%',
+              width: '80%',
               minHeight: '50%',
               maxHeight: '80%',
               position: 'absolute',
@@ -343,10 +343,10 @@ export default function Home() {
 
             <Grid
               container
-              direction="row"
+              direction="column"
               alignItems="center"
               justifyContent="center"
-              sx={{ mt: '5%' }}
+              sx={{ mt: '2%' }}
             >
               <Grid
                 container
