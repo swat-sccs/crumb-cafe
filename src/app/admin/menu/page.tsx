@@ -478,7 +478,7 @@ export default function Home() {
               </Grid>
 
               {/* Options */}
-              <Grid item md={6} lg={5}>
+              <Grid item md={6} lg={6}>
                 <Container sx={{ mt: '5%', height: '25vh', overflowY: 'scroll', width: '100%' }}>
                   {SelectedItem.options.map((subOption: any) => (
                     <List key="_id">
@@ -497,7 +497,7 @@ export default function Home() {
                         <ListItemAvatar>
                           <Avatar>{subOption.friendlyName.charAt(0)}</Avatar>
                         </ListItemAvatar>
-                        <Grid container spacing={2}>
+                        <Grid container spacing={1}>
                           <Grid item>
                             {' '}
                             <TextField
@@ -523,7 +523,7 @@ export default function Home() {
                               variant="outlined"
                               size="small"
                               type="number"
-                              sx={{ width: '10ch' }}
+                              sx={{ width: '8ch' }}
                               value={subOption.extraPrice}
                               onChange={(event) => {
                                 handleSpecificOptionUpdate(
