@@ -30,6 +30,7 @@ import { AnyKeys } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
 import axios from 'axios';
 import useSWR from 'swr';
+import moment from 'moment';
 import { Dictionary } from '@fullcalendar/core/internal';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
@@ -49,6 +50,7 @@ export default function App() {
   const scrollRef = useRef<any>(null);
 
   const [editing, setEditing] = React.useState(false);
+  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
   const scrollToElement = (id: any) => {
     const current = document.getElementById(id);
@@ -510,7 +512,10 @@ export default function App() {
       );
     } else {
       const food = data.dishes.filter(
-        (dish: any) => dish.isOrderable == true && dish.tags.includes('food'),
+        (dish: any) =>
+          dish.isOrderable == true &&
+          dish.tags.includes('food') &&
+          dish.dotw.includes(moment().format('dddd').toString()),
       );
 
       return food.map((item: any) => (
