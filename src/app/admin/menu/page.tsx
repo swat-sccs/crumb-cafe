@@ -341,10 +341,9 @@ export default function Home() {
               direction="row"
               alignItems="center"
               justifyContent="space-around"
-              spacing={0}
               sx={{ mt: '2%' }}
             >
-              <Grid item md={4} lg={6}>
+              <Grid container item md={5} lg={6} spacing={-10}>
                 <Grid container direction="row" justifyContent="center">
                   <Grid
                     container
@@ -362,7 +361,7 @@ export default function Home() {
                         label="Name"
                         variant="outlined"
                         fullWidth
-                        sx={{ width: '25ch' }}
+                        sx={{ width: '12vw' }}
                         value={SelectedItem.friendlyName}
                         onChange={(event) => {
                           setSelectedItem({ ...SelectedItem, friendlyName: event.target.value });
@@ -376,8 +375,8 @@ export default function Home() {
                         label="Price"
                         variant="outlined"
                         type="number"
+                        sx={{ width: '12vw' }}
                         fullWidth
-                        sx={{ width: '25ch' }}
                         value={SelectedItem.basePrice}
                         onChange={(event) => {
                           setSelectedItem({
@@ -417,6 +416,7 @@ export default function Home() {
                     </Grid>
                   </Grid>
 
+                  {/* Selections */}
                   <Grid
                     container
                     item
@@ -428,11 +428,9 @@ export default function Home() {
                     spacing={2}
                   >
                     <Grid item>
-                      <FormControl sx={{ width: '25ch' }}>
+                      <FormControl sx={{ width: '20ch' }}>
                         <InputLabel id="demo-multiple-chip-label">Tags</InputLabel>
                         <Select
-                          labelId="demo-multiple-chip-label"
-                          id="demo-multiple-chip"
                           multiple
                           value={SelectedItem.tags}
                           onChange={handleTagChange}
@@ -455,7 +453,7 @@ export default function Home() {
                     </Grid>
 
                     <Grid item>
-                      <FormControl sx={{ width: '25ch' }}>
+                      <FormControl sx={{ width: '20ch' }}>
                         <InputLabel id="demo-multiple-chip-label">Days</InputLabel>
                         <Select
                           labelId="demo-multiple-chip-label"
@@ -478,6 +476,8 @@ export default function Home() {
                   </Grid>
                 </Grid>
               </Grid>
+
+              {/* Options */}
               <Grid item md={6} lg={5}>
                 <Container sx={{ mt: '5%', height: '25vh', overflowY: 'scroll', width: '100%' }}>
                   {SelectedItem.options.map((subOption: any) => (
