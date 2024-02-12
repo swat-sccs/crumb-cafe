@@ -34,12 +34,7 @@ db.orders.insertMany([
         },
       },
     ],
-    createdAt: {
-      $date: '2023-09-18T21:05:50.607Z',
-    },
-    updatedAt: {
-      $date: '2023-09-18T21:05:50.607Z',
-    },
+
     __v: 0,
   },
   {
@@ -70,12 +65,7 @@ db.orders.insertMany([
         },
       },
     ],
-    createdAt: {
-      $date: '2023-09-18T21:05:50.607Z',
-    },
-    updatedAt: {
-      $date: '2023-09-18T21:05:50.607Z',
-    },
+
     __v: 0,
   },
   {
@@ -106,12 +96,7 @@ db.orders.insertMany([
         },
       },
     ],
-    createdAt: {
-      $date: '2023-09-18T21:06:50.000Z',
-    },
-    updatedAt: {
-      $date: '2023-09-18T21:06:50.000Z',
-    },
+
     __v: 0,
   },
 ]);

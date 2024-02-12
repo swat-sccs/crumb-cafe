@@ -126,8 +126,9 @@ const OrderSchema = new Schema(
 
     updates: [OrderUpdateSchema],
   },
+  // see https://masteringjs.io/tutorials/mongoose/timestamps
   {
-    timestamps: true, // see https://masteringjs.io/tutorials/mongoose/timestamps
+    timestamps: true,
     query: {
       byCustomerName(customerName: string) {
         return this.where('customerName').equals(customerName);
