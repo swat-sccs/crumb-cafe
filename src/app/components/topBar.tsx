@@ -1,5 +1,5 @@
 'use client';
-import * as React from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,6 +14,7 @@ import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import CookieIcon from '@mui/icons-material/Cookie';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 
 const pages = [
   { name: 'POS', link: '/point_of_sale' },
@@ -26,6 +27,7 @@ const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 function ResponsiveAppBar() {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
+  const pathname = usePathname();
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -41,6 +43,11 @@ function ResponsiveAppBar() {
   const handleCloseUserMenu = () => {
     setAnchorElUser(null);
   };
+
+  useEffect(() => {
+    // Do something here...
+    console.log(pathname);
+  }, [pathname]);
 
   return (
     <AppBar position="static">
@@ -130,14 +137,25 @@ function ResponsiveAppBar() {
           <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
             {pages.map((page) => (
               <Link href={page.link} key={page.name} passHref style={{ textDecoration: 'none' }}>
-                <Button
-                  variant="text"
-                  color="white"
-                  onClick={handleCloseNavMenu}
-                  sx={{ my: 2, color: 'white', display: 'block' }}
-                >
-                  {page.name}
-                </Button>
+                {pathname == page.link ? (
+                  <Button
+                    variant="outlined"
+                    color="white"
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    {page.name}
+                  </Button>
+                ) : (
+                  <Button
+                    variant="text"
+                    color="white"
+                    onClick={handleCloseNavMenu}
+                    sx={{ my: 2, color: 'white', display: 'block' }}
+                  >
+                    {page.name}
+                  </Button>
+                )}
               </Link>
             ))}
           </Box>

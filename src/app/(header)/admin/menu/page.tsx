@@ -274,6 +274,7 @@ export default function Home() {
     const option_index = Object.values(theItem.options).findIndex(
       (option: any) => option._id == option_id,
     );
+
     theItem.options.splice(option_index, 1);
 
     setSelectedItem({ ...SelectedItem, theItem });
@@ -289,8 +290,6 @@ export default function Home() {
 
   return (
     <Box>
-      <LabelAvatar title="Menu" />
-
       <Grid container direction="row" sx={{ height: '80vh', overflowY: 'scroll' }} spacing={2}>
         <RenderCards></RenderCards>
 

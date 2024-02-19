@@ -56,8 +56,6 @@ export default function Analytics() {
   });
   return (
     <Container>
-      <LabelAvatar title="Analytics" />
-
       <Grid sx={{ backgroundColor: '' }} container direction="column" spacing={2}>
         <Grid container item direction="row" justifyContent="space-evenly" alignItems="center">
           <Grid item xs={2} lg={2.5}>

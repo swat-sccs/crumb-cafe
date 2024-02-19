@@ -177,23 +177,13 @@ export default function App() {
   };
 
   const removeOption = async (itemToRemoveFrom: any, optionToRemove: any) => {
-    //let rt = runningTotal;
-
     let temp = Object.assign([], currentOrder);
-    //let rt = runningTotal;
+    const index = currentOrder.findIndex((item: any) => item._uuid == itemToRemoveFrom._uuid);
+    let optionIndex = currentOrder[index].selectedOptions.findIndex(
+      (item: any) => item._id == optionToRemove._id,
+    );
 
-    for (const thing of temp) {
-      if (
-        thing.friendlyName == itemToRemoveFrom.friendlyName &&
-        thing.selectedOptions.indexOf(optionToRemove) > -1
-      ) {
-        let index = thing.selectedOptions.indexOf(optionToRemove);
-        thing.selectedOptions.splice(index, 1);
-        //thing.basePrice -= optionToRemove.extraPrice;
-        //rt -= optionToRemove.extraPrice;
-      }
-    }
-
+    temp[index].selectedOptions.splice(optionIndex, 1);
     setCurrentOrder(temp);
   };
 
