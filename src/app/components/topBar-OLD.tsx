@@ -1,11 +1,10 @@
-//Side Bar
-'use client';
-
 import * as React from 'react';
+import Grid from '@mui/material/Grid';
+import Typography from '@mui/material/Typography';
+import AppBar from '@mui/material/AppBar';
 
 import {
   Box,
-  Grid,
   ListItem,
   Divider,
   Drawer,
@@ -17,33 +16,25 @@ import {
   IconButton,
 } from '@mui/material';
 
-import { useTheme } from '@mui/material/styles';
-
 import {
   Menu,
   Insights,
-  Settings,
   CalendarMonth,
-  Home,
   PointOfSale,
   RestaurantMenu,
   ArrowBackIos,
 } from '@mui/icons-material';
 import { useRouter, usePathname } from 'next/navigation';
 
-import styles from './navigation.module.css';
+const pages = { Home: '/', Create: '/create', Help: '/help' };
 
-/*
-New box in the sub global on click fly out card with 3 sub links
-*/
-
-export default function Navigation() {
+const Navigation = () => {
   const router = useRouter();
 
   const [state, setState] = React.useState({
     open: false,
   });
-  const toggleDrawer = (anchor, open) => (event) => {
+  const toggleDrawer = (anchor: any, open: any) => (event: any) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
       return;
     }
@@ -68,7 +59,10 @@ export default function Navigation() {
         onClose={toggleDrawer('open', false)}
         onClick={toggleDrawer('open', false)}
       >
-        <Box sx={{ width: 200 }} role="presentation">
+        <Box
+          sx={{ width: 200, height: '100%', backgroundColor: 'rgba(0,0,0,0.2)' }}
+          role="presentation"
+        >
           <List>
             <ListItem disablePadding>
               <ListItemButton
@@ -139,14 +133,16 @@ export default function Navigation() {
       </Drawer>
     </Container>
   );
+};
+
+export default function ResponsiveAppBar(props: any) {
+  return (
+    <AppBar position="static">
+      <Grid container>
+        <Grid item xs={1}>
+          <Navigation></Navigation>
+        </Grid>
+      </Grid>
+    </AppBar>
+  );
 }
-
-//unused addresses
-/*
-/admin
-  - staff
-  - /
-  - settings
-
-
-*/

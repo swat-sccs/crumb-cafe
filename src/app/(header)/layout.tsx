@@ -1,26 +1,13 @@
+'use client';
 import { Grid, Toolbar, Typography, Button, Container } from '@mui/material';
-import Navigation from '../components/navBarExpanded';
+import Navigation from '@/app/components/topBar';
+import { useSession } from 'next-auth/react';
 
 export default function sideBar({ children }: { children: React.ReactNode }) {
   return (
     <section>
-      <Toolbar>
-        <Grid container>
-          <Grid item xs={1}>
-            <Navigation></Navigation>
-          </Grid>
-          <Grid item xs={5}>
-            <Typography
-              variant="h5"
-              component="div"
-              sx={{ flexGrow: 1, textAlign: 'left', mt: '2%' }}
-            ></Typography>
-          </Grid>
-        </Grid>
-
-        <Button color="inherit">Login</Button>
-      </Toolbar>
-      <Container sx={{ width: '85vw' }}>{children}</Container>
+      <Navigation></Navigation>
+      <Container sx={{ width: '85vw', mt: '2%' }}>{children}</Container>
     </section>
   );
 }

@@ -3,9 +3,12 @@ import { Container, Typography, Grid, Card, CardContent, CardActionArea } from '
 import CrumbParticles from './components/particles';
 import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
+import { getServerSession } from 'next-auth/next';
+import { redirect } from 'next/navigation';
 
 export default function Home() {
   const router = useRouter();
+
   return (
     <div>
       <Grid

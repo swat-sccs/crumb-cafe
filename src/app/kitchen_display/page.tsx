@@ -1,5 +1,5 @@
 'use client';
-import React from 'react';
+import React, { useRef, useState } from 'react';
 import { Box, Card, CardHeader, Container, Typography, useTheme, Slide } from '@mui/material';
 import {
   Table,
@@ -24,6 +24,7 @@ import { Close, Update } from '@mui/icons-material';
 import CardContent from '@mui/material/CardContent';
 import styles from '../page.module.css';
 import axios from 'axios';
+import ThermalPrinter from '../components/printer';
 
 import useSWR from 'swr';
 import { gridColumnGroupsLookupSelector } from '@mui/x-data-grid';
@@ -33,6 +34,12 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 export default function Home() {
   const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 1000 });
   //axios.get('/api/dishes').then((reponse) => console.log(reponse));
+  const [printerIPAddress, setPrinterIPAddress] = useState('192.168.192.168');
+  const [printerPort, setPrinterPort] = useState('8008');
+  const [textToPrint, setTextToPrint] = useState('');
+  const [connectionStatus, setConnectionStatus] = useState('');
+  const ePosDevice = useRef();
+  const printer = useRef();
 
   const OrderCard = () => {
     if (isLoading) {
@@ -142,6 +149,8 @@ export default function Home() {
   };
 
   const completeOrder = async (item: any) => {
+    console.log(item);
+    ThermalPrinter(item);
     const url = '/api/orders/' + item._id;
     let theitem = Object.assign({}, item);
 
@@ -159,6 +168,7 @@ export default function Home() {
   };
 
   const updateOrder = async (item: any) => {
+    console.log(item);
     const url = '/api/orders/' + item._id;
     let theitem = Object.assign({}, item);
 
@@ -183,6 +193,10 @@ export default function Home() {
       console.log(response);
     });
   };
+
+  React.useEffect(() => {
+    //
+  }, []);
 
   return (
     <div>

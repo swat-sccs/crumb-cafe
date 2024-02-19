@@ -4,7 +4,7 @@ import { Grid, Container, Typography, Avatar } from '@mui/material';
 import styles from './page.module.css';
 import { LineChart } from '@mui/x-charts/LineChart';
 import BasicCard from './card.js';
-import LabelAvatar from '../../components/labelAvatar.js';
+import LabelAvatar from '@/app/components/labelAvatar.js';
 import { PieChart, pieArcLabelClasses, pieArcClasses } from '@mui/x-charts/PieChart';
 import { useTheme } from '@mui/material/styles';
 import React, { useState, useEffect, useRef } from 'react';

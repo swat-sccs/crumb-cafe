@@ -33,7 +33,7 @@ import {
 import styles from './page.module.css';
 import React, { useState, useEffect, useRef } from 'react';
 import { Folder, Delete, Add } from '@mui/icons-material';
-import LabelAvatar from '../../components/labelAvatar';
+import LabelAvatar from '@/app/components/labelAvatar';
 import useSWR from 'swr';
 import axios from 'axios';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
