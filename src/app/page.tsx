@@ -5,7 +5,9 @@ import { useRouter } from 'next/navigation';
 import styles from './page.module.css';
 import { getServerSession } from 'next-auth/next';
 import { redirect } from 'next/navigation';
+import Link from 'next/link';
 
+//<Link href={page.link} key={page.name} passHref style={{ textDecoration: 'none' }}>
 export default function Home() {
   const router = useRouter();
 
@@ -36,60 +38,62 @@ export default function Home() {
         sx={{ marginTop: '0%', height: '85vh', backgroundColor: '' }}
       >
         <Grid item xs={5} sm={3} md={3} lg={3} sx={{ backgroundColor: '' }}>
-          <Card
-            className={styles.box}
-            sx={{
-              width: '100%',
-              height: '50%',
-              backgroundColor: 'rgb(49, 66, 95, 0.7)',
-              textAlign: 'center',
-              borderRadius: '50px',
-              marginTop: '20%',
-            }}
-            onClick={() => router.push('/admin/menu')}
-          >
-            <Grid
-              container
-              direction="column"
-              justifyContent="space-evenly"
-              alignItems="center"
-              sx={{ height: '40vh' }}
+          <Link href="/admin/menu" passHref style={{ textDecoration: 'none' }}>
+            <Card
+              className={styles.box}
+              sx={{
+                width: '100%',
+                height: '50%',
+                backgroundColor: 'rgb(49, 66, 95, 0.7)',
+                textAlign: 'center',
+                borderRadius: '50px',
+                marginTop: '20%',
+              }}
             >
-              <Typography
-                className={styles.font}
-                style={{ fontWeight: 'bold', color: 'white', fontSize: '2rem' }}
+              <Grid
+                container
+                direction="column"
+                justifyContent="space-evenly"
+                alignItems="center"
+                sx={{ height: '40vh' }}
               >
-                Admin Panel
-              </Typography>
-            </Grid>
-          </Card>
+                <Typography
+                  className={styles.font}
+                  style={{ fontWeight: 'bold', color: 'white', fontSize: '2rem' }}
+                >
+                  Admin Panel
+                </Typography>
+              </Grid>
+            </Card>
+          </Link>
         </Grid>
 
         <Grid item xs={5} sm={3} md={3} lg={3} sx={{ backgroundColor: '' }}>
-          <Card
-            className={styles.box}
-            sx={{
-              width: '100%',
-              height: '50%',
-              backgroundColor: 'rgb(49, 66, 95, 0.7)',
-              textAlign: 'center',
-              borderRadius: '50px',
-              marginTop: '20%',
-            }}
-            onClick={() => router.push('/point_of_sale')}
-          >
-            <Grid
-              container
-              direction="column"
-              justifyContent="space-evenly"
-              alignItems="center"
-              sx={{ height: '40vh' }}
+          <Link href="/point_of_sale" passHref style={{ textDecoration: 'none' }}>
+            <Card
+              className={styles.box}
+              sx={{
+                width: '100%',
+                height: '50%',
+                backgroundColor: 'rgb(49, 66, 95, 0.7)',
+                textAlign: 'center',
+                borderRadius: '50px',
+                marginTop: '20%',
+              }}
             >
-              <Typography variant="h4" style={{ fontWeight: 'bold', color: 'white' }}>
-                POS
-              </Typography>
-            </Grid>
-          </Card>
+              <Grid
+                container
+                direction="column"
+                justifyContent="space-evenly"
+                alignItems="center"
+                sx={{ height: '40vh' }}
+              >
+                <Typography variant="h4" style={{ fontWeight: 'bold', color: 'white' }}>
+                  POS
+                </Typography>
+              </Grid>
+            </Card>
+          </Link>
         </Grid>
 
         <Grid item xs={5} sm={3} md={3} lg={3} sx={{ backgroundColor: '' }}>
@@ -105,43 +109,45 @@ export default function Home() {
           >
             <Grid container justifyContent="center" spacing={0} alignItems="center">
               <Grid item xs={12}>
-                <Card
-                  className={styles.box}
-                  sx={{
-                    width: '100%',
-                    height: '20vh',
-                    backgroundColor: 'rgb(49, 66, 95, 0.7)',
-                    textAlign: 'center',
-                  }}
-                  onClick={() => router.push('/order_display')}
-                >
-                  <Typography
-                    variant="h4"
-                    style={{ fontWeight: 'bold', color: 'white', marginTop: '20%' }}
+                <Link href="/order_display" passHref style={{ textDecoration: 'none' }}>
+                  <Card
+                    className={styles.box}
+                    sx={{
+                      width: '100%',
+                      height: '20vh',
+                      backgroundColor: 'rgb(49, 66, 95, 0.7)',
+                      textAlign: 'center',
+                    }}
                   >
-                    Order Display
-                  </Typography>
-                </Card>
+                    <Typography
+                      variant="h4"
+                      style={{ fontWeight: 'bold', color: 'white', marginTop: '20%' }}
+                    >
+                      Order Display
+                    </Typography>
+                  </Card>
+                </Link>
               </Grid>
               <Grid item xs={12}>
                 {' '}
-                <Card
-                  className={styles.box}
-                  sx={{
-                    width: '100%',
-                    height: '20vh',
-                    backgroundColor: 'rgb(49, 66, 95, 0.7)',
-                    textAlign: 'center',
-                  }}
-                  onClick={() => router.push('/kitchen_display')}
-                >
-                  <Typography
-                    variant="h4"
-                    style={{ fontWeight: 'bold', color: 'white', marginTop: '20%' }}
+                <Link href="/kitchen_display" passHref style={{ textDecoration: 'none' }}>
+                  <Card
+                    className={styles.box}
+                    sx={{
+                      width: '100%',
+                      height: '20vh',
+                      backgroundColor: 'rgb(49, 66, 95, 0.7)',
+                      textAlign: 'center',
+                    }}
                   >
-                    Kitchen Display
-                  </Typography>
-                </Card>
+                    <Typography
+                      variant="h4"
+                      style={{ fontWeight: 'bold', color: 'white', marginTop: '20%' }}
+                    >
+                      Kitchen Display
+                    </Typography>
+                  </Card>
+                </Link>
               </Grid>
             </Grid>
           </Card>

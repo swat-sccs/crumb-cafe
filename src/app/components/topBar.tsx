@@ -132,6 +132,7 @@ function ResponsiveAppBar() {
               <Link href={page.link} key={page.name} passHref style={{ textDecoration: 'none' }}>
                 <Button
                   variant="text"
+                  color="white"
                   onClick={handleCloseNavMenu}
                   sx={{ my: 2, color: 'white', display: 'block' }}
                 >

@@ -37,7 +37,7 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function App() {
   const { data, error, isLoading } = useSWR('/api/dishes', fetcher);
-  const [user, setUser] = useState('izzy');
+  const [index, setIndex] = React.useState(0);
   //Name PopUp Open and Close
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
@@ -63,7 +63,10 @@ export default function App() {
     setName(e.target.value);
   }
 
-  const [currentDish, setCurrentDish] = useState({
+  const [currentDish, setCurrentDish] = useState<any>(null); //when selected CurrentDish is updated to display correct options.
+
+  /* item Schema
+  {
     _id: '',
     friendlyName: '',
     dotw: ['Monday'],
@@ -84,7 +87,7 @@ export default function App() {
     ],
     dependencies: [],
     __v: 0,
-  }); //when selected CurrentDish is updated to display correct options.
+  }*/
 
   const [flag, setFlag] = useState(true); //true is food, false is drink
 
@@ -136,11 +139,18 @@ export default function App() {
   }, [currentOrder]);
 
   const handleOpenOptions = (item: any) => {
-    //console.log(item);
-    setCurrentOrder([...currentOrder, item]);
-    setCurrentDish(item);
+    let temp = Object.assign({}, item);
+    temp['_uuid'] = index;
+
+    setIndex(index + 1);
+
+    let editedOrder = Array.from(currentOrder);
+    editedOrder.push(temp);
+    console.log('EDITED ORDER', editedOrder);
+    setCurrentOrder(editedOrder);
+    setCurrentDish(temp);
     setOptions(true);
-    scrollToElement(item._id);
+    scrollToElement(temp._id);
     //console.log(currentOrder);
   };
 
@@ -188,7 +198,6 @@ export default function App() {
   };
 
   const showOptions = (item: any) => {
-    console.log('selecting from list');
     setCurrentDish(item);
     // if (item.qty == 0) {
     //   setOptions(false);
@@ -289,7 +298,10 @@ export default function App() {
 
         <Grid item xs={6}>
           <Grid container direction="row" justifyContent="center" alignItems="center">
-            <OptionsComponent options={currentDish.options}></OptionsComponent>
+            <OptionsComponent
+              options={currentDish.options}
+              _uuid={currentDish._uuid}
+            ></OptionsComponent>
           </Grid>
         </Grid>
       </Grid>
@@ -304,8 +316,8 @@ export default function App() {
 
       specific.push(
         <>
-          <Grid item sx={{ m: 1 }}>
-            <Button onClick={() => addOption(subOption, multi)} size="large">
+          <Grid item sx={{ m: 1 }} key={props._uuid}>
+            <Button onClick={() => addOption(subOption, multi, props._uuid)} size="large">
               {subOption.friendlyName}
             </Button>
           </Grid>
@@ -316,27 +328,18 @@ export default function App() {
     return <>{specific}</>;
   };
 
-  const addOption = (option: any, multi: boolean) => {
-    let theOptions: any = [];
-    theOptions = Array.from(currentDish.selectedOptions);
-
-    let exists = false;
-
-    for (const item of theOptions) {
-      if (item._id == option._id) {
-        exists = true;
-      }
+  const addOption = (option: any, multi: boolean, _uuid: any) => {
+    for (const item of currentOrder) {
+      console.log(item.friendlyName, item._uuid);
     }
+    const index = currentOrder.findIndex((item: any) => item._uuid == _uuid);
 
+    setCurrentDish(currentOrder[index]);
+    let theOptions: any = Array.from(currentOrder[index].selectedOptions);
     theOptions.push(option);
-
-    const editedDish = Object.assign({}, currentDish);
-    //editedDish['basePrice'] = currentDish.basePrice + option.extraPrice;
-    editedDish['selectedOptions'] = theOptions;
-    setCurrentDish(editedDish);
-
-    const editedOrder = Array.from(currentOrder);
-    editedOrder[currentOrder.length - 1] = editedDish;
+    let editedOrder: any = Array.from(currentOrder);
+    editedOrder[index].selectedOptions = theOptions;
+    //editedOrder[currentOrder.length - 1] = editedDish;
     setCurrentOrder(editedOrder);
   };
 
@@ -628,9 +631,7 @@ export default function App() {
           size="large"
           onClick={() => cancelOrder()}
         >
-          CANCEL
-          <br />
-          ORDER
+          CANCEL ORDER
         </Button>
       </>
     );
@@ -734,8 +735,7 @@ export default function App() {
   //Render Current Selected food on left List
   const CurrentOrderItemsComponent = () => {
     //(currentOrder);
-    console.log('Logging!');
-    console.log(currentOrder);
+
     return currentOrder.map((item: any) => (
       <>
         <ListItem

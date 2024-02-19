@@ -9,6 +9,21 @@ declare module '@mui/material/styles' {
   }
 }
 
+declare module '@mui/material/styles' {
+  interface Palette {
+    white: Palette['primary'];
+  }
+
+  interface PaletteOptions {
+    white?: PaletteOptions['primary'];
+  }
+}
+declare module '@mui/material/Button' {
+  interface ButtonPropsColorOverrides {
+    white: true;
+  }
+}
+
 const theme = createTheme({
   palette: {
     mode: 'dark',
@@ -26,6 +41,12 @@ const theme = createTheme({
     },
     error: {
       main: '#86001a',
+    },
+    white: {
+      main: '#FFFFFF',
+      light: '#FFFFFF',
+      dark: '#FFFFFF',
+      contrastText: '#FFFFFF',
     },
   },
   shape: {
