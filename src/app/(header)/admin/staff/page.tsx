@@ -1,7 +1,7 @@
 'use client';
 import { Grid, Avatar, Container, Typography, Chip } from '@mui/material';
 import styles from './page.module.css';
-import LabelAvatar from '../../components/labelAvatar';
+import LabelAvatar from '@/app/components/labelAvatar';
 import {
   DataGrid,
   GridRowsProp,

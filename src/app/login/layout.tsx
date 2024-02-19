@@ -1,10 +1,8 @@
 import React from 'react';
 
 import { Grid, AppBar, Toolbar, IconButton, Typography, Button, Container } from '@mui/material';
-import MenuIcon from '@mui/icons-material/Menu';
 //import Navigation from './navBarPOS.js';
-import Navigation from '../components/navBarExpanded';
-import useSWR from 'swr';
+import Navigation from '@/app/components/topBar';
 
 export default function sideBar({ children }: { children: React.ReactNode }) {
   return (
