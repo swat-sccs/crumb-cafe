@@ -161,19 +161,18 @@ export default function App() {
     let temp = Object.assign([], currentOrder);
     //this finds the first match, but we want it to delete current item!
     //fix later by making sure ALL fields match
-    if (options == false) {
-      for (const thing of currentOrder) {
-        if (thing == props) {
-          let index = temp.indexOf(thing);
-          temp.splice(index, 1);
-          //setOptions(false);
-          //console.log('options set to false');
-          break;
-        }
+    for (const thing of currentOrder) {
+      if (thing == props) {
+        let index = temp.indexOf(thing);
+        temp.splice(index, 1);
+        //setOptions(false);
+        //console.log('options set to false');
+        break;
       }
-
-      setCurrentOrder(temp);
     }
+
+    setCurrentOrder(temp);
+    setOptions(false);
   };
 
   const removeOption = async (itemToRemoveFrom: any, optionToRemove: any) => {
@@ -264,20 +263,26 @@ export default function App() {
   const RenderOptions = () => {
     //console.log(currentDish);
     return (
-      <Grid container direction="column" justifyContent="flex-start" sx={{ height: '90vh' }}>
-        <Grid item xs={2} sx={{ mt: '5%' }}>
+      <Grid
+        container
+        direction="column"
+        justifyContent="flex-start"
+        sx={{ height: '69vh' /*hah*/ }}
+      >
+        <Grid item container xs={2} sx={{ mt: '5%' }}>
           <Grid container direction="row" justifyContent="center">
-            <Grid item xs={6}>
+            <Grid item xs={12}>
               <Card
                 sx={{
                   borderRadius: '10px',
                   display: 'flex',
                   flexDirection: 'column',
                   height: '100%',
+                  width: '100%',
                 }}
               >
                 <CardContent>
-                  <Typography fontSize="180%" textAlign="center">
+                  <Typography variant="h3" textAlign="center">
                     {currentDish.friendlyName}
                   </Typography>
                 </CardContent>
@@ -287,7 +292,13 @@ export default function App() {
         </Grid>
 
         <Grid item xs={6}>
-          <Grid container direction="row" justifyContent="center" alignItems="center">
+          <Grid
+            container
+            direction="row"
+            justifyContent="center"
+            alignItems="center"
+            sx={{ mt: '4%' }}
+          >
             <OptionsComponent
               options={currentDish.options}
               _uuid={currentDish._uuid}
@@ -612,9 +623,9 @@ export default function App() {
     return (
       <>
         <Button
+          fullWidth
           sx={{
             m: 1,
-            width: '47%',
             height: 60,
             lineHeight: 1.4,
           }}
@@ -631,24 +642,24 @@ export default function App() {
     return (
       <>
         <Button
+          fullWidth
           sx={{
             m: 1,
-            width: '47%',
             height: 60,
             lineHeight: 1.4,
           }}
           size="large"
           onClick={() => handleOpen()}
         >
-          <Grid container direction="row" justifyContent="space-around" alignItems="center">
-            <Grid item xs={3}>
+          <Grid container direction="row" justifyContent="space-between" alignItems="center">
+            <Grid item xs={6}>
               CONFIRM
               <br />
               ORDER
             </Grid>
 
-            <Grid item xs={5}>
-              <Typography fontSize="200%">
+            <Grid item xs={6}>
+              <Typography fontSize="150%">
                 (${Number.parseFloat(runningTotal.toString()).toFixed(2)})
               </Typography>
             </Grid>
@@ -668,7 +679,7 @@ export default function App() {
     if (options) {
       return (
         <>
-          <Grid container justifyContent="space-evenly">
+          <Grid item container justifyContent="space-evenly">
             {' '}
             <Button
               sx={{
@@ -681,7 +692,7 @@ export default function App() {
               //come back here IZZY
               onClick={() => removeItem(currentDish)}
             >
-              Delete This Item
+              Delete Item
             </Button>
             <Button
               sx={{
@@ -775,10 +786,21 @@ export default function App() {
   */
 
   return (
-    <Container sx={{}}>
+    <Box>
       <NamePopUp></NamePopUp>
-      <Box>
-        <Grid container spacing={12} rowSpacing={10} columnSpacing={{ xs: 5, sm: 2, md: 2 }}>
+      <Box
+        sx={{ position: 'absolute', bottom: '0', right: '0', mb: '5%', mr: '-5%', width: '35%' }}
+      >
+        <Fade in={true}>
+          {
+            <div>
+              <AlertComponent />
+            </div>
+          }
+        </Fade>
+      </Box>
+      <Container sx={{ backgroundColor: '', height: '100%' }}>
+        <Grid container spacing={12} direction="row">
           <Grid item sm={6}>
             <Card>
               <Grid
@@ -797,40 +819,38 @@ export default function App() {
                 </Typography>
               </Grid>
             </Card>
-            <Grid item>
-              <List sx={{ overflow: 'auto', height: '60vh' }}>
-                <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
-              </List>
-            </Grid>
-          </Grid>
+            <Grid item container direction="column">
+              <Grid item>
+                <List sx={{ overflow: 'auto', height: '62vh' }}>
+                  <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
+                </List>
+              </Grid>
 
-          <Grid item xs={6}>
-            <Grid container spacing={1} alignContent="space-around" justifyContent="center">
-              <Grid item xs={6}>
-                <ToggleComponent></ToggleComponent>
+              <Grid container item xs={6} spacing={4} alignContent="center" justifyContent="center">
+                <Grid item md={6} lg={6}>
+                  <CancelOrderComponent></CancelOrderComponent>
+                </Grid>
+                <Grid item md={6} lg={6}>
+                  <ConfirmOrderComponent></ConfirmOrderComponent>
+                </Grid>
               </Grid>
             </Grid>
+          </Grid>
 
-            <Grid container spacing={2} sx={{ maxHeight: '60vh' }}>
-              <OrderComponent></OrderComponent>
+          <Grid item container xs={6} alignContent="flex-start" direction="column">
+            <Grid item container spacing={1} alignContent="space-around" justifyContent="center">
+              <ToggleComponent></ToggleComponent>
+            </Grid>
+
+            <Grid item container sx={{ maxHeight: '50vh' }}>
+              <Grid item container xs={12} spacing={2}>
+                <OrderComponent></OrderComponent>
+                <DeleteConfirmCustomComponent></DeleteConfirmCustomComponent>
+              </Grid>
             </Grid>
           </Grid>
         </Grid>
-      </Box>
-      <Grid sx={{ marginTop: '5%', backgroundColor: '' }}>
-        <Grid container spacing={2} direction="row">
-          <Grid item xs={6}>
-            <CancelOrderComponent></CancelOrderComponent>
-            <ConfirmOrderComponent></ConfirmOrderComponent>
-          </Grid>
-
-          <Grid item xs={6}>
-            <Fade in={false}>{<AlertComponent />}</Fade>
-
-            <DeleteConfirmCustomComponent></DeleteConfirmCustomComponent>
-          </Grid>
-        </Grid>
-      </Grid>
-    </Container>
+      </Container>
+    </Box>
   );
 }

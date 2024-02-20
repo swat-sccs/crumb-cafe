@@ -46,7 +46,6 @@ function ResponsiveAppBar() {
 
   useEffect(() => {
     // Do something here...
-    console.log(pathname);
   }, [pathname]);
 
   return (
