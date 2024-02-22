@@ -20,44 +20,11 @@ const OrderUpdateSchema = new Schema(
 
 export type OrderUpdate = InferSchemaType<typeof OrderUpdateSchema>;
 
-const CustomDishOptionsSchema = new Schema({
-  friendlyName: {
-    type: String,
-    required: true,
-  },
-  description: {
-    type: String,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-});
-
-const OptionsSchema = new Schema({
-  name: {
-    type: String,
-    required: true,
-  },
-  id: {
-    type: Number,
-    required: true,
-  },
-  price: {
-    type: Number,
-    required: true,
-  },
-});
-
-export type CustomDishOptions = InferSchemaType<typeof CustomDishOptionsSchema>;
-
 const DishOptionItemSchema = new Schema({
   _id: {
     type: String,
     required: true,
   },
-  // name that should be displayed in the UI
   friendlyName: {
     type: String,
     required: true,
@@ -68,23 +35,36 @@ const DishOptionItemSchema = new Schema({
     default: 0,
   },
   allowQuantity: {
-    // as in "2 shots" etc.
     type: Boolean,
     required: true,
-    default: false,
-  },
-  // if any of these are out-of-stock, we mark it out of stock
-  dependencies: {
-    type: [
-      {
-        type: String,
-        ref: 'Ingredient',
-      },
-    ],
+    default: true,
   },
 });
 
 export type DishOptionItem = InferSchemaType<typeof DishOptionItemSchema>;
+
+const DishesListSchema = new Schema({
+  _id: {
+    type: String,
+    required: true,
+  },
+  friendlyName: {
+    type: String,
+    required: true,
+  },
+  price: {
+    type: Number,
+    required: true,
+    default: 0,
+  },
+  tag: {
+    type: String,
+    required: true,
+  },
+  options: [DishOptionItemSchema],
+});
+
+export type DishListItem = InferSchemaType<typeof DishesListSchema>;
 
 const OrderSchema = new Schema(
   {
@@ -96,7 +76,7 @@ const OrderSchema = new Schema(
       type: Number,
       required: true,
     },
-    price: {
+    total: {
       type: Number,
       required: true,
     },
@@ -109,22 +89,13 @@ const OrderSchema = new Schema(
       type: Boolean,
       required: true,
     },
-    dish: {
-      // see https://mongoosejs.com/docs/populate.html
-      // see https://mongoosejs.com/docs/typescript/populate.html
-      type: String, // should be the ID of a dish, or 'custom' which will be a reserved word
-      ref: 'Dish',
-      required: true,
-    },
-    // map customization ID to an array of one or more customization option IDs
-    // for multi-quantity options just repeat the ID a couple times
-    options: [DishOptionItemSchema],
+    dishes: [DishesListSchema],
     notes: {
       type: String,
       required: false,
     },
 
-    updates: [OrderUpdateSchema],
+    //updates: [OrderUpdateSchema], //OLD WHY HERE?
   },
   // see https://masteringjs.io/tutorials/mongoose/timestamps
   {

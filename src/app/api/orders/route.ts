@@ -18,22 +18,49 @@ const orderQuerySchema = z.object({
   updatedAfter: z.coerce.date().optional(),
 });
 
+/*
+dishes: [
+      {
+        _id: 'italian-soda',
+        friendlyName: 'Italian Soda',
+        price: 5,
+        options: [
+          {
+            _id: 'sour-cream',
+            friendlyName: 'Sour Cream',
+            extraPrice: 0,
+            allowQuantity: false,
+            dependencies: [],
+          },
+        ],
+      },
+
+*/
+
+//Status and customer number get added by the server, no need to have in schema -dcrepublic
 const newOrderSchema = z.object({
   customerName: z.string(), //not optional
-  dish: z.string(),
-  options: z.array(
-    z.object({
-      //ITEM SCHEMA
-      _id: z.string(),
-      friendlyName: z.string(),
-      extraPrice: z.number(),
-      allowQuantity: z.boolean(),
-      dependencies: z.array(z.string()), //empty array for now
-    }),
-  ),
-  price: z.number(),
+  total: z.number(),
+  //status also initialized to new
   hidden: z.boolean().optional(),
   notes: z.string().optional(),
+  dishes: z.array(
+    z.object({
+      _id: z.string(),
+      price: z.number(),
+      friendlyName: z.string(),
+      tag: z.string(),
+      options: z.array(
+        z.object({
+          //ITEM SCHEMA
+          _id: z.string(),
+          friendlyName: z.string(),
+          extraPrice: z.number(),
+          allowQuantity: z.boolean(),
+        }),
+      ),
+    }),
+  ),
 });
 
 export async function GET(request: NextRequest) {
@@ -114,6 +141,7 @@ export async function POST(request: NextRequest) {
     status: 'new',
   };
 
+  /* To many checks in my opinion -dcrepublic
   const dishValid = await DishModel.findById(augmentedData.dish);
 
   if (!dishValid) {
@@ -122,7 +150,7 @@ export async function POST(request: NextRequest) {
 
   if (!dishValid.isOrderable) {
     return new NextResponse('Dish is not available, at this time', { status: 400 });
-  }
+  }*/
 
   const newOrder = new OrderModel(augmentedData);
   const savedOrder = await newOrder.save();
@@ -131,3 +159,24 @@ export async function POST(request: NextRequest) {
     order: savedOrder,
   });
 }
+
+/* OLD SCHEMA SILLY 1 ITEM PER ORDER WHY?
+const newOrderSchema = z.object({
+  customerName: z.string(), //not optional
+  dish: z.string(),
+  options: z.array(
+    z.object({
+      //ITEM SCHEMA
+      _id: z.string(),
+      friendlyName: z.string(),
+      extraPrice: z.number(),
+      allowQuantity: z.boolean(),
+      dependencies: z.array(z.string()), //empty array for now
+    }),
+  ),
+  price: z.number(),
+  hidden: z.boolean().optional(),
+  notes: z.string().optional(),
+});
+
+*/

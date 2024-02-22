@@ -18,8 +18,6 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <head />
 
-        <Script src="./epos-2.27.0.js"></Script>
-
         <body>
           <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
         </body>

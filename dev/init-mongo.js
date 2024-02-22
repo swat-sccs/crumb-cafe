@@ -8,95 +8,24 @@ db.orders.insertMany([
     customerName: 'customer1',
     customerNumber: 1,
     status: 'completed',
-    hidden: 'true',
-    price: 5,
-    // italian soda
-    dish: 'italian-soda',
-    // lychee and apple shots
-    options: [
+    hidden: 'true', //for display purposes kinda redundant but do I really want to remove and reformat everything that uses it?
+    total: 5,
+    dishes: [
       {
-        _id: 'sour-cream',
-        friendlyName: 'Sour Cream',
-        extraPrice: 0,
-        allowQuantity: false,
-        dependencies: [],
+        _id: 'italian-soda',
+        friendlyName: 'Italian Soda',
+        tag: 'food',
+        price: 5,
+        options: [
+          {
+            _id: 'lychee',
+            friendlyName: 'Lychee',
+            extraPrice: 0,
+            allowQuantity: false,
+          },
+        ],
       },
     ],
-    updates: [
-      {
-        newStatus: 'new',
-        user: 'foo',
-        createdAt: {
-          $date: '2023-09-18T21:05:50.606Z',
-        },
-        updatedAt: {
-          $date: '2023-09-18T21:05:50.606Z',
-        },
-      },
-    ],
-
-    __v: 0,
-  },
-  {
-    customerName: 'customer2',
-    customerNumber: 2,
-    status: 'in_progress',
-    price: 5,
-    hidden: 'false',
-    dish: 'custom',
-    options: [
-      {
-        _id: 'sour-cream',
-        friendlyName: 'Sour Cream',
-        extraPrice: 0,
-        allowQuantity: false,
-        dependencies: [],
-      },
-    ],
-    updates: [
-      {
-        newStatus: 'new',
-        user: 'foo',
-        createdAt: {
-          $date: '2023-09-18T21:05:50.606Z',
-        },
-        updatedAt: {
-          $date: '2023-09-18T21:05:50.606Z',
-        },
-      },
-    ],
-
-    __v: 0,
-  },
-  {
-    customerName: 'customer3',
-    customerNumber: 3,
-    price: 5,
-    status: 'new',
-    hidden: 'false',
-    dish: 'pancakes',
-    options: [
-      {
-        _id: 'sour-cream',
-        friendlyName: 'Sour Cream',
-        extraPrice: 0,
-        allowQuantity: false,
-        dependencies: [],
-      },
-    ],
-    updates: [
-      {
-        newStatus: 'new',
-        user: 'foo',
-        createdAt: {
-          $date: '2023-09-18T21:06:50.000Z',
-        },
-        updatedAt: {
-          $date: '2023-09-18T21:06:50.000Z',
-        },
-      },
-    ],
-
     __v: 0,
   },
 ]);

@@ -1,7 +1,12 @@
-function ThermalPrinter(item) {
+import React, { useRef, useState } from 'react';
+
+const ThermalPrinter = (item) => {
   const printerIPAddress = '192.168.192.168';
   const printerPort = '8008';
   const STATUS_CONNECTED = 'Connected';
+
+  const ePosDevice = useRef();
+  const printer = useRef();
 
   let ePosDev = new window.epson.ePOSDevice();
   ePosDevice.current = ePosDev;
@@ -90,6 +95,8 @@ function ThermalPrinter(item) {
       throw data;
     }
   });
-}
+
+  return 1;
+};
 
 export default ThermalPrinter;

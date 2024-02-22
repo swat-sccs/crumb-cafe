@@ -39,10 +39,10 @@ export default function Analytics() {
       for (const order of data.orders) {
         console.log(order);
         if (moment().isSame(order.createdAt, 'day')) {
-          tempDaily += order.price;
+          tempDaily += order.total;
           tempDailyOrders++;
         }
-        tempTotal += order.price;
+        tempTotal += order.total;
       }
       setTotalSales(tempTotal);
       setDailySales(tempDaily);

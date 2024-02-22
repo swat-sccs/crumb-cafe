@@ -118,15 +118,15 @@ export default function App() {
     // console.log(currentDish);
     //setCurrentOrder([...currentOrder, currentDish]);
     setOptions(false);
-    //console.log(currentOrder);
+    console.log(currentOrder);
   };
 
   const calcTotal = () => {
     let rt = 0;
 
     for (const item of currentOrder) {
-      rt += item.basePrice;
-      for (const option of item.selectedOptions) {
+      rt += item.price;
+      for (const option of item.options) {
         rt += option.extraPrice;
       }
     }
@@ -139,8 +139,40 @@ export default function App() {
   }, [currentOrder]);
 
   const handleOpenOptions = (item: any) => {
-    let temp = Object.assign({}, item);
-    temp['_uuid'] = index;
+    /* 
+    customerName: 'customer1',
+    customerNumber: 1,
+    status: 'completed',
+    hidden: 'true', //for display purposes kinda redundant but do I really want to remove and reformat everything that uses it?
+    total: 5,
+    dishes: [
+      {
+        _id: 'italian-soda',
+        friendlyName: 'Italian Soda',
+        tag: 'food',
+        price: 5,
+        options: [
+          {
+            _id: 'lychee',
+            friendlyName: 'Lychee',
+            extraPrice: 0,
+            allowQuantity: false,
+          },
+        ],
+      },
+    ],
+    __v: 0,
+  }, */
+    //let temp = Object.assign({}, item);
+    let temp = {
+      _uuid: index,
+      _id: item._id,
+      friendlyName: item.friendlyName,
+      tag: item.tags[0],
+      price: item.basePrice,
+      options: [],
+    };
+    //temp['_uuid'] = index;
 
     setIndex(index + 1);
 
@@ -178,11 +210,12 @@ export default function App() {
   const removeOption = async (itemToRemoveFrom: any, optionToRemove: any) => {
     let temp = Object.assign([], currentOrder);
     const index = currentOrder.findIndex((item: any) => item._uuid == itemToRemoveFrom._uuid);
-    let optionIndex = currentOrder[index].selectedOptions.findIndex(
+
+    let optionIndex = currentOrder[index].options.findIndex(
       (item: any) => item._id == optionToRemove._id,
     );
 
-    temp[index].selectedOptions.splice(optionIndex, 1);
+    temp[index].options.splice(optionIndex, 1);
     setCurrentOrder(temp);
   };
 
@@ -206,52 +239,37 @@ export default function App() {
   };
 
   const confirmOrder = async (name: string) => {
-    console.log('order confirmed!: ' + name);
-    console.log(currentOrder);
-    handleClose();
+    //handleClose();
+    //Current order should just be a mirror of the dishes array You will attach below each order is simply a dish object.
 
-    for (const order of currentOrder) {
-      // { 'flavor-shots': ['apple', 'lychee'] }
-      //let options = { test: ['hello'], test2: ['things'] };
-      let thing1 = {};
-      if (order.selectedOptions) {
-        thing1 = {
-          customerName: name,
-          dish: order._id,
-          price: order.basePrice,
-          options: order.selectedOptions,
-          hidden: false,
-          notes: 'A note',
-        };
+    let thing1 = {
+      customerName: name,
+      total: runningTotal,
+      hidden: false,
+      notes: '',
+      dishes: currentOrder,
+    };
+
+    console.log(thing1);
+
+    await axios.post('/api/orders', thing1).then((response) => {
+      //console.log(response.status, response.data.token);
+      if (response.status == 200) {
+        console.log('order confirmed!: ' + name);
+        handleClose();
+        setSuccess(true);
+        setTimeout(handleSuccess, 3000);
+        setCurrentOrder([]);
+        setName('');
+        setRunningTotal(0);
+        setOptions(false);
       } else {
-        thing1 = {
-          customerName: name,
-          dish: order._id,
-          price: order.basePrice,
-          options: {},
-          hidden: false,
-          notes: 'A note',
-        };
+        console.log('failed');
+        handleClose();
+        setFailure(true);
+        setTimeout(handleFailure, 3000);
       }
-
-      console.log(thing1);
-
-      await axios.post('/api/orders', thing1).then((response) => {
-        //console.log(response.status, response.data.token);
-        if (response.status == 200) {
-          setSuccess(true);
-          setTimeout(handleSuccess, 3000);
-          setCurrentOrder([]);
-          setName('');
-          setRunningTotal(0);
-          setOptions(false);
-        } else {
-          console.log('failed');
-          setFailure(true);
-          setTimeout(handleFailure, 3000);
-        }
-      });
-    }
+    });
   };
   /*
   RenderOptions
@@ -300,7 +318,7 @@ export default function App() {
             sx={{ mt: '4%' }}
           >
             <OptionsComponent
-              options={currentDish.options}
+              friendlyName={currentDish.friendlyName}
               _uuid={currentDish._uuid}
             ></OptionsComponent>
           </Grid>
@@ -312,34 +330,35 @@ export default function App() {
   const OptionsComponent = (props: any) => {
     const specific = [];
 
-    for (const subOption of props.options) {
-      const multi = subOption.allowQuantity;
+    const item = data.dishes.filter((item: any) => item.friendlyName == props.friendlyName);
 
-      specific.push(
-        <>
-          <Grid item sx={{ m: 1 }} key={props._uuid}>
-            <Button onClick={() => addOption(subOption, multi, props._uuid)} size="large">
-              {subOption.friendlyName}
-            </Button>
-          </Grid>
-        </>,
-      );
+    for (const option of item) {
+      for (const subOption of option.options) {
+        const multi = subOption.allowQuantity;
+
+        specific.push(
+          <>
+            <Grid item sx={{ m: 1 }} key={props._uuid}>
+              <Button onClick={() => addOption(subOption, multi, props._uuid)} size="large">
+                {subOption.friendlyName}
+              </Button>
+            </Grid>
+          </>,
+        );
+      }
     }
 
     return <>{specific}</>;
   };
 
   const addOption = (option: any, multi: boolean, _uuid: any) => {
-    for (const item of currentOrder) {
-      console.log(item.friendlyName, item._uuid);
-    }
     const index = currentOrder.findIndex((item: any) => item._uuid == _uuid);
-
     setCurrentDish(currentOrder[index]);
-    let theOptions: any = Array.from(currentOrder[index].selectedOptions);
+
+    let theOptions: any = Array.from(currentOrder[index].options);
     theOptions.push(option);
     let editedOrder: any = Array.from(currentOrder);
-    editedOrder[index].selectedOptions = theOptions;
+    editedOrder[index].options = theOptions;
     //editedOrder[currentOrder.length - 1] = editedDish;
     setCurrentOrder(editedOrder);
   };
@@ -447,8 +466,12 @@ export default function App() {
       );
     } else {
       const drinks = data.dishes.filter(
-        (drink: any) => drink.isOrderable == true && drink.tags.includes('drink'),
+        (drink: any) =>
+          drink.dotw.includes(moment().format('dddd').toString()) &&
+          drink.isOrderable == true &&
+          drink.tags.includes('drink'),
       );
+
       return drinks.map((item: any) => (
         <>
           <Grid item xs={4}>
@@ -521,6 +544,7 @@ export default function App() {
           dish.tags.includes('food') &&
           dish.dotw.includes(moment().format('dddd').toString()),
       );
+      console.log(food);
 
       return food.map((item: any) => (
         <>
@@ -757,17 +781,15 @@ export default function App() {
 
                 <Grid item sm={3}>
                   <Typography textAlign="right" variant="h5">
-                    ${Number.parseFloat(item.basePrice).toFixed(2)}
+                    ${Number.parseFloat(item.price).toFixed(2)}
                   </Typography>
                 </Grid>
               </Grid>
             </ListItemText>
           </ListItemButton>
         </ListItem>
-        <RenderSelectedOptions
-          selectedOptions={item.selectedOptions}
-          item={item}
-        ></RenderSelectedOptions>
+
+        <RenderSelectedOptions selectedOptions={item.options} item={item}></RenderSelectedOptions>
 
         <Divider></Divider>
       </>
