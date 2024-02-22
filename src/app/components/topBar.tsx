@@ -21,6 +21,7 @@ const pages = [
   { name: 'Menu', link: '/admin/menu' },
   { name: 'Analytics', link: '/admin/analytics' },
   { name: 'Calendar', link: '/admin/calendar' },
+  { name: 'Orders', link: '/kitchen_display' },
 ];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
 

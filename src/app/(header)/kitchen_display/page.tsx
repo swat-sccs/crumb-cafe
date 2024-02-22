@@ -278,11 +278,6 @@ export default function Home() {
   return (
     <div>
       <Script src="./epos-2.27.0.js"></Script>
-      <Card elevation={2} sx={{ m: 1, p: 2, backgroundColor: '#31425f' }}>
-        <Typography textAlign="center" variant="h5" color="white">
-          Kitchen Portal
-        </Typography>
-      </Card>
 
       <Container sx={{ mt: 5 }}>
         <Grid

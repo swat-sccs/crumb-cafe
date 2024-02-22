@@ -1,6 +1,6 @@
 // Admin Analytics
 'use client';
-import { Grid, Container, Typography, Avatar } from '@mui/material';
+import { Grid, Container, Box, Fade } from '@mui/material';
 import styles from './page.module.css';
 import { LineChart } from '@mui/x-charts/LineChart';
 import BasicCard from './card.js';
@@ -13,37 +13,35 @@ import moment from 'moment';
 import useSWR from 'swr';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
-
-let data2 = [
-  { label: 'custom', value: 200 },
-  { label: 'italian-soda', value: 100 },
-  { label: 'Oreo Milk Shake', value: 50 },
-  { label: 'Chicken Tendies', value: 100 },
-  { label: 'Dino Nuggies', value: 30 },
-  { label: 'JUICE', value: 20 },
-];
+let data2: any = [];
 
 export default function Analytics() {
+  const theme = useTheme();
   const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 1000 });
   const [totalSales, setTotalSales] = React.useState(0);
   const [dailySales, setDailySales] = React.useState(0);
   const [totalOrders, setTotalOrders] = React.useState(0);
   const [dailyOrders, setDailyOrders] = React.useState(0);
 
+  //const [data2, setData2] = React.useState<any>([]);
+
   const calcNums = () => {
     if (isLoading == false && !error) {
       let tempTotal = 0;
       let tempDaily = 0;
       let tempDailyOrders = 0;
+      let labels: any = {};
+      let values: any = [];
 
       for (const order of data.orders) {
-        console.log(order);
+        //(order);
         if (moment().isSame(order.createdAt, 'day')) {
           tempDaily += order.total;
           tempDailyOrders++;
         }
         tempTotal += order.total;
       }
+
       setTotalSales(tempTotal);
       setDailySales(tempDaily);
       setTotalOrders(data.orders.length);
@@ -51,8 +49,28 @@ export default function Analytics() {
     }
   };
 
+  const pieChart = async () => {
+    let labels: any = {};
+    if (isLoading == false && !error) {
+      data2 = [];
+      for (const order of data.orders) {
+        for (const dish of order.dishes) {
+          //labels.push(dish.friendlyName);
+          labels[dish.friendlyName] = (labels[dish.friendlyName] ?? 0) + 1;
+        }
+      }
+      console.log(labels);
+
+      for (const thing in labels) {
+        data2.push({ label: thing, value: labels[thing] });
+        //setData2(temp);
+      }
+    }
+  };
+
   useEffect(() => {
     calcNums();
+    pieChart();
   });
   return (
     <Container>
@@ -75,18 +93,24 @@ export default function Analytics() {
           </Grid>
         </Grid>
 
-        <Grid container item direction="row" justifyContent="flex-start" alignItems="center">
+        <Grid
+          container
+          item
+          direction="row"
+          justifyContent="center"
+          alignItems="center"
+          className={styles.info}
+        >
           <PieChart
+            margin={{ top: 100, bottom: 140, left: 100, right: 100 }}
             series={[
               {
                 data: data2,
                 paddingAngle: 3,
                 arcLabel: (item) => `${item.value}`,
                 highlightScope: { faded: 'global', highlighted: 'item' },
-                cx: 150,
-                cy: 220,
                 innerRadius: 100,
-                outerRadius: 200,
+                outerRadius: 150,
                 cornerRadius: 10,
               },
             ]}
@@ -94,15 +118,21 @@ export default function Analytics() {
               [`& .${pieArcLabelClasses.root}`]: {
                 fill: 'white',
                 fontWeight: 'bold',
-                fontSize: 20,
+                fontSize: 22,
               },
               [`& .${pieArcClasses.faded}`]: {
                 fill: 'gray',
               },
             }}
-            height={440}
-            width={300}
-            legend={{ hidden: true }}
+            slotProps={{
+              legend: {
+                direction: 'row',
+                position: { vertical: 'bottom', horizontal: 'middle' },
+                padding: 0,
+              },
+            }}
+            height={540}
+            width={400}
           />
         </Grid>
       </Grid>
