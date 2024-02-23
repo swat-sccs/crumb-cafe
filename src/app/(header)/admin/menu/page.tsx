@@ -29,6 +29,7 @@ import {
   CircularProgress,
   Button,
   SelectChangeEvent,
+  Alert,
 } from '@mui/material';
 import styles from './page.module.css';
 import React, { useState, useEffect, useRef } from 'react';
@@ -51,6 +52,11 @@ export default function Home() {
   const [windowTitle, setWindowTitle] = React.useState('Edit Item');
   const [personName, setPersonName] = React.useState<string[]>([]);
   const scrollRef = useRef<any>(null);
+
+  const [Success, setSuccess] = React.useState(false);
+  const handleSuccess = () => setSuccess(false);
+  const [Failure, setFailure] = React.useState(false);
+  const handleFailure = () => setFailure(false);
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -142,10 +148,12 @@ export default function Home() {
       console.log(SelectedItem);
       await axios.put(url, SelectedItem).then((response) => {
         if (response.status == 200) {
+          setSuccess(true);
+          setTimeout(handleSuccess, 3000);
           handleClose();
-          console.log(response.data);
         } else {
-          console.log(response.data);
+          setFailure(true);
+          setTimeout(handleFailure, 3000);
         }
       });
     } else if (windowTitle == 'New Item') {
@@ -154,8 +162,12 @@ export default function Home() {
 
       await axios.post('/api/dishes', temp).then((response) => {
         if (response.status === 200) {
+          setSuccess(true);
+          setTimeout(handleSuccess, 3000);
           handleClose();
         } else {
+          setFailure(true);
+          setTimeout(handleFailure, 3000);
         }
       });
     }
@@ -171,6 +183,28 @@ export default function Home() {
     console.log(SelectedItem);
   };
 
+  const subHeader = (option: any) => {
+    const days = [];
+    for (const dotw of option.dotw) {
+      days.push(
+        <>
+          {dotw == 'Thursday' ? (
+            <Chip size="small" sx={{ ml: '2%', mt: '5%' }} label={'TH'} />
+          ) : (
+            <Chip size="small" sx={{ ml: '2%', mt: '5%' }} label={dotw.charAt(0).toUpperCase()} />
+          )}
+        </>,
+      );
+    }
+    return (
+      <>
+        <Typography variant="body1">$ {Number.parseFloat(option.basePrice).toFixed(2)}</Typography>
+
+        {days}
+      </>
+    );
+  };
+
   const RenderCards = () => {
     if (isLoading == false) {
       return data.dishes.map((option: any) => (
@@ -184,7 +218,7 @@ export default function Home() {
                   </IconButton>
                 }
                 title={option.friendlyName}
-                subheader={'$' + Number.parseFloat(option.basePrice).toFixed(2)}
+                subheader={subHeader(option)}
               />
 
               <Divider variant="middle" />
@@ -288,8 +322,30 @@ export default function Home() {
   });
   */
 
+  const AlertComponent = () => {
+    if (Success) {
+      return (
+        <Alert sx={{ display: 'flex', width: '75%' }} severity="success" variant="outlined">
+          Success — Item Saved!
+        </Alert>
+      );
+    }
+    if (Failure) {
+      return (
+        <Alert sx={{ display: 'flex', width: '75%' }} severity="error" variant="outlined">
+          Error — Something went wrong!
+        </Alert>
+      );
+    } else {
+      return <></>;
+    }
+  };
+
   return (
     <Box>
+      <Box sx={{ position: 'absolute', bottom: '0', right: '0', mb: ' 5%', mr: '5%' }}>
+        <AlertComponent></AlertComponent>
+      </Box>
       <Grid container direction="row" sx={{ height: '80vh', overflowY: 'scroll' }} spacing={2}>
         <RenderCards></RenderCards>
 
@@ -304,7 +360,6 @@ export default function Home() {
           </Fab>
         ) : null}
       </Grid>
-
       {open ? (
         <>
           <Box

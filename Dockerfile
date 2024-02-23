@@ -1,7 +1,7 @@
 FROM node:18-alpine
 ENV NODE_ENV=production
 RUN mkdir /app && chown -R node:node /app
-WORKDIR /usr/src/app
+WORKDIR /app
 USER node
 COPY --chown=node:node . .
 RUN npm ci --only=production && npm cache clean --force
