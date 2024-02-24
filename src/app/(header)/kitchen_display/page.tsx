@@ -3,7 +3,6 @@ SO.... RE write the submit function to send over entire orders onSubmit()
 THEN... In the backend change around the api to accept a list of the already format 'singular' orders
 THEN... CRY
 */
-
 'use client';
 import React, { useRef, useState } from 'react';
 import { Box, Card, CardHeader, Container, Typography, useTheme, Slide } from '@mui/material';
@@ -25,7 +24,7 @@ import {
   ImageListItem,
   ImageList,
 } from '@mui/material';
-import { Close, Print, Update } from '@mui/icons-material';
+import { Sensors, Print, Update } from '@mui/icons-material';
 import CardContent from '@mui/material/CardContent';
 import styles from '../page.module.css';
 import axios from 'axios';
@@ -41,6 +40,39 @@ export default function Home() {
   //axios.get('/api/dishes').then((reponse) => console.log(reponse));
   const ePosDevice = useRef();
   const printer = useRef<any>();
+  const printerIPAddress = process.env.NEXT_PUBLIC_PRINTERIP;
+  const printerPort = '8008';
+
+  const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
+
+  const connect = () => {
+    setConnectionStatus('Connecting ...');
+
+    let ePosDev = new window.epson.ePOSDevice();
+    ePosDevice.current = ePosDev;
+
+    ePosDev.connect(printerIPAddress, printerPort, (data: any) => {
+      if (data === 'OK') {
+        ePosDev.createDevice(
+          'local_printer',
+          ePosDev.DEVICE_TYPE_PRINTER,
+          { crypto: true, buffer: false },
+          (devobj: any, retcode: any) => {
+            if (retcode === 'OK') {
+              printer.current = devobj;
+              setConnectionStatus('CONNECTED');
+            } else {
+              setConnectionStatus('Connection Failed');
+              throw retcode;
+            }
+          },
+        );
+      } else {
+        setConnectionStatus('Connection Failed');
+        throw data;
+      }
+    });
+  };
 
   React.useEffect(() => {
     //
@@ -239,8 +271,45 @@ export default function Home() {
     });
   }
 
+  async function PRINT2(item: any) {
+    const prn: any = printer.current;
+
+    prn.addTextAlign(prn.ALIGN_CENTER);
+    prn.addTextSmooth(true);
+    prn.addTextDouble(true, true);
+    prn.addText('CRUMB CAFE\n');
+    prn.addTextDouble(false, false);
+    prn.addText('Sale Ticket\n\n');
+
+    prn.addText('---------------------------------');
+    prn.addText('ORDER ' + item.customerNumber + '       ' + moment().format('h:mm:ss a') + '\n');
+    prn.addText('---------------------------------\n');
+
+    prn.addTextAlign(prn.ALIGN_LEFT);
+    for (const thing of item.dishes) {
+      prn.addText(
+        thing.friendlyName.substring(0, 7) +
+          ' ................... $' +
+          thing.price.toFixed(2) +
+          '\n',
+      );
+      for (const item of thing.options) {
+        prn.addText('\t' + item.friendlyName + '\n');
+      }
+    }
+
+    prn.addFeedLine(3);
+    prn.addTextAlign(prn.ALIGN_CENTER);
+    prn.addTextStyle(false, true, true, prn.COLOR_2);
+    prn.addTextDouble(true, true);
+    prn.addText(item.customerName + '\n');
+
+    prn.addCut(prn.CUT_FEED);
+    prn.send();
+  }
+
   const completeOrder = async (item: any) => {
-    PRINT(item);
+    PRINT2(item);
     const url = '/api/orders/' + item._id;
     let theitem = Object.assign({}, item);
 
@@ -278,7 +347,15 @@ export default function Home() {
   return (
     <div>
       <Script src="./epos-2.27.0.js"></Script>
-
+      <Button
+        color="secondary"
+        disabled={STATUS_CONNECTED == 'CONNECTED'}
+        sx={{ position: 'absolute', top: 0, right: 0, mt: '1%', mr: '10%' }}
+        onClick={() => connect()}
+      >
+        <Sensors></Sensors> &nbsp;
+        {STATUS_CONNECTED}
+      </Button>
       <Container sx={{ mt: 5 }}>
         <Grid
           container
