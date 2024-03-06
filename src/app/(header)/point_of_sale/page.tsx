@@ -291,6 +291,12 @@ export default function App() {
           <Grid container direction="row" justifyContent="center">
             <Grid item xs={12}>
               <Card
+                style={{
+                  background: 'rgba(0,0,0,0.37)',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+                  WebkitBackdropFilter: 'blur(6.8px)',
+                }}
                 sx={{
                   borderRadius: '10px',
                   display: 'flex',
@@ -383,7 +389,7 @@ export default function App() {
             onClick={handleClose}
             sx={{
               width: '100%',
-              height: '100%',
+              height: '100vh',
               position: 'absolute',
               top: '0',
               left: '0',
@@ -476,7 +482,9 @@ export default function App() {
         <>
           <Grid item xs={4}>
             <Button
-              sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
+              //DRINKBUTTONS
+              sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold', boxShadow: 10 }}
+              color="secondary"
               size="large"
               onClick={() => handleOpenOptions(item)}
             >
@@ -550,6 +558,7 @@ export default function App() {
         <>
           <Grid item xs={4} key={item.id}>
             <Button
+              color="secondary"
               sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold' }}
               size="large"
               onClick={() => handleOpenOptions(item)}
@@ -584,6 +593,9 @@ export default function App() {
           <Tabs
             value={foodOdrink}
             //exclusive
+
+            textColor="secondary"
+            indicatorColor="secondary"
             aria-label="text alignment"
             sx={{ marginBottom: '10%' }}
             onChange={handleAlignment}
@@ -656,7 +668,7 @@ export default function App() {
           size="large"
           onClick={() => cancelOrder()}
         >
-          CANCEL ORDER
+          <Typography variant="h6">CANCEL ORDER</Typography>
         </Button>
       </>
     );
@@ -672,6 +684,7 @@ export default function App() {
             height: 60,
             lineHeight: 1.4,
           }}
+          color="success"
           size="large"
           onClick={() => handleOpen()}
         >
@@ -716,7 +729,7 @@ export default function App() {
               //come back here IZZY
               onClick={() => removeItem(currentDish)}
             >
-              Delete Item
+              <Typography variant="body1">Delete Item</Typography>
             </Button>
             <Button
               sx={{
@@ -728,7 +741,7 @@ export default function App() {
               size="large"
               onClick={() => addItems()}
             >
-              Confirm This Item
+              <Typography variant="body1">Confirm </Typography>
             </Button>
           </Grid>
         </>
@@ -775,7 +788,7 @@ export default function App() {
           <ListItemButton key={item.friendlyName} onClick={() => showOptions(item)}>
             <ListItemText style={{ textAlign: 'left' }}>
               <Grid container direction="row" justifyContent="space-between" alignItems="center">
-                <Grid item sm={4}>
+                <Grid item sm={9}>
                   <Typography variant="h5">{item.friendlyName}</Typography>
                 </Grid>
 
@@ -821,10 +834,18 @@ export default function App() {
           }
         </Fade>
       </Box>
-      <Container sx={{ backgroundColor: '', height: '100%' }}>
+      <Container sx={{ backgroundColor: '', height: '100%', mt: '2%' }}>
         <Grid container spacing={12} direction="row">
           <Grid item sm={6}>
-            <Card>
+            <Card
+              style={{
+                background: 'rgba(0,0,0,0.37)',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+                WebkitBackdropFilter: 'blur(6.8px)',
+              }}
+              sx={{ height: '82vh' }}
+            >
               <Grid
                 container
                 direction="row"
@@ -840,23 +861,32 @@ export default function App() {
                   Price
                 </Typography>
               </Grid>
-            </Card>
-            <Grid item container direction="column">
-              <Grid item>
-                <List sx={{ overflow: 'auto', height: '62vh' }}>
-                  <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
-                </List>
-              </Grid>
 
-              <Grid container item xs={6} spacing={4} alignContent="center" justifyContent="center">
-                <Grid item md={6} lg={6}>
-                  <CancelOrderComponent></CancelOrderComponent>
+              <Grid item container direction="column">
+                <Grid item>
+                  <List sx={{ overflow: 'auto', height: '64vh' }}>
+                    <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
+                  </List>
                 </Grid>
-                <Grid item md={6} lg={6}>
-                  <ConfirmOrderComponent></ConfirmOrderComponent>
+
+                <Grid
+                  container
+                  item
+                  xs={6}
+                  spacing={3}
+                  alignContent="center"
+                  justifyContent="center"
+                  sx={{}}
+                >
+                  <Grid item md={4} lg={5}>
+                    <CancelOrderComponent></CancelOrderComponent>
+                  </Grid>
+                  <Grid item md={4} lg={5}>
+                    <ConfirmOrderComponent></ConfirmOrderComponent>
+                  </Grid>
                 </Grid>
               </Grid>
-            </Grid>
+            </Card>
           </Grid>
 
           <Grid item container xs={6} alignContent="flex-start" direction="column">

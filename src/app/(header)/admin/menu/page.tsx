@@ -210,7 +210,15 @@ export default function Home() {
       return data.dishes.map((option: any) => (
         <>
           <Grid item md={4} lg={3}>
-            <Card sx={{ minWidth: '50%', height: '100%' }}>
+            <Card
+              sx={{ minWidth: '50%', height: '100%', boxShadow: 2 }}
+              style={{
+                background: 'rgba(0,0,0,0.37)',
+                backdropFilter: 'blur(10px)',
+
+                WebkitBackdropFilter: 'blur(6.8px)',
+              }}
+            >
               <CardHeader
                 action={
                   <IconButton aria-label="settings" onClick={() => handleOpen(option)}>
@@ -346,7 +354,7 @@ export default function Home() {
       <Box sx={{ position: 'absolute', bottom: '0', right: '0', mb: ' 5%', mr: '5%' }}>
         <AlertComponent></AlertComponent>
       </Box>
-      <Grid container direction="row" sx={{ height: '80vh', overflowY: 'scroll' }} spacing={2}>
+      <Grid container direction="row" sx={{ height: '90vh', overflowY: 'scroll' }} spacing={2}>
         <RenderCards></RenderCards>
 
         {!open ? (

@@ -6,10 +6,12 @@ import styles from './page.module.css';
 import { getServerSession } from 'next-auth/next';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
+import { useTheme } from '@mui/material';
 
 //<Link href={page.link} key={page.name} passHref style={{ textDecoration: 'none' }}>
 export default function Home() {
   const router = useRouter();
+  const theme = useTheme();
 
   return (
     <div>
@@ -41,10 +43,12 @@ export default function Home() {
           <Link href="/admin/menu" passHref style={{ textDecoration: 'none' }}>
             <Card
               className={styles.box}
+              color="primary"
+              style={{ backgroundColor: theme.palette.primary.dark }}
               sx={{
                 width: '100%',
                 height: '50%',
-                backgroundColor: 'rgb(49, 66, 95, 0.7)',
+
                 textAlign: 'center',
                 borderRadius: '50px',
                 marginTop: '20%',
@@ -72,10 +76,10 @@ export default function Home() {
           <Link href="/point_of_sale" passHref style={{ textDecoration: 'none' }}>
             <Card
               className={styles.box}
+              style={{ backgroundColor: theme.palette.primary.dark }}
               sx={{
                 width: '100%',
                 height: '50%',
-                backgroundColor: 'rgb(49, 66, 95, 0.7)',
                 textAlign: 'center',
                 borderRadius: '50px',
                 marginTop: '20%',
@@ -111,11 +115,11 @@ export default function Home() {
               <Grid item xs={12}>
                 <Link href="/order_display" passHref style={{ textDecoration: 'none' }}>
                   <Card
+                    style={{ backgroundColor: theme.palette.primary.dark }}
                     className={styles.box}
                     sx={{
                       width: '100%',
                       height: '20vh',
-                      backgroundColor: 'rgb(49, 66, 95, 0.7)',
                       textAlign: 'center',
                     }}
                   >
@@ -133,10 +137,11 @@ export default function Home() {
                 <Link href="/kitchen_display" passHref style={{ textDecoration: 'none' }}>
                   <Card
                     className={styles.box}
+                    style={{ backgroundColor: theme.palette.primary.dark }}
                     sx={{
                       width: '100%',
                       height: '20vh',
-                      backgroundColor: 'rgb(49, 66, 95, 0.7)',
+
                       textAlign: 'center',
                     }}
                   >
@@ -153,7 +158,6 @@ export default function Home() {
           </Card>
         </Grid>
       </Grid>
-      <CrumbParticles />
     </div>
   );
 }

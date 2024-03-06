@@ -50,7 +50,20 @@ function ResponsiveAppBar() {
   }, [pathname]);
 
   return (
-    <AppBar position="static">
+    <AppBar
+      position="static"
+      sx={
+        {
+          /*background: '#EA4785' */
+        }
+      }
+      style={{
+        background: 'rgba(234, 71, 133, 0.8)',
+        backdropFilter: 'blur(10px)',
+
+        WebkitBackdropFilter: 'blur(6.8px)',
+      }}
+    >
       <Container maxWidth="xl">
         <Toolbar disableGutters>
           <CookieIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />

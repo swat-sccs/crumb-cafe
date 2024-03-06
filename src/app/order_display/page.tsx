@@ -10,6 +10,7 @@ import {
   Divider,
   ListItemAvatar,
   Avatar,
+  ListItemText,
 } from '@mui/material';
 import {
   Table,
@@ -87,14 +88,16 @@ export default function Home() {
                 <ListItemAvatar>
                   <Typography variant="h4">#{item.customerNumber}</Typography>
                 </ListItemAvatar>
-                <Typography
-                  variant="h4"
-                  color={'white'}
-                  sx={{ width: '100%', borderStartEndRadius: '10px' }}
-                  textAlign={'center'}
-                >
-                  {item.customerName}
-                </Typography>
+                <ListItemText>
+                  <Typography
+                    variant="h5"
+                    color={'white'}
+                    sx={{ width: '100%' }}
+                    textAlign={'center'}
+                  >
+                    {item.customerName}
+                  </Typography>
+                </ListItemText>
               </ListItem>
               <Divider></Divider>
             </List>
@@ -109,7 +112,7 @@ export default function Home() {
     <Container>
       <Box>
         <Grid container justifyContent="center" alignContent="center">
-          <Card elevation={10} sx={{ m: 2, p: 2, backgroundColor: '#31425f', width: '50%' }}>
+          <Card elevation={10} sx={{ m: 2, p: 2, backgroundColor: '#93CBF3', width: '50%' }}>
             <Typography textAlign="center" variant="h3" color="white">
               Orders
             </Typography>
@@ -128,6 +131,12 @@ export default function Home() {
             <Card
               elevation={2}
               sx={{ m: 2, p: 2, width: 350, height: '60vh', overflowY: 'scroll' }}
+              style={{
+                background: 'rgba(0,0,0,0.37)',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+                WebkitBackdropFilter: 'blur(6.8px)',
+              }}
             >
               <Progress_List></Progress_List>
             </Card>
@@ -144,6 +153,12 @@ export default function Home() {
             <Card
               elevation={2}
               sx={{ m: 2, p: 2, width: 350, height: '60vh', overflowY: 'scroll' }}
+              style={{
+                background: 'rgba(0,0,0,0.37)',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+                WebkitBackdropFilter: 'blur(6.8px)',
+              }}
             >
               <Completed_List></Completed_List>
             </Card>

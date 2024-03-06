@@ -104,6 +104,12 @@ export default function Home() {
             <Grid item key={item._id}>
               <Badge badgeContent={item.dishes.length} color="secondary">
                 <Card
+                  style={{
+                    background: 'rgba(0,0,0,0.37)',
+                    backdropFilter: 'blur(10px)',
+                    boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+                    WebkitBackdropFilter: 'blur(6.8px)',
+                  }}
                   sx={{
                     borderRadius: '10px',
                     borderColor: 'black',
@@ -199,78 +205,6 @@ export default function Home() {
     return <>{DishAndOptions}</>;
   };
 
-  async function PRINT(item: any) {
-    const printerIPAddress = '192.168.192.168';
-    const printerPort = '8008';
-    let ePosDev = new window.epson.ePOSDevice();
-    ePosDevice.current = ePosDev;
-
-    await ePosDev.connect(printerIPAddress, printerPort, (data: any) => {
-      if (data === 'OK') {
-        ePosDev.createDevice(
-          'local_printer',
-          ePosDev.DEVICE_TYPE_PRINTER,
-          { crypto: false, buffer: false },
-          (devobj: any, retcode: any) => {
-            if (retcode === 'OK') {
-              printer.current = devobj;
-              //printer.current.startMonitor();
-              console.log('Connected! Printing!');
-              const prn: any = printer.current;
-
-              prn.addTextAlign(prn.ALIGN_CENTER);
-              prn.addTextSmooth(true);
-              prn.addTextDouble(true, true);
-              prn.addText('CRUMB CAFE\n');
-              prn.addTextDouble(false, false);
-              prn.addText('Sale Ticket\n\n');
-
-              prn.addText('---------------------------------');
-              prn.addText(
-                'ORDER ' + item.customerNumber + '       ' + moment().format('h:mm:ss a') + '\n',
-              );
-              prn.addText('---------------------------------\n');
-
-              // prn.addTextAlign(prn.ALIGN_LEFT);
-
-              //prn.addTextAlign(printer.ALIGN_RIGHT);
-              //prn.addText('TIME: ' + Date() + '\n');
-              //prn.color(prn.COLOR_1);
-              //ITEM 5 .................... $5.00
-              //6 chars
-              // 33 characters
-              prn.addTextAlign(prn.ALIGN_LEFT);
-              for (const thing of item.dishes) {
-                prn.addText(
-                  thing.friendlyName.substring(0, 7) +
-                    ' ................... $' +
-                    thing.price.toFixed(2) +
-                    '\n',
-                );
-                for (const item of thing.options) {
-                  prn.addText('\t' + item.friendlyName + '\n');
-                }
-              }
-
-              prn.addFeedLine(3);
-              prn.addTextAlign(prn.ALIGN_CENTER);
-              prn.addTextStyle(false, true, true, prn.COLOR_2);
-              prn.addTextDouble(true, true);
-              prn.addText(item.customerName + '\n');
-
-              prn.addCut(prn.CUT_FEED);
-              prn.send();
-            } else {
-              throw retcode;
-            }
-          },
-        );
-      } else {
-        throw data;
-      }
-    });
-  }
-
   async function PRINT2(item: any) {
     const prn: any = printer.current;
 
@@ -303,6 +237,42 @@ export default function Home() {
     prn.addTextStyle(false, true, true, prn.COLOR_2);
     prn.addTextDouble(true, true);
     prn.addText(item.customerName + '\n');
+
+    prn.addCut(prn.CUT_FEED);
+    prn.send();
+  }
+
+  async function PRINT3(item: any) {
+    const prn: any = printer.current;
+
+    prn.addTextAlign(prn.ALIGN_CENTER);
+    prn.addTextSmooth(true);
+    prn.addTextDouble(true, true);
+    prn.addText('CRUMB CAFE\n');
+    prn.addTextDouble(false, false);
+    prn.addText('Project Updates\n\n');
+
+    prn.addText('---------------------------------');
+    prn.addText('STATUS - Beta   ' + moment().format('h:mm:ss a') + '\n');
+    prn.addText('---------------------------------\n\n');
+
+    prn.addText('- Printer works\n   Can Print Anywhere\n');
+    prn.addText('---------------------------------\n');
+    prn.addText('- UI needs reskin with Crumb pics\n');
+    prn.addText('- Add search for menu creation\n');
+    prn.addText('- Filter orders by similar \n');
+    prn.addText('    Good for order runners\n');
+    prn.addText('- UI reskin with Crumb Images\n');
+    prn.addText('- Device? Ipad? Surface(ish)?\n');
+    prn.addText('- Login?\n');
+    prn.addText('   crumb.sccs.swarthmore.edu\n');
+    prn.addText('   currently pub access\n');
+
+    prn.addFeedLine(3);
+    prn.addTextAlign(prn.ALIGN_CENTER);
+    prn.addTextStyle(false, true, true, prn.COLOR_2);
+    prn.addTextDouble(true, true);
+    prn.addText(':)\n');
 
     prn.addCut(prn.CUT_FEED);
     prn.send();
