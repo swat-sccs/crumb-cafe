@@ -92,9 +92,9 @@ export default function Home() {
         let statusColor = 'grey';
 
         if (status == 'in_progress') {
-          statusColor = '#FB9902';
+          statusColor = '#FFA958';
         } else if (status == 'completed') {
-          statusColor = '#1F7D1F';
+          statusColor = '#CCFE8C';
         } else {
           statusColor = 'grey';
         }

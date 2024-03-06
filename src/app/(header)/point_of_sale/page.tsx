@@ -691,8 +691,6 @@ export default function App() {
           <Grid container direction="row" justifyContent="space-between" alignItems="center">
             <Grid item xs={6}>
               CONFIRM
-              <br />
-              ORDER
             </Grid>
 
             <Grid item xs={6}>
@@ -878,10 +876,10 @@ export default function App() {
                   justifyContent="center"
                   sx={{}}
                 >
-                  <Grid item md={4} lg={5}>
+                  <Grid item md={5} lg={5}>
                     <CancelOrderComponent></CancelOrderComponent>
                   </Grid>
-                  <Grid item md={4} lg={5}>
+                  <Grid item md={6} lg={5}>
                     <ConfirmOrderComponent></ConfirmOrderComponent>
                   </Grid>
                 </Grid>
