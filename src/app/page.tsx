@@ -44,7 +44,12 @@ export default function Home() {
             <Card
               className={styles.box}
               color="primary"
-              style={{ backgroundColor: theme.palette.primary.dark }}
+              style={{
+                background: 'rgba(0,0,0,0.37)',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+                WebkitBackdropFilter: 'blur(6.8px)',
+              }}
               sx={{
                 width: '100%',
                 height: '50%',
@@ -76,7 +81,12 @@ export default function Home() {
           <Link href="/point_of_sale" passHref style={{ textDecoration: 'none' }}>
             <Card
               className={styles.box}
-              style={{ backgroundColor: theme.palette.primary.dark }}
+              style={{
+                background: 'rgba(0,0,0,0.37)',
+                backdropFilter: 'blur(10px)',
+                boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+                WebkitBackdropFilter: 'blur(6.8px)',
+              }}
               sx={{
                 width: '100%',
                 height: '50%',
@@ -102,6 +112,9 @@ export default function Home() {
 
         <Grid item xs={5} sm={3} md={3} lg={3} sx={{ backgroundColor: '' }}>
           <Card
+            style={{
+              background: 'rgba(0,0,0,0)',
+            }}
             sx={{
               width: '100%',
               height: '40vh',
@@ -115,7 +128,11 @@ export default function Home() {
               <Grid item xs={12}>
                 <Link href="/order_display" passHref style={{ textDecoration: 'none' }}>
                   <Card
-                    style={{ backgroundColor: theme.palette.primary.dark }}
+                    style={{
+                      background: 'rgba(0,0,0,0.37)',
+                      backdropFilter: 'blur(10px)',
+                      WebkitBackdropFilter: 'blur(6.8px)',
+                    }}
                     className={styles.box}
                     sx={{
                       width: '100%',
@@ -137,7 +154,12 @@ export default function Home() {
                 <Link href="/kitchen_display" passHref style={{ textDecoration: 'none' }}>
                   <Card
                     className={styles.box}
-                    style={{ backgroundColor: theme.palette.primary.dark }}
+                    style={{
+                      background: 'rgba(0,0,0,0.37)',
+                      backdropFilter: 'blur(10px)',
+                      boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+                      WebkitBackdropFilter: 'blur(6.8px)',
+                    }}
                     sx={{
                       width: '100%',
                       height: '20vh',
