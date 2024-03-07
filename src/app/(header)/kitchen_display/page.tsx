@@ -102,7 +102,7 @@ export default function Home() {
         orders.push(
           <>
             <Grid item key={item._id}>
-              <Badge badgeContent={item.dishes.length} color="secondary">
+              <Badge badgeContent={item.dishes.length} color="primary">
                 <Card
                   style={{
                     background: 'rgba(0,0,0,0.37)',
@@ -176,6 +176,7 @@ export default function Home() {
           <>
             <Grid item sx={{ m: 1 }} key={option._id}>
               <Chip
+                size="small"
                 label={option.friendlyName}
                 color="primary"
                 sx={{
@@ -191,7 +192,7 @@ export default function Home() {
       }
       DishAndOptions.push(
         <>
-          <Box key={item._id}>
+          <Box key={item._id} sx={{ width: '10vw' }}>
             <Typography variant="h5" textAlign="left" sx={{ mt: '10%' }}>
               {item.friendlyName}
             </Typography>

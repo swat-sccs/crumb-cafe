@@ -35,6 +35,8 @@ import styles from './page.module.css';
 import React, { useState, useEffect, useRef } from 'react';
 import { Folder, Delete, Add } from '@mui/icons-material';
 import LabelAvatar from '@/app/components/labelAvatar';
+import SearchIcon from '@mui/icons-material/Search';
+
 import useSWR from 'swr';
 import axios from 'axios';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
@@ -57,6 +59,10 @@ export default function Home() {
   const handleSuccess = () => setSuccess(false);
   const [Failure, setFailure] = React.useState(false);
   const handleFailure = () => setFailure(false);
+  const [search, setSearch] = useState('');
+  const handleSearch = (event: any) => {
+    setSearch(event.target.value);
+  };
 
   useEffect(() => {
     if (scrollRef.current) {
@@ -207,7 +213,17 @@ export default function Home() {
 
   const RenderCards = () => {
     if (isLoading == false) {
-      return data.dishes.map((option: any) => (
+      let filteredData = [];
+      console.log(data);
+      if (search) {
+        filteredData = data.dishes.filter((data: any) =>
+          data.friendlyName.toLowerCase().includes(search.toLowerCase().trim()),
+        );
+      } else {
+        filteredData = data.dishes;
+      }
+
+      return filteredData.map((option: any) => (
         <>
           <Grid item md={4} lg={3}>
             <Card
@@ -215,7 +231,6 @@ export default function Home() {
               style={{
                 background: 'rgba(0,0,0,0.37)',
                 backdropFilter: 'blur(10px)',
-
                 WebkitBackdropFilter: 'blur(6.8px)',
               }}
             >
@@ -354,7 +369,21 @@ export default function Home() {
       <Box sx={{ position: 'absolute', bottom: '0', right: '0', mb: ' 5%', mr: '5%' }}>
         <AlertComponent></AlertComponent>
       </Box>
-      <Grid container direction="row" sx={{ height: '90vh', overflowY: 'scroll' }} spacing={2}>
+      <Grid container justifyContent="center" alignItems="center" sx={{ mb: '2%' }}>
+        <TextField
+          label="Search"
+          value={search}
+          onChange={(event) => handleSearch(event)}
+          InputProps={{
+            startAdornment: (
+              <InputAdornment position="start">
+                <SearchIcon />
+              </InputAdornment>
+            ),
+          }}
+        />
+      </Grid>
+      <Grid container direction="row" sx={{ height: '80vh', overflowY: 'scroll' }} spacing={2}>
         <RenderCards></RenderCards>
 
         {!open ? (

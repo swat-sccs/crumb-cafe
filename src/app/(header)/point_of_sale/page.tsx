@@ -460,7 +460,7 @@ export default function App() {
     if (isLoading) {
       return (
         <Grid container justifyContent="center">
-          <CircularProgress />
+          <CircularProgress color="primary" />
         </Grid>
       );
     }
@@ -484,11 +484,13 @@ export default function App() {
             <Button
               //DRINKBUTTONS
               sx={{ m: 1, width: '100%', height: '100%', fontWeight: 'bold', boxShadow: 10 }}
-              color="secondary"
+              color="primary"
               size="large"
               onClick={() => handleOpenOptions(item)}
             >
-              {item.friendlyName}
+              <Typography variant="body1" textTransform="uppercase" fontWeight="bold">
+                {item.friendlyName}
+              </Typography>
             </Button>
           </Grid>
         </>
@@ -535,7 +537,7 @@ export default function App() {
     if (isLoading) {
       return (
         <Grid container justifyContent="center">
-          <CircularProgress />
+          <CircularProgress color="secondary" />
         </Grid>
       );
     }
@@ -563,7 +565,9 @@ export default function App() {
               size="large"
               onClick={() => handleOpenOptions(item)}
             >
-              {item.friendlyName}
+              <Typography variant="body1" textTransform="uppercase" fontWeight="bold">
+                {item.friendlyName}
+              </Typography>
             </Button>
           </Grid>
         </>
@@ -594,8 +598,8 @@ export default function App() {
             value={foodOdrink}
             //exclusive
 
-            textColor="secondary"
-            indicatorColor="secondary"
+            textColor={foodOdrink == 'drink' ? 'primary' : 'secondary'}
+            indicatorColor={foodOdrink == 'drink' ? 'primary' : 'secondary'}
             aria-label="text alignment"
             sx={{ marginBottom: '10%' }}
             onChange={handleAlignment}
@@ -668,7 +672,7 @@ export default function App() {
           size="large"
           onClick={() => cancelOrder()}
         >
-          <Typography variant="h6">CANCEL ORDER</Typography>
+          <Typography variant="body1">CANCEL ORDER</Typography>
         </Button>
       </>
     );
@@ -688,22 +692,45 @@ export default function App() {
           size="large"
           onClick={() => handleOpen()}
         >
-          <Grid container direction="row" justifyContent="space-between" alignItems="center">
-            <Grid item xs={6}>
-              CONFIRM
+          <Grid
+            container
+            direction="row"
+            justifyContent="space-between"
+            alignItems="center"
+            spacing={2}
+          >
+            <Grid item xs={12}>
+              <Typography variant="body1"> CONFIRM</Typography>
             </Grid>
 
+            {/*
             <Grid item xs={6}>
-              <Typography fontSize="150%">
-                (${Number.parseFloat(runningTotal.toString()).toFixed(2)})
-              </Typography>
+              <Typography>(${Number.parseFloat(runningTotal.toString()).toFixed(2)})</Typography>
             </Grid>
+             */}
           </Grid>
         </Button>
       </>
     );
   };
 
+  const OrderTotalComponent = () => {
+    return (
+      <>
+        <Grid container justifyContent="space-between">
+          <Grid item ml="10%">
+            <Typography variant="h5">Total</Typography>
+          </Grid>
+
+          <Grid item mr="10%">
+            <Typography variant="h5">
+              (${Number.parseFloat(runningTotal.toString()).toFixed(2)})
+            </Typography>
+          </Grid>
+        </Grid>
+      </>
+    );
+  };
   /*
   renderDeleteConfirmCustomComponent
 
@@ -832,17 +859,16 @@ export default function App() {
           }
         </Fade>
       </Box>
-      <Container sx={{ backgroundColor: '', height: '100%', mt: '2%' }}>
-        <Grid container spacing={12} direction="row">
-          <Grid item sm={6}>
+      <Container sx={{ backgroundColor: 'white', height: '100%', mt: '2%' }}>
+        <Grid container spacing={10} direction="row">
+          <Grid item sm={6} md={6}>
             <Card
               style={{
                 background: 'rgba(0,0,0,0.37)',
                 backdropFilter: 'blur(10px)',
-                boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
                 WebkitBackdropFilter: 'blur(6.8px)',
               }}
-              sx={{ height: '82vh' }}
+              sx={{ height: '82vh', boxShadow: 10 }}
             >
               <Grid
                 container
@@ -862,37 +888,49 @@ export default function App() {
 
               <Grid item container direction="column">
                 <Grid item>
-                  <List sx={{ overflow: 'auto', height: '64vh' }}>
+                  <List sx={{ overflow: 'auto', height: '59vh' }}>
                     <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
                   </List>
                 </Grid>
-
-                <Grid
-                  container
-                  item
-                  xs={6}
-                  spacing={3}
-                  alignContent="center"
-                  justifyContent="center"
-                  sx={{}}
-                >
-                  <Grid item md={5} lg={5}>
-                    <CancelOrderComponent></CancelOrderComponent>
-                  </Grid>
-                  <Grid item md={6} lg={5}>
-                    <ConfirmOrderComponent></ConfirmOrderComponent>
-                  </Grid>
+                <Grid item>
+                  <Card
+                    sx={{ height: '15vh' }}
+                    style={{
+                      background: 'rgba(231, 255, 255,0.3)',
+                      backdropFilter: 'blur(10px)',
+                      WebkitBackdropFilter: 'blur(6.8px)',
+                    }}
+                  >
+                    <Grid container item alignContent="center" justifyContent="center" mt="2%">
+                      <OrderTotalComponent></OrderTotalComponent>
+                    </Grid>
+                    <Grid
+                      container
+                      item
+                      spacing={3}
+                      alignContent="center"
+                      justifyContent="center"
+                      sx={{}}
+                    >
+                      <Grid item md={5} lg={5}>
+                        <CancelOrderComponent></CancelOrderComponent>
+                      </Grid>
+                      <Grid item md={5} lg={5}>
+                        <ConfirmOrderComponent></ConfirmOrderComponent>
+                      </Grid>
+                    </Grid>
+                  </Card>
                 </Grid>
               </Grid>
             </Card>
           </Grid>
 
-          <Grid item container xs={6} alignContent="flex-start" direction="column">
+          <Grid item container xs={6} md={6} lg={6} alignContent="flex-start" direction="column">
             <Grid item container spacing={1} alignContent="space-around" justifyContent="center">
               <ToggleComponent></ToggleComponent>
             </Grid>
 
-            <Grid item container sx={{ maxHeight: '50vh' }}>
+            <Grid item container sx={{ maxHeight: '70vh' }}>
               <Grid item container xs={12} spacing={2}>
                 <OrderComponent></OrderComponent>
                 <DeleteConfirmCustomComponent></DeleteConfirmCustomComponent>
