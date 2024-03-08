@@ -101,7 +101,7 @@ export default function Home() {
 
         orders.push(
           <>
-            <Grid item key={item._id}>
+            <Grid item key={item._id} sx={{ mt: '1%' }}>
               <Badge badgeContent={item.dishes.length} color="primary">
                 <Card
                   style={{
@@ -180,8 +180,9 @@ export default function Home() {
                 label={option.friendlyName}
                 color="primary"
                 sx={{
-                  fontSize: '100%',
+                  height: 'auto',
                   '& .MuiChip-label': {
+                    display: 'block',
                     whiteSpace: 'normal',
                   },
                 }}
@@ -332,9 +333,9 @@ export default function Home() {
           container
           direction="row"
           justifyContent="flex-start"
-          sx={{ overflowY: 'scroll', height: '85vh' }}
+          sx={{ overflowY: 'scroll', height: '87vh' }}
           columnGap={2}
-          spacing={{ xs: 0, md: 1, lg: 2 }}
+          spacing={{ xs: 0, md: 1, lg: 1 }}
         >
           <OrderCard></OrderCard>
         </Grid>

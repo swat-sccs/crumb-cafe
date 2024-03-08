@@ -383,7 +383,7 @@ export default function Home() {
           }}
         />
       </Grid>
-      <Grid container direction="row" sx={{ height: '80vh', overflowY: 'scroll' }} spacing={2}>
+      <Grid container direction="row" sx={{ height: '85vh', overflowY: 'scroll' }} spacing={2}>
         <RenderCards></RenderCards>
 
         {!open ? (

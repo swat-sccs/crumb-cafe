@@ -7,7 +7,7 @@ export default function sideBar({ children }: { children: React.ReactNode }) {
   return (
     <section>
       <Navigation></Navigation>
-      <Container sx={{ width: '85vw', mt: '2%' }}>{children}</Container>
+      <Container sx={{ width: '85vw', height: '85vh', mt: '2%' }}>{children}</Container>
     </section>
   );
 }
