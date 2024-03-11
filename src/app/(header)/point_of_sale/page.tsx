@@ -897,8 +897,6 @@ export default function App() {
                     sx={{ height: '15vh' }}
                     style={{
                       background: 'rgba(231, 255, 255,0.3)',
-                      backdropFilter: 'blur(10px)',
-                      WebkitBackdropFilter: 'blur(6.8px)',
                     }}
                   >
                     <Grid container item alignContent="center" justifyContent="center" mt="2%">

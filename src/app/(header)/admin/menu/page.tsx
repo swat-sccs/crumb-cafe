@@ -20,6 +20,8 @@ import {
   Box,
   Fab,
   FormControl,
+  FormGroup,
+  Switch,
   OutlinedInput,
   Chip,
   InputLabel,
@@ -33,6 +35,10 @@ import {
 } from '@mui/material';
 import styles from './page.module.css';
 import React, { useState, useEffect, useRef } from 'react';
+import EditIcon from '@mui/icons-material/Edit';
+import DeleteIcon from '@mui/icons-material/DeleteOutlined';
+import SaveIcon from '@mui/icons-material/Save';
+import CancelIcon from '@mui/icons-material/Close';
 import { Folder, Delete, Add } from '@mui/icons-material';
 import LabelAvatar from '@/app/components/labelAvatar';
 import SearchIcon from '@mui/icons-material/Search';
@@ -40,7 +46,20 @@ import SearchIcon from '@mui/icons-material/Search';
 import useSWR from 'swr';
 import axios from 'axios';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import { grey, red } from '@mui/material/colors';
+import {
+  GridRowsProp,
+  GridRowModesModel,
+  GridRowModes,
+  DataGrid,
+  GridColDef,
+  GridRenderCellParams,
+  GridToolbarContainer,
+  GridActionsCellItem,
+  GridEventListener,
+  GridRowId,
+  GridRowModel,
+  GridRowEditStopReasons,
+} from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
@@ -55,6 +74,11 @@ export default function Home() {
   const [personName, setPersonName] = React.useState<string[]>([]);
   const scrollRef = useRef<any>(null);
 
+  const [SwitchChecked, setSwitchChecked] = useState(false);
+
+  const [DeleteState, setDelete] = useState(false);
+  const [DeleteSuccess, setDeleteSuccess] = React.useState(false);
+  const handleDeleteSuccess = () => setDeleteSuccess(false);
   const [Success, setSuccess] = React.useState(false);
   const handleSuccess = () => setSuccess(false);
   const [Failure, setFailure] = React.useState(false);
@@ -81,7 +105,10 @@ export default function Home() {
     const url = '/api/dishes/' + SelectedItem._id;
     await axios.delete(url, SelectedItem).then((response) => {
       if (response.status == 200) {
+        setDeleteSuccess(true);
+        setDelete(false);
         handleClose();
+        setTimeout(handleDeleteSuccess, 3000);
         console.log(response.data);
       } else {
         console.log(response.data);
@@ -95,6 +122,7 @@ export default function Home() {
     setWindowTitle('New Item');
   };
   const handleClose = () => setOpen(false);
+  const handleDelete = () => setDelete(true);
 
   const handleChange = (event: SelectChangeEvent<typeof personName>) => {
     const {
@@ -147,6 +175,16 @@ export default function Home() {
     dependencies: [],
     __v: 0,
   };
+  const columns: GridColDef[] = [];
+  for (const key of Object.keys(blankDish)) {
+    columns.push({
+      field: key,
+      headerName: key.charAt(0).toUpperCase() + key.slice(1),
+      width: 150,
+      headerClassName: 'super-app-theme--header',
+      editable: key == '_id' ? false : true,
+    });
+  }
 
   const update = async () => {
     if (windowTitle == 'Edit Item') {
@@ -211,16 +249,72 @@ export default function Home() {
     );
   };
 
+  const SaveOnServerFunction = React.useCallback(async (updatedRow: any, originalRow: any) => {
+    const url = '/api/dishes/' + updatedRow._id;
+    await axios.put(url, updatedRow).then((response) => {
+      if (response.status == 200) {
+        setSuccess(true);
+        setTimeout(handleSuccess, 3000);
+        handleClose();
+      } else {
+        setFailure(true);
+        setTimeout(handleFailure, 3000);
+        return originalRow;
+      }
+    });
+    return updatedRow;
+  }, []);
+  const handleProcessRowUpdateError = React.useCallback((error: Error) => {
+    setFailure(true);
+    setTimeout(handleFailure, 3000);
+  }, []);
+
   const RenderCards = () => {
     if (isLoading == false) {
       let filteredData = [];
-      console.log(data);
       if (search) {
         filteredData = data.dishes.filter((data: any) =>
           data.friendlyName.toLowerCase().includes(search.toLowerCase().trim()),
         );
       } else {
         filteredData = data.dishes;
+      }
+
+      if (SwitchChecked) {
+        function getRowId(row: any) {
+          return row._id;
+        }
+        return (
+          <>
+            <Box
+              style={{ height: '75vh', width: '100%', marginTop: '2%' }}
+              sx={{
+                '& .super-app-theme--header': {
+                  backgroundColor: 'rgba(73, 201, 230, .4)',
+                },
+              }}
+            >
+              <DataGrid
+                editMode="row"
+                onProcessRowUpdateError={handleProcessRowUpdateError}
+                rows={data.dishes}
+                columns={columns}
+                getRowId={getRowId}
+                processRowUpdate={(updatedRow, originalRow) =>
+                  SaveOnServerFunction(updatedRow, originalRow)
+                }
+                style={{
+                  background: 'rgba(0,0,0,0.37)',
+                  backdropFilter: 'blur(10px)',
+                  WebkitBackdropFilter: 'blur(6.8px)',
+                }}
+                sx={{
+                  boxShadow: 2,
+                }}
+              />
+            </Box>
+          </>
+        );
       }
 
       return filteredData.map((option: any) => (
@@ -256,10 +350,12 @@ export default function Home() {
                     control={<Checkbox checked={option.isOrderable}></Checkbox>}
                     label="Orderable"
                   />
+                  {/*
                   <FormControlLabel
                     control={<Checkbox checked={option.isArchived}></Checkbox>}
                     label="Archived"
                   />
+                   */}
                 </Typography>
 
                 <Typography variant="body2" color="text.secondary"></Typography>
@@ -348,8 +444,19 @@ export default function Home() {
   const AlertComponent = () => {
     if (Success) {
       return (
-        <Alert sx={{ display: 'flex', width: '75%' }} severity="success" variant="outlined">
+        <Alert
+          sx={{ display: 'flex', width: '75%', zIndex: '10' }}
+          severity="success"
+          variant="outlined"
+        >
           Success — Item Saved!
+        </Alert>
+      );
+    }
+    if (DeleteSuccess) {
+      return (
+        <Alert sx={{ display: 'flex', width: '75%' }} severity="success" variant="outlined">
+          Success — Item Deleted!
         </Alert>
       );
     }
@@ -364,26 +471,99 @@ export default function Home() {
     }
   };
 
+  const DeleteConfirmComponent = () => {
+    return (
+      <>
+        {DeleteState ? (
+          <>
+            <Box
+              onClick={() => setDelete(false)}
+              sx={{
+                width: '100%',
+                height: '100vh',
+                position: 'absolute',
+                top: '0',
+                left: '0',
+                zIndex: '10',
+                backgroundColor: 'rgba(0,0,0,0.5)',
+              }}
+            ></Box>
+            <Card
+              sx={{
+                width: '40%',
+                height: '40%',
+                position: 'absolute',
+                top: '50%',
+                left: '50%',
+                zIndex: '11',
+                transform: 'translate(-50%, -50%)',
+              }}
+            >
+              <CardHeader
+                style={{ backgroundColor: theme.palette.error.light }}
+                titleTypographyProps={{ variant: 'h4', fontWeight: 'bold', textAlign: 'center' }}
+                title={'DELETE ITEM?'}
+              ></CardHeader>
+              <Container>
+                <Typography variant="h6" textAlign="center" sx={{ mt: '10%' }}>
+                  Are you sure you want to delete <br></br> {SelectedItem.friendlyName} ?
+                </Typography>
+                <Grid container justifyContent="center" alignItems="center" sx={{ mt: '10%' }}>
+                  <Button variant="contained" color="error" onClick={deleteItem} size="large">
+                    CONFIRM DELTE
+                  </Button>
+                </Grid>
+              </Container>
+            </Card>
+          </>
+        ) : null}
+      </>
+    );
+  };
+
   return (
     <Box>
-      <Box sx={{ position: 'absolute', bottom: '0', right: '0', mb: ' 5%', mr: '5%' }}>
+      <Box sx={{ position: 'absolute', top: '0', right: '0', mt: ' 6%', mr: '15%', zIndex: '10' }}>
         <AlertComponent></AlertComponent>
       </Box>
-      <Grid container justifyContent="center" alignItems="center" sx={{ mb: '2%' }}>
-        <TextField
-          label="Search"
-          value={search}
-          onChange={(event) => handleSearch(event)}
-          InputProps={{
-            startAdornment: (
-              <InputAdornment position="start">
-                <SearchIcon />
-              </InputAdornment>
-            ),
-          }}
-        />
+      <Grid
+        container
+        direction="row"
+        justifyContent="space-between"
+        alignItems="center"
+        sx={{ mb: '2%' }}
+      >
+        <Grid item xs={1}>
+          {''}
+        </Grid>
+        <Grid item>
+          <TextField
+            sx={{ width: '20vw' }}
+            label="Search"
+            value={search}
+            onChange={(event) => handleSearch(event)}
+            InputProps={{
+              startAdornment: (
+                <InputAdornment position="start">
+                  <SearchIcon />
+                </InputAdornment>
+              ),
+            }}
+          />
+        </Grid>
+        <Grid item>
+          <FormGroup>
+            <FormControlLabel
+              control={
+                <Switch checked={SwitchChecked} onChange={() => setSwitchChecked(!SwitchChecked)} />
+              }
+              label={SwitchChecked ? 'List' : 'Grid'}
+            />
+          </FormGroup>
+        </Grid>
       </Grid>
-      <Grid container direction="row" sx={{ height: '85vh', overflowY: 'scroll' }} spacing={2}>
+
+      <Grid container direction="row" sx={{ height: '80vh', overflowY: 'scroll' }} spacing={2}>
         <RenderCards></RenderCards>
 
         {!open ? (
@@ -397,13 +577,15 @@ export default function Home() {
           </Fab>
         ) : null}
       </Grid>
+      {/*Confirm Delete of Item*/}
+      <DeleteConfirmComponent></DeleteConfirmComponent>
       {open ? (
         <>
           <Box
             onClick={() => handleClose()}
             sx={{
               width: '100%',
-              height: '100%',
+              height: '100vh',
               position: 'absolute',
               top: '0',
               left: '0',
@@ -422,7 +604,13 @@ export default function Home() {
             }}
           >
             <CardHeader
-              style={{ backgroundColor: theme.palette.primary.main }}
+              style={{
+                //backgroundColor: theme.palette.primary.main,
+                backgroundImage:
+                  'linear-gradient(127deg, rgba(73, 201, 230, .7), rgba(73, 201, 230, 0) 131.51%)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(6.8px)',
+              }}
               titleTypographyProps={{ variant: 'h4', fontWeight: 'bold' }}
               title={windowTitle}
             ></CardHeader>
@@ -640,7 +828,7 @@ export default function Home() {
 
                 <Grid container justifyContent="flex-end" spacing={2} sx={{ mt: '5%' }}>
                   <Grid item>
-                    <Button variant="outlined" color="warning" onClick={deleteItem}>
+                    <Button variant="outlined" color="warning" onClick={handleDelete}>
                       Delete
                     </Button>
                   </Grid>

@@ -77,11 +77,11 @@ const theme = createTheme({
     MuiCssBaseline: {
       styleOverrides: {
         body: {
-          backgroundImage: `linear-gradient(217deg, rgba(46, 49, 54, 1), rgba(46, 49, 54, 0) 100.71%),
-            linear-gradient(127deg, rgba(157, 225, 121, .7), rgba(157, 225, 121, 0) 50.71%),
-            linear-gradient(336deg, rgba(73, 201, 230, .7), rgba(73, 201, 230, 0) 70.71%);`,
+          backgroundImage: `
+            linear-gradient(127deg, rgba(157, 225, 121, .7), rgba(73, 201, 230, .1) 50.71%),
+            linear-gradient(336deg, rgba(73, 201, 230, .7), rgba(157, 225, 121, .1) 70.71%);`,
           backgroundRepeat: 'no-repeat',
-          backdropFilter: 'blur(50px)',
+          backdropFilter: 'blur(10px)',
           backgroundAttachment: 'fixed',
         },
       },

@@ -194,7 +194,7 @@ export default function Home() {
       DishAndOptions.push(
         <>
           <Box key={item._id} sx={{ width: '10vw' }}>
-            <Typography variant="h5" textAlign="left" sx={{ mt: '10%' }}>
+            <Typography variant="h6" textAlign="left" sx={{ mt: '10%' }}>
               {item.friendlyName}
             </Typography>
             {options}
@@ -328,13 +328,14 @@ export default function Home() {
         <Sensors></Sensors> &nbsp;
         {STATUS_CONNECTED}
       </Button>
-      <Container sx={{ mt: 5 }}>
+      <Container sx={{ mt: 5, width: '100%' }}>
         <Grid
           container
           direction="row"
           justifyContent="flex-start"
           sx={{ overflowY: 'scroll', height: '87vh' }}
           columnGap={2}
+          rowSpacing={1}
           spacing={{ xs: 0, md: 1, lg: 1 }}
         >
           <OrderCard></OrderCard>

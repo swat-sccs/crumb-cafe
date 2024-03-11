@@ -9,7 +9,7 @@ db.orders.insertMany([
     customerNumber: 1,
     status: 'completed',
     hidden: 'true', //for display purposes kinda redundant but do I really want to remove and reformat everything that uses it?
-    total: 5,
+    total: 0,
     dishes: [
       {
         _id: 'italian-soda',
