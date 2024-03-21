@@ -12,14 +12,18 @@ services:
       DOMAIN: https://crumb.sccs.swarthmore.edu/
       MONGODB_URI: mongodb://crumb-db:27017
       MONGODB_DB: crumb
-    labels:
-      - 'traefik.enable=true'
-      - 'traefik.docker.network=traefik'
-      - 'traefik.http.routers.crumb.entrypoints=https'
-      - 'traefik.http.routers.crumb.rule=Host(`crumb.sccs.swarthmore.edu`)'
-      - 'traefik.http.routers.crumb.tls=true'
-      - 'traefik.http.routers.crumb.tls.certresolver=letsEncrypt'
-      - 'traefik.http.services.crumb.loadbalancer.server.port=3434'
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
+      labels:
+        - 'traefik.enable=true'
+        - 'traefik.docker.network=traefik'
+        - 'traefik.http.routers.crumb.entrypoints=https'
+        - 'traefik.http.routers.crumb.rule=Host(`crumb.sccs.swarthmore.edu`)'
+        - 'traefik.http.routers.crumb.tls=true'
+        - 'traefik.http.routers.crumb.tls.certresolver=letsEncrypt'
+        - 'traefik.http.services.crumb.loadbalancer.server.port=3434'
     container_name: crumb-docker
     command: npm run start
     networks:
@@ -32,6 +36,10 @@ services:
     # first-time database initialization
     environment:
       MONGO_INITDB_DATABASE: crumb
+    deploy:
+      placement:
+        constraints:
+          - node.role == manager
     volumes:
       - ./dev/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
     networks:
@@ -41,4 +49,3 @@ networks:
   internal:
   traefik:
     external: true
-    driver: bridge
