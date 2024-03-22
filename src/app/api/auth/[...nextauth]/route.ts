@@ -9,8 +9,6 @@ const handler = NextAuth({
           id: profile.sub,
           name: profile.name,
           email: profile.email,
-
-          //role: profile.groups.find((group: string) => group==="admin") || "user",
         };
       },
       clientId: process.env.NEXT_PUBLIC_KEYCLOAK_ID || '',
@@ -18,19 +16,6 @@ const handler = NextAuth({
       issuer: process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER,
     }),
   ],
-  /*callbacks: {
-        jwt({ token, user }) {
-          if(user) token.role = user.role
-          return token
-        },
-        session({ session, token }) {
-          if (session && session.user) {
-            // @ts-ignore
-            session.user.role = token.role
-          }
-          return session
-        }
-      }*/
 });
 
 export { handler as GET, handler as POST };

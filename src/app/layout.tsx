@@ -2,8 +2,9 @@ import ThemeRegistry from './ThemeRegistry';
 import { NextAuthProvider } from './NextAuthProvider';
 import { NextURL } from 'next/dist/server/web/next-url';
 import Script from 'next/script';
+import Navigation from '@/app/components/topBar';
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
   return (
     <NextAuthProvider>
       <html lang="en">
@@ -19,7 +20,12 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <head />
 
         <body>
-          <ThemeRegistry options={{ key: 'mui' }}>{children}</ThemeRegistry>
+          <ThemeRegistry options={{ key: 'mui' }}>
+            <>
+              <Navigation />
+              {children}
+            </>
+          </ThemeRegistry>
         </body>
       </html>
     </NextAuthProvider>

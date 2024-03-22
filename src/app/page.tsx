@@ -7,12 +7,11 @@ import { getServerSession } from 'next-auth/next';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { useTheme } from '@mui/material';
+import Navigation from '@/app/components/topBar';
 
 //<Link href={page.link} key={page.name} passHref style={{ textDecoration: 'none' }}>
-export default function Home() {
-  const router = useRouter();
-  const theme = useTheme();
-
+Home.displayName = 'Home';
+export default async function Home() {
   return (
     <div>
       <Grid
@@ -20,10 +19,13 @@ export default function Home() {
         direction="column"
         justifyContent="flex-start"
         alignItems="center"
-        sx={{ backgroundColor: '', width: '100vw', marginTop: '4%' }}
+        sx={{ backgroundColor: '', width: '100vw', height: '100%' }}
       >
         <Grid item>
-          <Typography variant="h2" style={{ fontWeight: 'bold', color: 'white' }}>
+          <Typography
+            variant="h2"
+            style={{ fontWeight: 'bold', color: 'white', position: 'relative', top: 50 }}
+          >
             Crumb Cafe
           </Typography>
         </Grid>

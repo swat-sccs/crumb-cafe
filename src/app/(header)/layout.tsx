@@ -1,12 +1,11 @@
 'use client';
 import { Grid, Toolbar, Typography, Button, Container } from '@mui/material';
-import Navigation from '@/app/components/topBar';
 import { useSession } from 'next-auth/react';
+import Navigation from '@/app/components/topBar';
 
 export default function sideBar({ children }: { children: React.ReactNode }) {
   return (
     <section>
-      <Navigation></Navigation>
       <Container sx={{ width: '85vw', height: '85vh', mt: '2%' }}>{children}</Container>
     </section>
   );

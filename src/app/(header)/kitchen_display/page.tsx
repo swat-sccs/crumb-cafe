@@ -244,41 +244,6 @@ export default function Home() {
     prn.send();
   }
 
-  async function PRINT3(item: any) {
-    const prn: any = printer.current;
-
-    prn.addTextAlign(prn.ALIGN_CENTER);
-    prn.addTextSmooth(true);
-    prn.addTextDouble(true, true);
-    prn.addText('CRUMB CAFE\n');
-    prn.addTextDouble(false, false);
-    prn.addText('Project Updates\n\n');
-
-    prn.addText('---------------------------------');
-    prn.addText('STATUS - Beta   ' + moment().format('h:mm:ss a') + '\n');
-    prn.addText('---------------------------------\n\n');
-
-    prn.addText('- Printer works\n   Can Print Anywhere\n');
-    prn.addText('---------------------------------\n');
-    prn.addText('- UI needs reskin with Crumb pics\n');
-    prn.addText('- Add search for menu creation\n');
-    prn.addText('- Filter orders by similar \n');
-    prn.addText('    Good for order runners\n');
-    prn.addText('- UI reskin with Crumb Images\n');
-    prn.addText('- Device? Ipad? Surface(ish)?\n');
-    prn.addText('- Login?\n');
-    prn.addText('   crumb.sccs.swarthmore.edu\n');
-    prn.addText('   currently pub access\n');
-
-    prn.addFeedLine(3);
-    prn.addTextAlign(prn.ALIGN_CENTER);
-    prn.addTextStyle(false, true, true, prn.COLOR_2);
-    prn.addTextDouble(true, true);
-    prn.addText(':)\n');
-
-    prn.addCut(prn.CUT_FEED);
-    prn.send();
-  }
 
   const completeOrder = async (item: any) => {
     PRINT2(item);
