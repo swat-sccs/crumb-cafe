@@ -11,7 +11,7 @@ import Navigation from '@/app/components/topBar';
 
 //<Link href={page.link} key={page.name} passHref style={{ textDecoration: 'none' }}>
 Home.displayName = 'Home';
-export default async function Home() {
+export default function Home() {
   return (
     <div>
       <Grid

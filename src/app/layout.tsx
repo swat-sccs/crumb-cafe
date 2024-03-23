@@ -6,7 +6,7 @@ import Script from 'next/script';
 import Navigation from '@/app/components/topBar';
 import { usePathname } from 'next/navigation';
 
-export default async function RootLayout({ children }: { children: React.ReactNode }) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const pathname = usePathname();
   return (
     <NextAuthProvider>
