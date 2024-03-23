@@ -244,7 +244,6 @@ export default function Home() {
     prn.send();
   }
 
-
   const completeOrder = async (item: any) => {
     PRINT2(item);
     const url = '/api/orders/' + item._id;
@@ -287,7 +286,7 @@ export default function Home() {
       <Button
         color="secondary"
         disabled={STATUS_CONNECTED == 'CONNECTED'}
-        sx={{ position: 'absolute', top: 0, right: 0, mt: '1%', mr: '10%' }}
+        sx={{ position: 'absolute', top: 2, right: 40, mt: '1%', mr: '10%' }}
         onClick={() => connect()}
       >
         <Sensors></Sensors> &nbsp;

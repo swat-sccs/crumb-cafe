@@ -2,8 +2,18 @@
 import { Grid, Toolbar, Typography, Button, Container } from '@mui/material';
 import { useSession } from 'next-auth/react';
 import Navigation from '@/app/components/topBar';
+import { useLayoutEffect } from 'react';
+import { redirect } from 'next/navigation';
 
-export default function sideBar({ children }: { children: React.ReactNode }) {
+export default function SideBar({ children }: { children: React.ReactNode }) {
+  const { data: session, status } = useSession();
+
+  useLayoutEffect(() => {
+    if (status != 'authenticated') {
+      redirect('/');
+    }
+  }, []);
+
   return (
     <section>
       <Container sx={{ width: '85vw', height: '85vh', mt: '2%' }}>{children}</Container>

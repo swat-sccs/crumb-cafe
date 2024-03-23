@@ -32,6 +32,16 @@ const fetcher = (url: any) => fetch(url).then((res) => res.json());
 export default function Home() {
   const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 1000 });
 
+  function compareFn(a: any, b: any) {
+    if (a.created < b.createdAt) {
+      return -1;
+    } else if (a.createdAt > b.createdAt) {
+      return 1;
+    }
+    // a must be equal to b
+    return 0;
+  }
+
   const Progress_List = () => {
     if (isLoading) {
       return <></>;
@@ -39,6 +49,7 @@ export default function Home() {
       const filteredOrders = data.orders.filter(
         (dish: any) => dish.hidden == false && dish.status == 'in_progress',
       );
+      console.log(filteredOrders);
       const orders = [];
       for (const item of filteredOrders) {
         const status = item.status;
@@ -130,7 +141,7 @@ export default function Home() {
             </Grid>
             <Card
               elevation={2}
-              sx={{ m: 2, p: 2, width: 350, height: '60vh', overflowY: 'scroll' }}
+              sx={{ m: 2, p: 2, width: 350, height: '65vh', overflowY: 'scroll' }}
               style={{
                 background: 'rgba(0,0,0,0.37)',
                 backdropFilter: 'blur(10px)',
@@ -152,7 +163,7 @@ export default function Home() {
             </Grid>
             <Card
               elevation={2}
-              sx={{ m: 2, p: 2, width: 350, height: '60vh', overflowY: 'scroll' }}
+              sx={{ m: 2, p: 2, width: 350, height: '65vh', overflowY: 'scroll' }}
               style={{
                 background: 'rgba(0,0,0,0.37)',
                 backdropFilter: 'blur(10px)',

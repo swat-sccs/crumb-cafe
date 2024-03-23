@@ -16,6 +16,7 @@ import CookieIcon from '@mui/icons-material/Cookie';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
+import { useLayoutEffect } from 'react';
 
 const pages = [
   { name: 'POS', link: '/point_of_sale' },
@@ -33,9 +34,10 @@ function ResponsiveAppBar(props: any) {
     setAnchorElUser(null);
   };
 
-  let authenticated;
+  let authenticated: any;
   let loginLink;
   let nameButton;
+
   if (props.hasOwnProperty('login')) {
     loginLink = null;
     nameButton = null;
@@ -45,7 +47,7 @@ function ResponsiveAppBar(props: any) {
       loginLink = (
         <MenuItem key="logout">
           <Link key="logout" href="/api/auth/signout" passHref style={{ textDecoration: 'none' }}>
-            <Button>
+            <Button variant="outlined" style={{ backgroundColor: 'transparent' }}>
               <Typography textAlign="center">Log out</Typography>
             </Button>
           </Link>
@@ -66,8 +68,11 @@ function ResponsiveAppBar(props: any) {
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
   };
+
   const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorElUser(event.currentTarget);
+    if (authenticated) {
+      setAnchorElUser(event.currentTarget);
+    }
   };
 
   const handleCloseNavMenu = (page: any) => {
@@ -211,18 +216,19 @@ function ResponsiveAppBar(props: any) {
           </Box>
 
           <Box sx={{ flexGrow: 0, position: 'absolute', right: 0 }}>
-            <Button variant="contained" onClick={handleOpenUserMenu}>
-              <Link
-                href={authenticated ? '' : '/api/auth/signin'}
-                passHref
-                style={{ textDecoration: 'none' }}
-                className="text-white transition-colors duration-200 ease-in-out hover:text-accent"
-              >
+            <Link
+              href={authenticated ? '' : '/api/auth/signin'}
+              onClick={handleOpenUserMenu}
+              passHref
+              style={{ textDecoration: 'none' }}
+              className="text-white transition-colors duration-200 ease-in-out hover:text-accent"
+            >
+              <Button variant="contained">
                 <Typography variant="body1" color="black">
                   {nameButton}
                 </Typography>
-              </Link>
-            </Button>
+              </Button>
+            </Link>
 
             <Menu
               sx={{ mt: '45px' }}

@@ -555,6 +555,7 @@ export default function App() {
           dish.dotw.includes(moment().format('dddd').toString()),
       );
       console.log(food);
+      console.log(moment().format('dddd').toString());
 
       return food.map((item: any) => (
         <>

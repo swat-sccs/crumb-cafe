@@ -1,10 +1,13 @@
+'use client';
 import ThemeRegistry from './ThemeRegistry';
 import { NextAuthProvider } from './NextAuthProvider';
 import { NextURL } from 'next/dist/server/web/next-url';
 import Script from 'next/script';
 import Navigation from '@/app/components/topBar';
+import { usePathname } from 'next/navigation';
 
 export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  const pathname = usePathname();
   return (
     <NextAuthProvider>
       <html lang="en">
@@ -22,7 +25,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
         <body>
           <ThemeRegistry options={{ key: 'mui' }}>
             <>
-              <Navigation />
+              {pathname != '/order_display' && <Navigation />}
               {children}
             </>
           </ThemeRegistry>
