@@ -11,11 +11,12 @@ const handler = NextAuth({
           email: profile.email,
         };
       },
-      clientId: process.env.NEXT_PUBLIC_KEYCLOAK_ID || '',
-      clientSecret: process.env.NEXT_PUBLIC_KEYCLOAK_SECRET || '',
-      issuer: process.env.NEXT_PUBLIC_KEYCLOAK_ISSUER,
+      clientId: process.env.KEYCLOAK_ID || '',
+      clientSecret: process.env.KEYCLOAK_SECRET || '',
+      issuer: process.env.KEYCLOAK_ISSUER,
     }),
   ],
+  secret: process.env.NEXTAUTH_SECRET,
 });
 
 export { handler as GET, handler as POST };
