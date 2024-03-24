@@ -19,7 +19,7 @@ import {
   Chip,
   Grid,
   Badge,
-  ListItemAvatar,
+  TextField,
   Divider,
   ImageListItem,
   ImageList,
@@ -42,8 +42,12 @@ export default function Home() {
   const printer = useRef<any>();
   const printerIPAddress = process.env.NEXT_PUBLIC_PRINTERIP;
   const printerPort = '8008';
+  const [PRINTER_IP, Set_PRINTERIP] = React.useState('130.58.218.136');
 
   const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
+  const handleIpEdit = (event: any) => {
+    Set_PRINTERIP(event.target.value);
+  };
 
   const connect = () => {
     setConnectionStatus('Connecting ...');
@@ -51,7 +55,7 @@ export default function Home() {
     let ePosDev = new window.epson.ePOSDevice();
     ePosDevice.current = ePosDev;
 
-    ePosDev.connect(printerIPAddress, printerPort, (data: any) => {
+    ePosDev.connect(PRINTER_IP, printerPort, (data: any) => {
       if (data === 'OK') {
         ePosDev.createDevice(
           'local_printer',
@@ -283,6 +287,14 @@ export default function Home() {
   return (
     <div>
       <Script src="./epos-2.27.0.js"></Script>
+      <TextField
+        value={PRINTER_IP}
+        label="IP Addr..."
+        variant="outlined"
+        size="small"
+        onChange={handleIpEdit}
+        sx={{ position: 'absolute', top: 15, right: 0, mr: '28%' }}
+      />
       <Button
         color="secondary"
         disabled={STATUS_CONNECTED == 'CONNECTED'}
