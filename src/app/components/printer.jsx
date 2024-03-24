@@ -1,7 +1,7 @@
 import React, { useRef, useState } from 'react';
 
 const ThermalPrinter = (item) => {
-  const printerIPAddress = '192.168.192.168';
+  const printerIPAddress = 'https://192.168.192.168';
   const printerPort = '8008';
   const STATUS_CONNECTED = 'Connected';
 
