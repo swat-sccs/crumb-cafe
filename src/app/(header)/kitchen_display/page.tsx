@@ -32,6 +32,7 @@ import Script from 'next/script';
 import moment from 'moment';
 import useSWR from 'swr';
 import { gridColumnGroupsLookupSelector } from '@mui/x-data-grid';
+import { disposeEmitNodes } from 'typescript';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
@@ -49,13 +50,15 @@ export default function Home() {
     Set_PRINTERIP(event.target.value);
   };
 
-  const connect = () => {
+  const connect = async () => {
     setConnectionStatus('Connecting ...');
 
     let ePosDev = new window.epson.ePOSDevice();
     ePosDevice.current = ePosDev;
 
-    ePosDev.connect(PRINTER_IP, printerPort, (data: any) => {
+    console.log(ePosDev);
+
+    await ePosDev.connect(PRINTER_IP, printerPort, (data: any) => {
       if (data === 'OK') {
         ePosDev.createDevice(
           'local_printer',
@@ -80,6 +83,7 @@ export default function Home() {
 
   React.useEffect(() => {
     //
+    connect();
     //console.log(window.epson.ePOSDevice());
   }, []);
 
