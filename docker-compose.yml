@@ -44,6 +44,7 @@ services:
           - node.role == manager
     volumes:
       - ./dev/init-mongo.js:/docker-entrypoint-initdb.d/init-mongo.js:ro
+      - ./data/db:/data/db
     networks:
       - internal
 
