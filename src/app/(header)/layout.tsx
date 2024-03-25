@@ -1,24 +1,21 @@
-'use client';
 import { Grid, Toolbar, Typography, Button, Container } from '@mui/material';
 import { useSession } from 'next-auth/react';
-import Navigation from '@/app/components/topBar';
-import { useLayoutEffect } from 'react';
 import { redirect } from 'next/navigation';
+import { config } from '@/app/lib/auth';
+import { getServerSession } from 'next-auth/next';
 
-export default function SideBar({ children }: { children: React.ReactNode }) {
-  const { data: session, status } = useSession();
+export default async function SideBar({ children }: { children: React.ReactNode }) {
+  //const { data: session, status } = useSession();
+  const session: any = await getServerSession(config);
 
-  useLayoutEffect(() => {
-    if (status != 'authenticated') {
-      redirect('/');
-    }
-  }, []);
-
-  return (
-    <section>
-      <Container sx={{ width: '85vw', height: '85vh', mt: '2%' }}>{children}</Container>
-    </section>
-  );
+  if (session) {
+    return (
+      <section>
+        <Container sx={{ width: '85vw', height: '85vh', mt: '2%' }}>{children}</Container>
+      </section>
+    );
+  }
+  redirect('/');
 }
 
 /*Old

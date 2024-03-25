@@ -9,11 +9,10 @@ import { Box, Card, CardHeader, Container, Typography, useTheme, Slide } from '@
 import {
   Table,
   TableBody,
-  TableCell,
   TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
+  FormGroup,
+  FormControlLabel,
+  Switch,
   ButtonGroup,
   Button,
   Chip,
@@ -44,10 +43,16 @@ export default function Home() {
   const printerIPAddress = process.env.NEXT_PUBLIC_PRINTERIP;
   const printerPort = '8008';
   const [PRINTER_IP, Set_PRINTERIP] = React.useState('130.58.218.136');
+  const [showCompleted, setShowCompleted] = React.useState(false);
 
   const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
   const handleIpEdit = (event: any) => {
     Set_PRINTERIP(event.target.value);
+  };
+
+  const handleCompleteSwitch = (event: any) => {
+    console.log(event.target.checked);
+    setShowCompleted(event.target.checked);
   };
 
   const connect = async () => {
@@ -55,9 +60,6 @@ export default function Home() {
 
     let ePosDev = new window.epson.ePOSDevice();
     ePosDevice.current = ePosDev;
-
-    console.log(ePosDev);
-
     await ePosDev.connect(PRINTER_IP, printerPort, (data: any) => {
       if (data === 'OK') {
         ePosDev.createDevice(
@@ -91,7 +93,13 @@ export default function Home() {
     if (isLoading) {
       return <></>;
     } else {
-      const filteredOrders = data.orders.filter((dish: any) => dish.hidden == false);
+      let filteredOrders = [];
+      console.log(showCompleted);
+      if (showCompleted) {
+        filteredOrders = data.orders.sort((a: any, b: any) => a.hidden - b.hidden);
+      } else {
+        filteredOrders = data.orders.filter((dish: any) => dish.hidden == false);
+      }
       const orders = [];
       console.log(data.orders);
 
@@ -102,7 +110,7 @@ export default function Home() {
         if (status == 'in_progress') {
           statusColor = '#FFA958';
         } else if (status == 'completed') {
-          statusColor = '#CCFE8C';
+          statusColor = '#799653';
         } else {
           statusColor = 'grey';
         }
@@ -128,10 +136,10 @@ export default function Home() {
                   key={item.customerName}
                 >
                   <Typography
-                    variant="h4"
+                    variant="h5"
                     bgcolor={statusColor}
                     color={'white'}
-                    sx={{ width: '100%', borderStartEndRadius: '10px' }}
+                    sx={{ width: '100%', borderStartEndRadius: '10px', p: 0.5 }}
                     textAlign={'center'}
                   >
                     {item.customerName}
@@ -291,6 +299,14 @@ export default function Home() {
   return (
     <div>
       <Script src="./epos-2.27.0.js"></Script>
+      <Grid container justifyContent="flex-end">
+        <FormGroup>
+          <FormControlLabel
+            control={<Switch value={showCompleted} onChange={handleCompleteSwitch} />}
+            label="Show Completed"
+          />
+        </FormGroup>
+      </Grid>
       <TextField
         value={PRINTER_IP}
         label="IP Addr..."
@@ -308,12 +324,12 @@ export default function Home() {
         <Sensors></Sensors> &nbsp;
         {STATUS_CONNECTED}
       </Button>
-      <Container sx={{ mt: 5, width: '100%' }}>
+      <Container sx={{ mt: 2, width: '100%' }}>
         <Grid
           container
           direction="row"
           justifyContent="flex-start"
-          sx={{ overflowY: 'scroll', height: '87vh' }}
+          sx={{ overflowY: 'scroll', height: '82vh' }}
           columnGap={2}
           rowSpacing={1}
           spacing={{ xs: 0, md: 1, lg: 1 }}

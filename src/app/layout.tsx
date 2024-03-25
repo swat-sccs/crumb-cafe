@@ -24,6 +24,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
 
         <body>
           <ThemeRegistry options={{ key: 'mui' }}>
+            <Script src="./epos-2.27.0.js"></Script>
             <>
               {pathname != '/order_display' && <Navigation />}
               {children}

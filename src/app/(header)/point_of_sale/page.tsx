@@ -336,12 +336,13 @@ export default function App() {
   const OptionsComponent = (props: any) => {
     const specific = [];
 
-    const item = data.dishes.filter((item: any) => item.friendlyName == props.friendlyName);
+    let item = data.dishes.filter((item: any) => item.friendlyName == props.friendlyName);
 
     for (const option of item) {
-      for (const subOption of option.options) {
-        const multi = subOption.allowQuantity;
+      let temp: any = option.options;
 
+      for (const subOption of temp) {
+        const multi = subOption.allowQuantity;
         specific.push(
           <>
             <Grid item sx={{ m: 1 }} key={props._uuid}>
