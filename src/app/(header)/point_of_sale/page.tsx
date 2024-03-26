@@ -112,6 +112,7 @@ export default function App() {
   }, []);
 
   async function PRINT2(item: any) {
+    console.log('PRINTING', item);
     const prn: any = printer.current;
 
     prn.addTextAlign(prn.ALIGN_CENTER);
@@ -358,6 +359,23 @@ export default function App() {
       dishes: currentOrder,
     };
 
+    //break food and drinks into seperate lists so that they can each be on their own recipts.
+
+    let foodies = {
+      customerName: name,
+      total: runningTotal,
+      hidden: false,
+      notes: '',
+      dishes: currentOrder.filter((item: any) => item.tag == 'food'),
+    };
+    let drinkies = {
+      customerName: name,
+      total: runningTotal,
+      hidden: false,
+      notes: '',
+      dishes: currentOrder.filter((item: any) => item.tag == 'drink'),
+    };
+
     //console.log(thing1);
 
     await axios.post('/api/orders', thing1).then((response) => {
@@ -371,11 +389,11 @@ export default function App() {
         setName('');
         setRunningTotal(0);
         setOptions(false);
-        if (printDouble) {
-          PRINT2(thing1);
-          PRINT2(thing1);
-        } else {
-          PRINT2(thing1);
+        if (foodies.dishes.length > 0) {
+          PRINT2(foodies);
+        }
+        if (drinkies.dishes.length > 0) {
+          PRINT2(drinkies);
         }
       } else {
         console.log('failed');

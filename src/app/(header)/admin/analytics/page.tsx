@@ -51,9 +51,16 @@ export default function Analytics() {
 
   const pieChart = async () => {
     let labels: any = {};
+
     if (isLoading == false && !error) {
       data2 = [];
-      for (const order of data.orders) {
+      let filteredOrders = data.orders.filter((a: any) => {
+        return moment().isSame(moment(a.createdAt), 'd');
+      });
+
+      console.log(data.orders);
+      console.log(filteredOrders);
+      for (const order of filteredOrders) {
         for (const dish of order.dishes) {
           //labels.push(dish.friendlyName);
           labels[dish.friendlyName] = (labels[dish.friendlyName] ?? 0) + 1;
