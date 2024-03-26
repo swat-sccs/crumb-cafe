@@ -13,8 +13,18 @@ export async function GET(request) {
 // To handle a POST request to /api
 export async function POST(request) {
   // Do whatever you want
-  console.log(request);
-  return NextResponse.json({ message: 'Hello World' }, { status: 200 });
+
+  let response1;
+  await axios
+    .post('http://130.58.163.115:5001', request.json, {
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    })
+    .then((response) => {
+      response1 = response;
+    });
+  return NextResponse.json({ message: 'hello' }, { status: 200 });
 }
 
 // Same logic to add a `PATCH`, `DELETE`...

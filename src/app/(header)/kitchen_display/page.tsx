@@ -36,6 +36,8 @@ import { disposeEmitNodes } from 'typescript';
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function Home() {
+  const theme = useTheme();
+
   const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 1000 });
   //axios.get('/api/dishes').then((reponse) => console.log(reponse));
   const ePosDevice = useRef();
@@ -44,7 +46,9 @@ export default function Home() {
   const printerPort = '8008';
   const [PRINTER_IP, Set_PRINTERIP] = React.useState('192.168.192.168');
   const [showCompleted, setShowCompleted] = React.useState(false);
-
+  const [deleteSwitch, setdeleteSwitch] = React.useState(false);
+  const [SelectedOrder, setSelectedOrder] = React.useState<any>();
+  const [deleteMe, setdeleteMe] = React.useState(false);
   const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
   const handleIpEdit = (event: any) => {
     Set_PRINTERIP(event.target.value);
@@ -53,6 +57,11 @@ export default function Home() {
   const handleCompleteSwitch = (event: any) => {
     //console.log(event.target.checked);
     setShowCompleted(event.target.checked);
+  };
+
+  const handleDeleteSwitch = (event: any) => {
+    //console.log(event.target.checked);
+    setdeleteSwitch(event.target.checked);
   };
 
   const connect = async () => {
@@ -85,6 +94,12 @@ export default function Home() {
     connect();
     //console.log(window.epson.ePOSDevice());
   }, []);
+
+  function queueDelete(item: any) {
+    setSelectedOrder(item);
+    console.log(item);
+    setdeleteMe(true);
+  }
 
   const OrderCard = () => {
     if (isLoading) {
@@ -162,6 +177,14 @@ export default function Home() {
 
                     <Grid item container direction="row" sx={{ mt: '15%' }}>
                       <ButtonGroup fullWidth variant="contained">
+                        {deleteSwitch ? (
+                          <Box sx={{ backgroundColor: theme.palette.error.light }}>
+                            <Button fullWidth onClick={() => queueDelete(item)} color="inherit">
+                              X
+                            </Button>
+                          </Box>
+                        ) : null}
+
                         <Button fullWidth onClick={() => updateOrder(item)}>
                           <Update></Update>
                         </Button>
@@ -284,6 +307,18 @@ export default function Home() {
     });
   };
 
+  const deleteOrder = async (item: any) => {
+    //PRINT2(item);
+
+    const url = '/api/orders/' + SelectedOrder._id;
+    let theitem = Object.assign({}, SelectedOrder);
+
+    await axios.delete(url, theitem).then((response) => {
+      console.log(response);
+      setdeleteMe(false);
+    });
+  };
+
   const updateOrder = async (item: any) => {
     const url = '/api/orders/' + item._id;
     let theitem = Object.assign({}, item);
@@ -310,13 +345,67 @@ export default function Home() {
   return (
     <div>
       <Script src="./epos-2.27.0.js"></Script>
+      {deleteMe ? (
+        <>
+          <Box
+            onClick={() => setdeleteMe(false)}
+            sx={{
+              width: '100%',
+              height: '100vh',
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              zIndex: '10',
+              backgroundColor: 'rgba(0,0,0,0.5)',
+            }}
+          ></Box>
+          <Card
+            sx={{
+              width: '40%',
+              height: '40%',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              zIndex: '11',
+              transform: 'translate(-50%, -50%)',
+            }}
+          >
+            <CardHeader
+              style={{ backgroundColor: theme.palette.error.light }}
+              titleTypographyProps={{ variant: 'h4', fontWeight: 'bold', textAlign: 'center' }}
+              title={'DELETE ITEM?'}
+            ></CardHeader>
+            <Container>
+              <Typography variant="h6" textAlign="center" sx={{ mt: '10%' }}>
+                Are you sure you want to delete <br></br> {SelectedOrder.customerName} ?
+              </Typography>
+              <Grid container justifyContent="center" alignItems="center" sx={{ mt: '10%' }}>
+                <Button variant="contained" color="error" onClick={deleteOrder} size="large">
+                  CONFIRM DELTE
+                </Button>
+              </Grid>
+            </Container>
+          </Card>
+        </>
+      ) : null}
+
       <Grid container justifyContent="flex-end">
-        <FormGroup>
-          <FormControlLabel
-            control={<Switch value={showCompleted} onChange={handleCompleteSwitch} />}
-            label="Show Completed"
-          />
-        </FormGroup>
+        <Grid item>
+          <FormGroup>
+            <FormControlLabel
+              control={<Switch value={showCompleted} onChange={handleCompleteSwitch} />}
+              label="Show Completed"
+            />
+          </FormGroup>
+        </Grid>
+        <Grid item>
+          <FormGroup>
+            <FormControlLabel
+              control={<Switch value={deleteSwitch} onChange={handleDeleteSwitch} />}
+              label="Show Delete"
+            />
+          </FormGroup>
+        </Grid>
       </Grid>
       <TextField
         value={PRINTER_IP}
