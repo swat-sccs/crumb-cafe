@@ -130,7 +130,7 @@ export default function App() {
     prn.addText('Sale Ticket\n\n');
 
     prn.addText('------------------------------------------');
-    prn.addText('ORDER ' + item.customerNumber + '       ' + moment().format('h:mm:ss a') + '\n');
+    prn.addText(moment().format('h:mm:ss a') + '\n');
     prn.addText('-----------------------------------------\n');
 
     prn.addTextAlign(prn.ALIGN_LEFT);
@@ -358,31 +358,34 @@ export default function App() {
     };
 
     //console.log(thing1);
-
-    await axios.post('/api/orders', thing1).then((response) => {
-      //console.log(response.status, response.data.token);
-      if (response.status == 200) {
-        console.log('order confirmed!: ' + name);
-        handleClose();
-        setSuccess(true);
-        setTimeout(handleSuccess, 3000);
-        setCurrentOrder([]);
-        setName('');
-        setRunningTotal(0);
-        setOptions(false);
-        if (foodies.dishes.length > 0) {
-          PRINT2(foodies);
+    if (STATUS_CONNECTED != 'CONNECTED') {
+      alert('printer not connected!');
+    } else {
+      await axios.post('/api/orders', thing1).then((response) => {
+        //console.log(response.status, response.data.token);
+        if (response.status == 200) {
+          console.log('order confirmed!: ' + name);
+          handleClose();
+          setSuccess(true);
+          setTimeout(handleSuccess, 3000);
+          setCurrentOrder([]);
+          setName('');
+          setRunningTotal(0);
+          setOptions(false);
+          if (foodies.dishes.length > 0) {
+            PRINT2(foodies);
+          }
+          if (drinkies.dishes.length > 0) {
+            PRINT2(drinkies);
+          }
+        } else {
+          console.log('failed');
+          handleClose();
+          setFailure(true);
+          setTimeout(handleFailure, 3000);
         }
-        if (drinkies.dishes.length > 0) {
-          PRINT2(drinkies);
-        }
-      } else {
-        console.log('failed');
-        handleClose();
-        setFailure(true);
-        setTimeout(handleFailure, 3000);
-      }
-    });
+      });
+    }
   };
   /*
   RenderOptions
@@ -561,13 +564,28 @@ export default function App() {
               />
             </Box>
           </Grid>
-          <Button sx={{ marginTop: 2 }} onClick={() => confirmOrder(name)}>
-            Submit
-          </Button>
-          <Button sx={{ marginTop: 2 }} onClick={handleClose} color="secondary">
-            {' '}
-            close
-          </Button>
+          <Grid container justifyContent="center" alignItems="center" direction="row">
+            <Grid item xs={12}>
+              <Button
+                fullWidth
+                sx={{ marginTop: 2 }}
+                onClick={() => confirmOrder(name)}
+                size="large"
+              >
+                Submit
+              </Button>
+            </Grid>
+            <Grid item xs={4} sx={{ ml: 2 }}>
+              <Button sx={{ marginTop: 2 }} onClick={() => connect()} color="warning">
+                Connect
+              </Button>
+            </Grid>
+            <Grid item xs={4} sx={{ ml: 2 }}>
+              <Button sx={{ marginTop: 2 }} onClick={handleClose} color="secondary">
+                close
+              </Button>
+            </Grid>
+          </Grid>
         </Grid>
       </>
     );
