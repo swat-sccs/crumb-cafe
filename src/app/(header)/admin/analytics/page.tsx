@@ -58,15 +58,15 @@ export default function Analytics() {
         return moment().isSame(moment(a.createdAt), 'd');
       });
 
-      console.log(data.orders);
-      console.log(filteredOrders);
+      //console.log(data.orders);
+      //console.log(filteredOrders);
       for (const order of filteredOrders) {
         for (const dish of order.dishes) {
           //labels.push(dish.friendlyName);
           labels[dish.friendlyName] = (labels[dish.friendlyName] ?? 0) + 1;
         }
       }
-      console.log(labels);
+      //console.log(labels);
 
       for (const thing in labels) {
         data2.push({ label: thing, value: labels[thing] });

@@ -38,6 +38,7 @@ import useSWR from 'swr';
 import moment from 'moment';
 import { Dictionary } from '@fullcalendar/core/internal';
 import Printer from '@/app/components/printer';
+import { setIPCookie, getIPCookie } from './action';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
@@ -59,6 +60,7 @@ export default function App() {
   const ePosDevice = useRef();
   const printer = useRef<any>();
   const printerPort = '8008';
+
   const [PRINTER_IP, Set_PRINTERIP] = React.useState('192.168.192.168');
   const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
 
@@ -81,6 +83,8 @@ export default function App() {
   }
 
   const connect = async () => {
+    //const ip = await getIPCookie();
+    // Set_PRINTERIP(ip);
     setConnectionStatus('Connecting ...');
     let ePosDev = new window.epson.ePOSDevice();
 
@@ -95,6 +99,7 @@ export default function App() {
             if (retcode === 'OK') {
               printer.current = devobj;
               setConnectionStatus('CONNECTED');
+              //setIPCookie(PRINTER_IP);
             } else {
               setConnectionStatus('Connection Failed');
             }
@@ -104,6 +109,8 @@ export default function App() {
         setConnectionStatus('Connection Failed');
       }
     });
+    //setIPCookie(PRINTER_IP);
+    //setIPCookie(PRINTER_IP);
   };
   React.useEffect(() => {
     //
@@ -112,7 +119,7 @@ export default function App() {
   }, []);
 
   async function PRINT2(item: any) {
-    console.log('PRINTING', item);
+    //console.log('PRINTING', item);
     const prn: any = printer.current;
 
     prn.addTextAlign(prn.ALIGN_CENTER);
@@ -323,33 +330,7 @@ export default function App() {
 
   const confirmOrder = async (name: string) => {
     //handleClose();
-    let printDouble = false;
-    let drinkVAR = false;
-    let foodVAR = false;
     //Current order should just be a mirror of the dishes array You will attach below each order is simply a dish object.
-    let drinks = [];
-    let foods = [];
-    let item = data.dishes.filter((item: any) => item.tags.includes('drink'));
-    let food = data.dishes.filter((item: any) => item.tags.includes('food'));
-    for (const items of item) {
-      drinks.push(items.friendlyName);
-    }
-    for (const items of food) {
-      foods.push(items.friendlyName);
-    }
-
-    for (const abcd of currentOrder) {
-      if (drinks.includes(abcd.friendlyName)) {
-        drinkVAR = true;
-      }
-      if (foods.includes(abcd.friendlyName)) {
-        foodVAR = true;
-      }
-    }
-    if (drinkVAR && foodVAR) {
-      console.log('TRUEEE');
-      printDouble = true;
-    }
 
     let thing1 = {
       customerName: name,
@@ -691,7 +672,6 @@ export default function App() {
           dish.dotw.includes(moment().format('dddd').toString()),
       );
       //(food);
-      console.log(moment().format('dddd').toString());
 
       return food.map((item: any) => (
         <>

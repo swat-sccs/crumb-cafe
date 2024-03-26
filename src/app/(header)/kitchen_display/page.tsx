@@ -51,7 +51,7 @@ export default function Home() {
   };
 
   const handleCompleteSwitch = (event: any) => {
-    console.log(event.target.checked);
+    //console.log(event.target.checked);
     setShowCompleted(event.target.checked);
   };
 
@@ -91,15 +91,12 @@ export default function Home() {
       return <></>;
     } else {
       let filteredOrders = [];
-      console.log(showCompleted);
       if (showCompleted) {
         filteredOrders = data.orders.sort((a: any, b: any) => a.hidden - b.hidden);
       } else {
         filteredOrders = data.orders.filter((dish: any) => dish.hidden == false);
       }
       const orders = [];
-      console.log(data.orders);
-      moment;
       filteredOrders = filteredOrders.sort((a: any, b: any) => {
         let a2 = moment(a.createdAt);
         let b2 = moment(b.createdAt);
@@ -249,7 +246,7 @@ export default function Home() {
           '\n',
       );
       for (const item of thing.options) {
-        prn.addText('\t' + item.friendlyName + '\n');
+        prn.addText('\t + ' + item.friendlyName + '\n');
       }
     }
 
@@ -264,9 +261,20 @@ export default function Home() {
   }
 
   const completeOrder = async (item: any) => {
-    PRINT2(item);
+    //PRINT2(item);
     const url = '/api/orders/' + item._id;
     let theitem = Object.assign({}, item);
+
+    let foodies = Object.assign({}, theitem);
+    let drinkies = Object.assign({}, theitem);
+    foodies['dishes'] = theitem.dishes.filter((item: any) => item.tag == 'food');
+    drinkies['dishes'] = theitem.dishes.filter((item: any) => item.tag == 'drink');
+    if (foodies.dishes.length > 0) {
+      PRINT2(foodies);
+    }
+    if (drinkies.dishes.length > 0) {
+      PRINT2(drinkies);
+    }
 
     theitem['status'] = 'completed';
     theitem['hidden'] = 'true';

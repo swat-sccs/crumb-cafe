@@ -154,12 +154,11 @@ export default function Home() {
     allowQuantity: true,
     dependencies: [],
   };
-  let numDay = moment().day();
-  let day = DOTW[numDay];
+
   const blankDish = {
     _id: '',
     friendlyName: '',
-    dotw: [day],
+    dotw: [moment().format('dddd').toString()],
     basePrice: 5,
     tags: ['food'],
     categories: ['food'],
@@ -192,7 +191,7 @@ export default function Home() {
   const update = async () => {
     if (windowTitle == 'Edit Item') {
       const url = '/api/dishes/' + SelectedItem._id;
-      console.log(SelectedItem);
+      //console.log(SelectedItem);
       await axios.put(url, SelectedItem).then((response) => {
         if (response.status == 200) {
           setSuccess(true);
@@ -227,7 +226,7 @@ export default function Home() {
 
     setSelectedItem({ ...SelectedItem, options: temp });
 
-    console.log(SelectedItem);
+    // console.log(SelectedItem);
   };
 
   const subHeader = (option: any) => {
@@ -420,7 +419,7 @@ export default function Home() {
       }
     }
 
-    console.log(theItem);
+    //console.log(theItem);
     setSelectedItem(theItem);
   };
 
