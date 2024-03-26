@@ -99,6 +99,12 @@ export default function Home() {
       }
       const orders = [];
       console.log(data.orders);
+      moment;
+      filteredOrders = filteredOrders.sort((a: any, b: any) => {
+        let a2 = moment(a.createdAt);
+        let b2 = moment(b.createdAt);
+        return b2.diff(a2);
+      });
 
       for (const item of filteredOrders) {
         const status = item.status;
