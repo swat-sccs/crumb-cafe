@@ -90,7 +90,7 @@ export default function App() {
         ePosDev.createDevice(
           'local_printer',
           ePosDev.DEVICE_TYPE_PRINTER,
-          { crypto: true, buffer: false },
+          { crypto: false, buffer: false },
           (devobj: any, retcode: any) => {
             if (retcode === 'OK') {
               printer.current = devobj;
@@ -112,11 +112,6 @@ export default function App() {
   }, []);
 
   async function PRINT2(item: any) {
-    console.log(item);
-    console.log('PRINTING');
-    if (STATUS_CONNECTED != 'CONNECTED') {
-      await connect();
-    }
     const prn: any = printer.current;
 
     prn.addTextAlign(prn.ALIGN_CENTER);
@@ -126,20 +121,20 @@ export default function App() {
     prn.addTextDouble(false, false);
     prn.addText('Sale Ticket\n\n');
 
-    prn.addText('---------------------------------');
+    prn.addText('------------------------------------------');
     prn.addText('ORDER ' + item.customerNumber + '       ' + moment().format('h:mm:ss a') + '\n');
-    prn.addText('---------------------------------\n');
+    prn.addText('-----------------------------------------\n');
 
     prn.addTextAlign(prn.ALIGN_LEFT);
     for (const thing of item.dishes) {
       prn.addText(
-        thing.friendlyName.substring(0, 7) +
+        thing.friendlyName.substring(0, 15) +
           ' ................... $' +
           thing.price.toFixed(2) +
           '\n',
       );
       for (const item of thing.options) {
-        prn.addText('\t' + item.friendlyName + '\n');
+        prn.addText('\t + ' + item.friendlyName + '\n');
       }
     }
 

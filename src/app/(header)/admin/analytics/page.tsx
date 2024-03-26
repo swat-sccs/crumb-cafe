@@ -110,7 +110,7 @@ export default function Analytics() {
                 arcLabel: (item) => `${item.value}`,
                 highlightScope: { faded: 'global', highlighted: 'item' },
                 innerRadius: 100,
-                outerRadius: 150,
+                outerRadius: 180,
                 cornerRadius: 10,
               },
             ]}
@@ -126,13 +126,13 @@ export default function Analytics() {
             }}
             slotProps={{
               legend: {
-                direction: 'row',
-                position: { vertical: 'bottom', horizontal: 'middle' },
+                direction: 'column',
+                position: { vertical: 'middle', horizontal: 'left' },
                 padding: 0,
               },
             }}
             height={540}
-            width={400}
+            width={1000}
           />
         </Grid>
       </Grid>

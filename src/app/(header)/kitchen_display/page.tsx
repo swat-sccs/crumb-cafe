@@ -65,7 +65,7 @@ export default function Home() {
         ePosDev.createDevice(
           'local_printer',
           ePosDev.DEVICE_TYPE_PRINTER,
-          { crypto: true, buffer: false },
+          { crypto: false, buffer: false },
           (devobj: any, retcode: any) => {
             if (retcode === 'OK') {
               printer.current = devobj;
@@ -236,14 +236,14 @@ export default function Home() {
     prn.addTextDouble(false, false);
     prn.addText('Sale Ticket\n\n');
 
-    prn.addText('---------------------------------');
+    prn.addText('------------------------------------------');
     prn.addText('ORDER ' + item.customerNumber + '       ' + moment().format('h:mm:ss a') + '\n');
-    prn.addText('---------------------------------\n');
+    prn.addText('-----------------------------------------\n');
 
     prn.addTextAlign(prn.ALIGN_LEFT);
     for (const thing of item.dishes) {
       prn.addText(
-        thing.friendlyName.substring(0, 7) +
+        thing.friendlyName.substring(0, 15) +
           ' ................... $' +
           thing.price.toFixed(2) +
           '\n',
