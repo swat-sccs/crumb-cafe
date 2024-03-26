@@ -25,7 +25,7 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { orange, cyan, blueGrey } from '@mui/material/colors';
 import React, { useState, useEffect, useRef } from 'react';
-import { BreakfastDiningOutlined, LegendToggle } from '@mui/icons-material';
+import { BreakfastDiningOutlined, LegendToggle, NoFoodSharp } from '@mui/icons-material';
 import { AnyKeys, ConnectionStates } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
 import axios from 'axios';
@@ -199,7 +199,7 @@ export default function App() {
 
   const addItems = () => {
     setOptions(false);
-    console.log(currentOrder);
+    //console.log(currentOrder);
   };
 
   const calcTotal = () => {
@@ -259,7 +259,7 @@ export default function App() {
 
     let editedOrder = Array.from(currentOrder);
     editedOrder.push(temp);
-    console.log('EDITED ORDER', editedOrder);
+    //console.log('EDITED ORDER', editedOrder);
     setCurrentOrder(editedOrder);
     setCurrentDish(temp);
     setOptions(true);
@@ -322,7 +322,25 @@ export default function App() {
 
   const confirmOrder = async (name: string) => {
     //handleClose();
+    let printDouble = false;
     //Current order should just be a mirror of the dishes array You will attach below each order is simply a dish object.
+    let drinks = [];
+    let foods = [];
+    let item = data.dishes.filter((item: any) => item.tags.includes('drink'));
+    let food = data.dishes.filter((item: any) => item.tags.includes('food'));
+    for (const items of item) {
+      drinks.push(items.friendlyName);
+    }
+    for (const items of food) {
+      foods.push(items.friendlyName);
+    }
+
+    for (const abcd of currentOrder) {
+      if (drinks.includes(abcd.friendlyName)) {
+        console.log('TRUEEE');
+        printDouble = true;
+      }
+    }
 
     let thing1 = {
       customerName: name,
@@ -332,7 +350,7 @@ export default function App() {
       dishes: currentOrder,
     };
 
-    console.log(thing1);
+    //console.log(thing1);
 
     await axios.post('/api/orders', thing1).then((response) => {
       //console.log(response.status, response.data.token);
@@ -345,7 +363,12 @@ export default function App() {
         setName('');
         setRunningTotal(0);
         setOptions(false);
-        PRINT2(thing1);
+        if (printDouble) {
+          PRINT2(thing1);
+          PRINT2(thing1);
+        } else {
+          PRINT2(thing1);
+        }
       } else {
         console.log('failed');
         handleClose();
@@ -641,7 +664,7 @@ export default function App() {
           dish.tags.includes('food') &&
           dish.dotw.includes(moment().format('dddd').toString()),
       );
-      console.log(food);
+      //(food);
       console.log(moment().format('dddd').toString());
 
       return food.map((item: any) => (
