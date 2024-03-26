@@ -42,7 +42,7 @@ export default function Home() {
   const printer = useRef<any>();
   const printerIPAddress = process.env.NEXT_PUBLIC_PRINTERIP;
   const printerPort = '8008';
-  const [PRINTER_IP, Set_PRINTERIP] = React.useState('130.58.218.136');
+  const [PRINTER_IP, Set_PRINTERIP] = React.useState('130.58.218.83');
   const [showCompleted, setShowCompleted] = React.useState(false);
 
   const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
@@ -57,8 +57,8 @@ export default function Home() {
 
   const connect = async () => {
     setConnectionStatus('Connecting ...');
-
     let ePosDev = new window.epson.ePOSDevice();
+
     ePosDevice.current = ePosDev;
     await ePosDev.connect(PRINTER_IP, printerPort, (data: any) => {
       if (data === 'OK') {
@@ -72,17 +72,14 @@ export default function Home() {
               setConnectionStatus('CONNECTED');
             } else {
               setConnectionStatus('Connection Failed');
-              throw retcode;
             }
           },
         );
       } else {
         setConnectionStatus('Connection Failed');
-        throw data;
       }
     });
   };
-
   React.useEffect(() => {
     //
     connect();

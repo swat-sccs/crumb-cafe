@@ -18,7 +18,7 @@ import {
   IconButton,
   Alert,
   InputBase,
-  Modal,
+  TextField,
   Fade,
 } from '@mui/material';
 import DeleteIcon from '@mui/icons-material/Delete';
@@ -26,12 +26,13 @@ import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { orange, cyan, blueGrey } from '@mui/material/colors';
 import React, { useState, useEffect, useRef } from 'react';
 import { BreakfastDiningOutlined, LegendToggle } from '@mui/icons-material';
-import { AnyKeys } from 'mongoose';
+import { AnyKeys, ConnectionStates } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
 import axios from 'axios';
 import useSWR from 'swr';
 import moment from 'moment';
 import { Dictionary } from '@fullcalendar/core/internal';
+import Printer from '@/app/components/printer';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
@@ -49,6 +50,13 @@ export default function App() {
   const [name, setName] = React.useState('');
   const scrollRef = useRef<any>(null);
 
+  //Printer Things
+  const ePosDevice = useRef();
+  const printer = useRef<any>();
+  const printerPort = '8008';
+  const [PRINTER_IP, Set_PRINTERIP] = React.useState('130.58.218.83');
+  const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
+
   const [editing, setEditing] = React.useState(false);
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
 
@@ -59,8 +67,85 @@ export default function App() {
     }
   };
 
+  const handleIpEdit = (event: any) => {
+    Set_PRINTERIP(event.target.value);
+  };
+
   function handleNameChange(e: any) {
     setName(e.target.value);
+  }
+
+  const connect = async () => {
+    setConnectionStatus('Connecting ...');
+    let ePosDev = new window.epson.ePOSDevice();
+
+    ePosDevice.current = ePosDev;
+    await ePosDev.connect(PRINTER_IP, printerPort, (data: any) => {
+      if (data === 'OK') {
+        ePosDev.createDevice(
+          'local_printer',
+          ePosDev.DEVICE_TYPE_PRINTER,
+          { crypto: true, buffer: false },
+          (devobj: any, retcode: any) => {
+            if (retcode === 'OK') {
+              printer.current = devobj;
+              setConnectionStatus('CONNECTED');
+            } else {
+              setConnectionStatus('Connection Failed');
+            }
+          },
+        );
+      } else {
+        setConnectionStatus('Connection Failed');
+      }
+    });
+  };
+  React.useEffect(() => {
+    //
+    connect();
+    //console.log(window.epson.ePOSDevice());
+  }, []);
+
+  async function PRINT2(item: any) {
+    console.log(item);
+    console.log('PRINTING');
+    if (STATUS_CONNECTED != 'CONNECTED') {
+      await connect();
+    }
+    const prn: any = printer.current;
+
+    prn.addTextAlign(prn.ALIGN_CENTER);
+    prn.addTextSmooth(true);
+    prn.addTextDouble(true, true);
+    prn.addText('CRUMB CAFE\n');
+    prn.addTextDouble(false, false);
+    prn.addText('Sale Ticket\n\n');
+
+    prn.addText('---------------------------------');
+    prn.addText('ORDER ' + item.customerNumber + '       ' + moment().format('h:mm:ss a') + '\n');
+    prn.addText('---------------------------------\n');
+
+    prn.addTextAlign(prn.ALIGN_LEFT);
+    for (const thing of item.dishes) {
+      prn.addText(
+        thing.friendlyName.substring(0, 7) +
+          ' ................... $' +
+          thing.price.toFixed(2) +
+          '\n',
+      );
+      for (const item of thing.options) {
+        prn.addText('\t' + item.friendlyName + '\n');
+      }
+    }
+
+    prn.addFeedLine(3);
+    prn.addTextAlign(prn.ALIGN_CENTER);
+    prn.addTextStyle(false, true, true, prn.COLOR_2);
+    prn.addTextDouble(true, true);
+    prn.addText(item.customerName + '\n');
+
+    prn.addCut(prn.CUT_FEED);
+    prn.send();
   }
 
   const [currentDish, setCurrentDish] = useState<any>(null); //when selected CurrentDish is updated to display correct options.
@@ -113,10 +198,6 @@ export default function App() {
   };
 
   const addItems = () => {
-    //setCurrentDish(item);
-    //console.log(currentDish);
-    // console.log(currentDish);
-    //setCurrentOrder([...currentOrder, currentDish]);
     setOptions(false);
     console.log(currentOrder);
   };
@@ -232,6 +313,7 @@ export default function App() {
 
   const cancelOrder = () => {
     setCurrentOrder([]);
+    Printer();
 
     //console.log(runningTotal);
     setRunningTotal(0);
@@ -263,6 +345,7 @@ export default function App() {
         setName('');
         setRunningTotal(0);
         setOptions(false);
+        PRINT2(thing1);
       } else {
         console.log('failed');
         handleClose();
@@ -849,6 +932,22 @@ export default function App() {
 
   return (
     <Box>
+      <TextField
+        value={PRINTER_IP}
+        label="IP Addr..."
+        variant="outlined"
+        size="small"
+        onChange={handleIpEdit}
+        sx={{ position: 'absolute', top: 15, right: 0, mr: '28%' }}
+      />
+      <Button
+        color="secondary"
+        disabled={STATUS_CONNECTED == 'CONNECTED'}
+        sx={{ position: 'absolute', top: 2, right: 40, mt: '1%', mr: '10%' }}
+        onClick={() => connect()}
+      >
+        {STATUS_CONNECTED}
+      </Button>
       <NamePopUp></NamePopUp>
       <Box
         sx={{ position: 'absolute', bottom: '0', right: '0', mb: '5%', mr: '-5%', width: '35%' }}

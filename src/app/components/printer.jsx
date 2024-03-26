@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
 
-const ThermalPrinter = (item) => {
+function Printer() {
   const printerIPAddress = 'https://192.168.192.168';
   const printerPort = '8008';
   const STATUS_CONNECTED = 'Connected';
@@ -64,11 +64,8 @@ const ThermalPrinter = (item) => {
             //ITEM 5 .................... $5.00
             //6 chars
             // 33 characters
-            prn.addText(
-              item.dish.substring(0, 7) + ' ................... $' + item.price.toFixed(2) + '\n',
-            );
+
             prn.addFeedLine(15);
-            prn.addText('          ' + item.customerName + '\n');
             prn.addFeedLine(5);
             prn.addText("     ___                _     \n"); // prettier-ignore
             prn.addText("   / __|_ _ _  _ _ __ | |__   \n"); // prettier-ignore
@@ -97,6 +94,6 @@ const ThermalPrinter = (item) => {
   });
 
   return 1;
-};
+}
 
-export default ThermalPrinter;
+export default Printer;

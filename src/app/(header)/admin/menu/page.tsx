@@ -61,6 +61,7 @@ import {
   GridRowEditStopReasons,
 } from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
+import moment from 'moment';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
@@ -68,7 +69,7 @@ export default function Home() {
   const theme = useTheme();
   const { data, error, isLoading } = useSWR('/api/dishes', fetcher, { refreshInterval: 1000 });
   const [SelectedItem, setSelectedItem]: any[] = React.useState({});
-  const DOTW = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'];
+  const DOTW = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   const TAGS = ['food', 'drink'];
   const [windowTitle, setWindowTitle] = React.useState('Edit Item');
   const [personName, setPersonName] = React.useState<string[]>([]);
@@ -153,10 +154,12 @@ export default function Home() {
     allowQuantity: true,
     dependencies: [],
   };
+  let numDay = moment().day();
+  let day = DOTW[numDay];
   const blankDish = {
     _id: '',
     friendlyName: '',
-    dotw: ['Monday'],
+    dotw: [day],
     basePrice: 5,
     tags: ['food'],
     categories: ['food'],
