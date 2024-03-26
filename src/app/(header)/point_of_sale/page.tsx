@@ -470,7 +470,6 @@ export default function App() {
       return (
         <>
           <Box
-            onClick={handleClose}
             sx={{
               width: '100%',
               height: '100vh',
@@ -534,6 +533,10 @@ export default function App() {
           </Grid>
           <Button sx={{ marginTop: 2 }} onClick={() => confirmOrder(name)}>
             Submit
+          </Button>
+          <Button sx={{ marginTop: 2 }} onClick={handleClose} color="secondary">
+            {' '}
+            close
           </Button>
         </Grid>
       </>
