@@ -25,7 +25,12 @@ import DeleteIcon from '@mui/icons-material/Delete';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
 import { orange, cyan, blueGrey } from '@mui/material/colors';
 import React, { useState, useEffect, useRef } from 'react';
-import { BreakfastDiningOutlined, LegendToggle, NoFoodSharp } from '@mui/icons-material';
+import {
+  BreakfastDiningOutlined,
+  FmdGoodSharp,
+  LegendToggle,
+  NoFoodSharp,
+} from '@mui/icons-material';
 import { AnyKeys, ConnectionStates } from 'mongoose';
 import { Rock_3D } from 'next/font/google';
 import axios from 'axios';
@@ -323,6 +328,8 @@ export default function App() {
   const confirmOrder = async (name: string) => {
     //handleClose();
     let printDouble = false;
+    let drinkVAR = false;
+    let foodVAR = false;
     //Current order should just be a mirror of the dishes array You will attach below each order is simply a dish object.
     let drinks = [];
     let foods = [];
@@ -337,9 +344,15 @@ export default function App() {
 
     for (const abcd of currentOrder) {
       if (drinks.includes(abcd.friendlyName)) {
-        console.log('TRUEEE');
-        printDouble = true;
+        drinkVAR = true;
       }
+      if (foods.includes(abcd.friendlyName)) {
+        foodVAR = true;
+      }
+    }
+    if (drinkVAR && foodVAR) {
+      console.log('TRUEEE');
+      printDouble = true;
     }
 
     let thing1 = {
