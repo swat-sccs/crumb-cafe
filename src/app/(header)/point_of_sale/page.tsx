@@ -54,7 +54,7 @@ export default function App() {
   const ePosDevice = useRef();
   const printer = useRef<any>();
   const printerPort = '8008';
-  const [PRINTER_IP, Set_PRINTERIP] = React.useState('130.58.218.83');
+  const [PRINTER_IP, Set_PRINTERIP] = React.useState('192.168.192.168');
   const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
 
   const [editing, setEditing] = React.useState(false);

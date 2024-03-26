@@ -42,7 +42,7 @@ export default function Home() {
   const printer = useRef<any>();
   const printerIPAddress = process.env.NEXT_PUBLIC_PRINTERIP;
   const printerPort = '8008';
-  const [PRINTER_IP, Set_PRINTERIP] = React.useState('130.58.218.83');
+  const [PRINTER_IP, Set_PRINTERIP] = React.useState('192.168.192.168');
   const [showCompleted, setShowCompleted] = React.useState(false);
 
   const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
