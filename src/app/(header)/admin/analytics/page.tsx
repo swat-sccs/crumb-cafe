@@ -5,6 +5,9 @@ import styles from './page.module.css';
 import { LineChart } from '@mui/x-charts/LineChart';
 import BasicCard from './card.js';
 import LabelAvatar from '@/app/components/labelAvatar.js';
+import { BarChart } from '@mui/x-charts/BarChart';
+import { axisClasses } from '@mui/x-charts';
+
 import { PieChart, pieArcLabelClasses, pieArcClasses } from '@mui/x-charts/PieChart';
 import { useTheme } from '@mui/material/styles';
 import React, { useState, useEffect, useRef } from 'react';
@@ -13,7 +16,7 @@ import moment from 'moment';
 import useSWR from 'swr';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
-let data2: any = [];
+let data2: any = [{}];
 
 export default function Analytics() {
   const theme = useTheme();
@@ -23,6 +26,7 @@ export default function Analytics() {
   const [totalOrders, setTotalOrders] = React.useState(0);
   const [dailyOrders, setDailyOrders] = React.useState(0);
 
+  const [sales, setSales] = React.useState([]);
   //const [data2, setData2] = React.useState<any>([]);
 
   const calcNums = () => {
@@ -73,12 +77,25 @@ export default function Analytics() {
         //setData2(temp);
       }
     }
+    console.log(data2);
   };
+
+  const chartSetting = {
+    xAxis: [
+      {
+        label: 'Amount (# of items sold)',
+      },
+    ],
+    width: 1000,
+    height: 540,
+  };
+  const valueFormatter = (value: number | null) => `${value}`;
 
   useEffect(() => {
     calcNums();
     pieChart();
   });
+
   return (
     <Container>
       <Grid sx={{ backgroundColor: '' }} container direction="column" spacing={2}>
@@ -108,38 +125,25 @@ export default function Analytics() {
           alignItems="center"
           className={styles.info}
         >
-          <PieChart
-            margin={{ top: 100, bottom: 140, left: 100, right: 100 }}
-            series={[
-              {
-                data: data2,
-                paddingAngle: 3,
-                arcLabel: (item) => `${item.value}`,
-                highlightScope: { faded: 'global', highlighted: 'item' },
-                innerRadius: 100,
-                outerRadius: 180,
-                cornerRadius: 10,
-              },
+          <BarChart
+            dataset={data2}
+            yAxis={[{ scaleType: 'band', dataKey: 'label' }]}
+            series={[{ dataKey: 'value', valueFormatter }]}
+            layout="horizontal"
+            {...chartSetting}
+            colors={[
+              '#FFA958',
+              '#F48178',
+              '#C96D91',
+              '#8B6595',
+              '#505A7E',
+              '#2F4858',
+              '#549142',
+              '#008151',
+              '#006F5F',
+              '#532F26',
+              '#00D7BD',
             ]}
-            sx={{
-              [`& .${pieArcLabelClasses.root}`]: {
-                fill: 'white',
-                fontWeight: 'bold',
-                fontSize: 22,
-              },
-              [`& .${pieArcClasses.faded}`]: {
-                fill: 'gray',
-              },
-            }}
-            slotProps={{
-              legend: {
-                direction: 'column',
-                position: { vertical: 'middle', horizontal: 'left' },
-                padding: 0,
-              },
-            }}
-            height={540}
-            width={1000}
           />
         </Grid>
       </Grid>

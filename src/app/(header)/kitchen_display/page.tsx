@@ -24,6 +24,7 @@ import {
   ImageList,
 } from '@mui/material';
 import { Sensors, Print, Update } from '@mui/icons-material';
+import { Masonry } from '@mui/lab';
 import CardContent from '@mui/material/CardContent';
 import styles from '../page.module.css';
 import axios from 'axios';
@@ -132,7 +133,7 @@ export default function Home() {
 
         orders.push(
           <>
-            <Grid item key={item._id} sx={{ mt: '1%' }}>
+            <Grid item key={item._id} sx={{}}>
               <Badge badgeContent={item.dishes.length} color="primary">
                 <Card
                   style={{
@@ -424,19 +425,11 @@ export default function Home() {
         <Sensors></Sensors> &nbsp;
         {STATUS_CONNECTED}
       </Button>
-      <Container sx={{ mt: 2, width: '100%' }}>
-        <Grid
-          container
-          direction="row"
-          justifyContent="flex-start"
-          sx={{ overflowY: 'scroll', height: '82vh' }}
-          columnGap={2}
-          rowSpacing={1}
-          spacing={{ xs: 0, md: 1, lg: 1 }}
-        >
+      <Box sx={{ mt: 2, width: '100%', overflowY: 'scroll', height: '81vh' }}>
+        <Masonry columns={5} spacing={2} sx={{ p: 1.2 }}>
           <OrderCard></OrderCard>
-        </Grid>
-      </Container>
+        </Masonry>
+      </Box>
     </div>
   );
 }

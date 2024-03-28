@@ -356,11 +356,11 @@ export default function App() {
       notes: '',
       dishes: currentOrder.filter((item: any) => item.tag == 'drink'),
     };
-
     /*
     await axios.post('/api/print', thing1).then((response) => {
       console.log(response);
-    });*/
+    });
+    */
 
     //console.log(thing1);
     if (STATUS_CONNECTED != 'CONNECTED') {

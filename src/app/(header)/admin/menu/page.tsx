@@ -33,6 +33,10 @@ import {
   SelectChangeEvent,
   Alert,
 } from '@mui/material';
+import { Masonry } from '@mui/lab';
+import ImageList from '@mui/material/ImageList';
+import ImageListItem from '@mui/material/ImageListItem';
+
 import styles from './page.module.css';
 import React, { useState, useEffect, useRef } from 'react';
 import EditIcon from '@mui/icons-material/Edit';
@@ -235,9 +239,9 @@ export default function Home() {
       days.push(
         <>
           {dotw == 'Thursday' ? (
-            <Chip size="small" sx={{ ml: '2%', mt: '5%' }} label={'TH'} />
+            <Chip size="small" sx={{ ml: '0.5%', mt: '1%' }} label={'TH'} />
           ) : (
-            <Chip size="small" sx={{ ml: '2%', mt: '5%' }} label={dotw.charAt(0).toUpperCase()} />
+            <Chip size="small" sx={{ ml: '0.5%', mt: '1%' }} label={dotw.charAt(0).toUpperCase()} />
           )}
         </>,
       );
@@ -287,84 +291,76 @@ export default function Home() {
           return row._id;
         }
         return (
-          <>
-            <Box
-              style={{ height: '75vh', width: '100%', marginTop: '2%' }}
-              sx={{
-                '& .super-app-theme--header': {
-                  backgroundColor: 'rgba(73, 201, 230, .4)',
-                },
-              }}
-            >
-              <DataGrid
-                editMode="row"
-                onProcessRowUpdateError={handleProcessRowUpdateError}
-                rows={data.dishes}
-                columns={columns}
-                getRowId={getRowId}
-                processRowUpdate={(updatedRow, originalRow) =>
-                  SaveOnServerFunction(updatedRow, originalRow)
-                }
-                style={{
-                  background: 'rgba(0,0,0,0.37)',
-                  backdropFilter: 'blur(10px)',
-                  WebkitBackdropFilter: 'blur(6.8px)',
-                }}
-                sx={{
-                  boxShadow: 2,
-                }}
-              />
-            </Box>
-          </>
-        );
-      }
-
-      return filteredData.map((option: any) => (
-        <>
-          <Grid item md={4} lg={3}>
-            <Card
-              sx={{ minWidth: '50%', height: '100%', boxShadow: 2 }}
+          <Box
+            style={{ height: '75vh', width: '100%', marginTop: '2%' }}
+            sx={{
+              '& .super-app-theme--header': {
+                backgroundColor: 'rgba(73, 201, 230, .4)',
+              },
+            }}
+          >
+            <DataGrid
+              editMode="row"
+              onProcessRowUpdateError={handleProcessRowUpdateError}
+              rows={data.dishes}
+              columns={columns}
+              getRowId={getRowId}
+              processRowUpdate={(updatedRow, originalRow) =>
+                SaveOnServerFunction(updatedRow, originalRow)
+              }
               style={{
                 background: 'rgba(0,0,0,0.37)',
                 backdropFilter: 'blur(10px)',
                 WebkitBackdropFilter: 'blur(6.8px)',
               }}
-            >
-              <CardHeader
-                action={
-                  <IconButton aria-label="settings" onClick={() => handleOpen(option)}>
-                    <MoreVertIcon />
-                  </IconButton>
-                }
-                title={option.friendlyName}
-                subheader={subHeader(option)}
-              />
+              sx={{
+                boxShadow: 2,
+              }}
+            />
+          </Box>
+        );
+      }
 
-              <Divider variant="middle" />
-              <CardContent sx={{ mt: '-5%' }}>
-                <List key={option._id}>
-                  <OptionsComponent options={option.options} sx={{ ml: '2%' }} />
-                </List>
+      return filteredData.map((option: any) => (
+        <Grid item key={option._id} xs={12} sx={{ width: '100%' }}>
+          <Box
+            sx={{ minWidth: '100%', boxShadow: 2 }}
+            style={{
+              background: 'rgba(0,0,0,0.37)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(6.8px)',
+            }}
+          >
+            <CardHeader
+              action={
+                <IconButton aria-label="settings" onClick={() => handleOpen(option)}>
+                  <MoreVertIcon />
+                </IconButton>
+              }
+              title={option.friendlyName}
+              subheader={subHeader(option)}
+            />
 
-                <Divider />
-                <Typography variant="body1" color="text.secondary" sx={{ mt: '5%' }}>
-                  <FormControlLabel
-                    control={<Checkbox checked={option.isOrderable}></Checkbox>}
-                    label="Orderable"
-                  />
-                  {/*
+            <CardContent>
+              <Grid container spacing={2} key={option._id} sx={{ width: '100%' }}>
+                <OptionsComponent options={option.options} sx={{ ml: '2%' }} />
+              </Grid>
+
+              <Typography variant="body1" color="text.secondary">
+                <FormControlLabel
+                  control={<Checkbox checked={option.isOrderable}></Checkbox>}
+                  label="Orderable"
+                />
+                {/*
                   <FormControlLabel
                     control={<Checkbox checked={option.isArchived}></Checkbox>}
                     label="Archived"
                   />
                    */}
-                </Typography>
-
-                <Typography variant="body2" color="text.secondary"></Typography>
-              </CardContent>
-            </Card>
-          </Grid>
-        </>
+              </Typography>
+            </CardContent>
+          </Box>
+        </Grid>
       ));
     } else {
       return (
@@ -382,15 +378,19 @@ export default function Home() {
     for (const subOption of props.options) {
       specific.push(
         <>
-          <ListItem key={subOption._id}>
-            <ListItemIcon>
-              <Avatar>{subOption.friendlyName.charAt(0)}</Avatar>
-            </ListItemIcon>
-            <ListItemText
-              primary={subOption.friendlyName}
-              secondary={'$' + Number.parseFloat(subOption.extraPrice).toFixed(2)}
-            />
-          </ListItem>
+          <Grid item key={subOption._id}>
+            <Card sx={{ backgroundColor: 'rgba(0,0,0,0.8)' }}>
+              <ListItem>
+                <ListItemIcon>
+                  <Avatar>{subOption.friendlyName.charAt(0)}</Avatar>
+                </ListItemIcon>
+                <ListItemText
+                  primary={subOption.friendlyName}
+                  secondary={'$' + Number.parseFloat(subOption.extraPrice).toFixed(2)}
+                />
+              </ListItem>
+            </Card>
+          </Grid>
         </>,
       );
     }
@@ -565,7 +565,7 @@ export default function Home() {
         </Grid>
       </Grid>
 
-      <Grid container direction="row" sx={{ height: '80vh', overflowY: 'scroll' }} spacing={2}>
+      <Grid container direction="row" sx={{ height: '78vh', overflowY: 'scroll' }} spacing={3}>
         <RenderCards></RenderCards>
 
         {!open ? (
