@@ -92,7 +92,6 @@ export default function Home() {
   };
   React.useEffect(() => {
     //
-    connect();
     //console.log(window.epson.ePOSDevice());
   }, []);
 
@@ -408,23 +407,7 @@ export default function Home() {
           </FormGroup>
         </Grid>
       </Grid>
-      <TextField
-        value={PRINTER_IP}
-        label="IP Addr..."
-        variant="outlined"
-        size="small"
-        onChange={handleIpEdit}
-        sx={{ position: 'absolute', top: 15, right: 0, mr: '28%' }}
-      />
-      <Button
-        color="secondary"
-        disabled={STATUS_CONNECTED == 'CONNECTED'}
-        sx={{ position: 'absolute', top: 2, right: 40, mt: '1%', mr: '10%' }}
-        onClick={() => connect()}
-      >
-        <Sensors></Sensors> &nbsp;
-        {STATUS_CONNECTED}
-      </Button>
+
       <Box sx={{ mt: 2, width: '100%', overflowY: 'scroll', height: '81vh' }}>
         <Masonry columns={5} spacing={2} sx={{ p: 1.2 }}>
           <OrderCard></OrderCard>

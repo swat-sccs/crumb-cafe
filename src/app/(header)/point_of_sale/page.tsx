@@ -48,12 +48,17 @@ export default function App() {
   //Name PopUp Open and Close
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
-  const handleClose = () => setOpen(false);
+  const handleClose = () => {
+    setOpen(false), setoneopen(false);
+  };
   const [Success, setSuccess] = React.useState(false);
   const handleSuccess = () => setSuccess(false);
   const [Failure, setFailure] = React.useState(false);
   const handleFailure = () => setFailure(false);
   const [name, setName] = React.useState('');
+
+  const [oneCard, setOneCard] = React.useState('');
+  const [oneopen, setoneopen] = React.useState(false);
   const scrollRef = useRef<any>(null);
 
   //Printer Things
@@ -80,6 +85,9 @@ export default function App() {
 
   function handleNameChange(e: any) {
     setName(e.target.value);
+  }
+  function handleOneCardChange(e: any) {
+    setOneCard(e.target.value);
   }
 
   const connect = async () => {
@@ -114,7 +122,6 @@ export default function App() {
   };
   React.useEffect(() => {
     //
-    connect();
     //console.log(window.epson.ePOSDevice());
   }, []);
 
@@ -151,7 +158,7 @@ export default function App() {
     prn.addTextStyle(false, true, true, prn.COLOR_2);
     prn.addTextDouble(true, true);
     prn.addText(item.customerName + '\n');
-
+    //prn.addBarcode('12345', prn.BARCODE_CODE39, prn.HRI_NONE, prn.FONT_A, 2, 32);
     prn.addCut(prn.CUT_FEED);
     prn.send();
   }
@@ -340,6 +347,15 @@ export default function App() {
       dishes: currentOrder,
     };
 
+    let thing2 = {
+      customerName: name,
+      total: runningTotal,
+      hidden: false,
+      notes: '',
+      oc: oneCard,
+      dishes: currentOrder,
+    };
+
     //break food and drinks into seperate lists so that they can each be on their own recipts.
 
     let foodies = {
@@ -356,41 +372,50 @@ export default function App() {
       notes: '',
       dishes: currentOrder.filter((item: any) => item.tag == 'drink'),
     };
+
+    //PRINT2(foodies);
+
     /*
-    await axios.post('/api/print', thing1).then((response) => {
-      console.log(response);
-    });
+    text 500,500
+    clear 1048, 628
+    enter 125, 630
+    mealswipe 726, 250
+    svc 400, 250
+    cancel 980, 1169
+    pay 183, 1169
     */
 
     //console.log(thing1);
-    if (STATUS_CONNECTED != 'CONNECTED') {
-      alert('printer not connected!');
-    } else {
-      await axios.post('/api/orders', thing1).then((response) => {
-        //console.log(response.status, response.data.token);
-        if (response.status == 200) {
-          console.log('order confirmed!: ' + name);
-          handleClose();
-          setSuccess(true);
-          setTimeout(handleSuccess, 3000);
-          setCurrentOrder([]);
-          setName('');
-          setRunningTotal(0);
-          setOptions(false);
-          if (foodies.dishes.length > 0) {
-            PRINT2(foodies);
-          }
-          if (drinkies.dishes.length > 0) {
-            PRINT2(drinkies);
-          }
-        } else {
-          console.log('failed');
-          handleClose();
-          setFailure(true);
-          setTimeout(handleFailure, 3000);
+
+    await axios.post('/api/orders', thing1).then((response) => {
+      if (response.status == 200) {
+        console.log('order confirmed!: ' + name);
+        handleClose();
+        setSuccess(true);
+        setTimeout(handleSuccess, 3000);
+        setCurrentOrder([]);
+        setName('');
+        setRunningTotal(0);
+        setOneCard('');
+        setOptions(false);
+        /*
+        if (foodies.dishes.length > 0) {
+          PRINT2(foodies);
         }
-      });
-    }
+        if (drinkies.dishes.length > 0) {
+          PRINT2(drinkies);
+        }*/
+      } else {
+        console.log('failed');
+        handleClose();
+        setFailure(true);
+        setTimeout(handleFailure, 3000);
+      }
+    });
+
+    await axios.post('/api/print', thing2).then((response) => {
+      console.log(response);
+    });
   };
   /*
   RenderOptions
@@ -491,6 +516,104 @@ export default function App() {
     setCurrentOrder(editedOrder);
   };
 
+  const OneCardPopUp = () => {
+    const style = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '30vw',
+      bgcolor: 'background.paper',
+      border: '2px solid #000',
+      boxShadow: 24,
+      p: 4,
+    };
+
+    if (oneopen) {
+      return (
+        <>
+          <Box
+            onClick={handleClose}
+            sx={{
+              width: '100%',
+              height: '100vh',
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              backgroundColor: 'rgba(0,0,0,0.7)',
+              zIndex: '1',
+            }}
+          ></Box>
+          <Box
+            sx={{
+              zIndex: '2',
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '40vw',
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              boxShadow: 24,
+              p: 4,
+            }}
+          >
+            <Typography id="transition-modal-title" variant="h3" align="center">
+              Scan One Card
+            </Typography>
+            <OneCardInputComponent />
+          </Box>
+        </>
+      );
+    }
+    return <></>;
+  };
+
+  const OneCardInputComponent = () => {
+    return (
+      <>
+        <Grid container direction="column" justifyContent="space-evenly">
+          <Grid container direction="row" justifyContent="center" sx={{ marginTop: '7%' }}>
+            <Box
+              sx={{
+                borderRadius: 10,
+                width: '30vw',
+                height: '10vh',
+                outlineColor: 'white',
+                outlineStyle: 'solid',
+              }}
+            >
+              <InputBase
+                autoFocus
+                autoComplete="off"
+                inputProps={{ style: { textAlign: 'center' } }}
+                id="filled-basic"
+                placeholder="One Card"
+                value={oneCard}
+                onChange={handleOneCardChange}
+                sx={{ fontSize: '250%', padding: 1, ml: 1, flex: 1 }}
+              />
+            </Box>
+          </Grid>
+          <Grid container justifyContent="center" alignItems="center" direction="row">
+            <Grid item xs={12}>
+              <Button
+                fullWidth
+                sx={{ marginTop: 2 }}
+                onClick={() => {
+                  setoneopen(false), setOpen(true);
+                }}
+                size="large"
+              >
+                <Typography variant="h5">To Name</Typography>
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
+      </>
+    );
+  };
+
   const NamePopUp = () => {
     const style = {
       position: 'absolute',
@@ -517,25 +640,26 @@ export default function App() {
               backgroundColor: 'rgba(0,0,0,0.7)',
               zIndex: '1',
             }}
+            onClick={handleClose}
+          ></Box>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '40vw',
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              boxShadow: 24,
+              zIndex: '2',
+              p: 4,
+            }}
           >
-            <Box
-              sx={{
-                position: 'absolute',
-                top: '50%',
-                left: '50%',
-                transform: 'translate(-50%, -50%)',
-                width: '30vw',
-                bgcolor: 'background.paper',
-                border: '2px solid #000',
-                boxShadow: 24,
-                p: 4,
-              }}
-            >
-              <Typography id="transition-modal-title" variant="h3" align="center">
-                Order Name
-              </Typography>
-              <InputComponent />
-            </Box>
+            <Typography id="transition-modal-title" variant="h3" align="center">
+              Order Name
+            </Typography>
+            <InputComponent />
           </Box>
         </>
       );
@@ -550,7 +674,7 @@ export default function App() {
             <Box
               sx={{
                 borderRadius: 10,
-                width: '20vw',
+                width: '30vw',
                 height: '10vh',
                 outlineColor: 'white',
                 outlineStyle: 'solid',
@@ -569,7 +693,7 @@ export default function App() {
               />
             </Box>
           </Grid>
-          <Grid container justifyContent="center" alignItems="center" direction="row">
+          <Grid container justifyContent="center" alignItems="center" direction="row" spacing={2}>
             <Grid item xs={12}>
               <Button
                 fullWidth
@@ -577,17 +701,13 @@ export default function App() {
                 onClick={() => confirmOrder(name)}
                 size="large"
               >
-                Submit
+                <Typography variant="h5">Submit</Typography>
               </Button>
             </Grid>
-            <Grid item xs={4} sx={{ ml: 2 }}>
-              <Button sx={{ marginTop: 2 }} onClick={() => connect()} color="warning">
-                Connect
-              </Button>
-            </Grid>
-            <Grid item xs={4} sx={{ ml: 2 }}>
-              <Button sx={{ marginTop: 2 }} onClick={handleClose} color="secondary">
-                close
+            <Grid item xs={6}></Grid>
+            <Grid item xs={6}>
+              <Button fullWidth onClick={handleClose} color="secondary" size="large">
+                <Typography variant="h5"> Close</Typography>
               </Button>
             </Grid>
           </Grid>
@@ -830,7 +950,7 @@ export default function App() {
           }}
           color="success"
           size="large"
-          onClick={() => handleOpen()}
+          onClick={() => setoneopen(true)}
         >
           <Grid
             container
@@ -906,7 +1026,7 @@ export default function App() {
               size="large"
               onClick={() => addItems()}
             >
-              <Typography variant="body1">Confirm </Typography>
+              <Typography variant="body1">Confirm</Typography>
             </Button>
           </Grid>
         </>
@@ -987,22 +1107,7 @@ export default function App() {
 
   return (
     <Box>
-      <TextField
-        value={PRINTER_IP}
-        label="IP Addr..."
-        variant="outlined"
-        size="small"
-        onChange={handleIpEdit}
-        sx={{ position: 'absolute', top: 15, right: 0, mr: '28%' }}
-      />
-      <Button
-        color="secondary"
-        disabled={STATUS_CONNECTED == 'CONNECTED'}
-        sx={{ position: 'absolute', top: 2, right: 40, mt: '1%', mr: '10%' }}
-        onClick={() => connect()}
-      >
-        {STATUS_CONNECTED}
-      </Button>
+      <OneCardPopUp></OneCardPopUp>
       <NamePopUp></NamePopUp>
       <Box
         sx={{ position: 'absolute', bottom: '0', right: '0', mb: '5%', mr: '-5%', width: '35%' }}
