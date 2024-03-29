@@ -335,7 +335,7 @@ export default function App() {
     //console.log(runningTotal);
   };
 
-  const confirmOrder = async (name: string) => {
+  const confirmOrder = async (name: string, paymentType: string) => {
     //handleClose();
     //Current order should just be a mirror of the dishes array You will attach below each order is simply a dish object.
 
@@ -347,12 +347,13 @@ export default function App() {
       dishes: currentOrder,
     };
 
-    let thing2 = {
+    let toPrintServer = {
       customerName: name,
       total: runningTotal,
       hidden: false,
       notes: '',
       oc: oneCard,
+      payment: paymentType,
       dishes: currentOrder,
     };
 
@@ -407,14 +408,20 @@ export default function App() {
         }*/
       } else {
         console.log('failed');
-        handleClose();
+
         setFailure(true);
         setTimeout(handleFailure, 3000);
       }
     });
 
-    await axios.post('/api/print', thing2).then((response) => {
-      console.log(response);
+    await axios.post('/api/print', toPrintServer).then((response) => {
+      if (response.status == 200) {
+        setSuccess(true);
+        setTimeout(handleSuccess, 3000);
+      } else {
+        setFailure(true);
+        setTimeout(handleFailure, 3000);
+      }
     });
   };
   /*
@@ -694,17 +701,32 @@ export default function App() {
             </Box>
           </Grid>
           <Grid container justifyContent="center" alignItems="center" direction="row" spacing={2}>
-            <Grid item xs={12}>
+            <Grid item xs={8}>
               <Button
                 fullWidth
                 sx={{ marginTop: 2 }}
-                onClick={() => confirmOrder(name)}
+                onClick={() => confirmOrder(name, 'swipe')}
                 size="large"
               >
-                <Typography variant="h5">Submit</Typography>
+                <Typography variant="h5">Meal Swipe</Typography>
+              </Button>
+              <Button
+                fullWidth
+                sx={{ marginTop: 2 }}
+                onClick={() => confirmOrder(name, 'dining')}
+                size="large"
+              >
+                <Typography variant="h5">Dining Dollars</Typography>
+              </Button>
+              <Button
+                fullWidth
+                sx={{ marginTop: 2 }}
+                onClick={() => confirmOrder(name, 'swat')}
+                size="large"
+              >
+                <Typography variant="h5">Swat Points</Typography>
               </Button>
             </Grid>
-            <Grid item xs={6}></Grid>
             <Grid item xs={6}>
               <Button fullWidth onClick={handleClose} color="secondary" size="large">
                 <Typography variant="h5"> Close</Typography>
