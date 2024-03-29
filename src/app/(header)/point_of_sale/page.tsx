@@ -56,6 +56,7 @@ export default function App() {
   const [Failure, setFailure] = React.useState(false);
   const handleFailure = () => setFailure(false);
   const [name, setName] = React.useState('');
+  const [paymore, setPayMore] = React.useState(false);
 
   const [oneCard, setOneCard] = React.useState('');
   const [oneopen, setoneopen] = React.useState(false);
@@ -354,6 +355,7 @@ export default function App() {
       notes: '',
       oc: oneCard,
       payment: paymentType,
+      receipt: true,
       dishes: currentOrder,
     };
 
@@ -391,6 +393,7 @@ export default function App() {
     await axios.post('/api/orders', thing1).then((response) => {
       if (response.status == 200) {
         console.log('order confirmed!: ' + name);
+        /*
         handleClose();
         setSuccess(true);
         setTimeout(handleSuccess, 3000);
@@ -399,6 +402,8 @@ export default function App() {
         setRunningTotal(0);
         setOneCard('');
         setOptions(false);
+
+        */
         /*
         if (foodies.dishes.length > 0) {
           PRINT2(foodies);
@@ -418,6 +423,48 @@ export default function App() {
       if (response.status == 200) {
         setSuccess(true);
         setTimeout(handleSuccess, 3000);
+      } else {
+        setFailure(true);
+        setTimeout(handleFailure, 3000);
+      }
+    });
+
+    if (currentOrder.total - 7 > 0 && paymentType == 'swipe') {
+      setPayMore(true);
+    } else {
+      handleClose();
+      setSuccess(true);
+      setTimeout(handleSuccess, 3000);
+      setCurrentOrder([]);
+      setName('');
+      setRunningTotal(0);
+      setOneCard('');
+      setOptions(false);
+    }
+  };
+
+  const pay2 = async (name: string, paymentType: string) => {
+    let toPrintServer2 = {
+      customerName: name,
+      total: runningTotal,
+      hidden: false,
+      notes: '',
+      oc: oneCard,
+      payment: paymentType,
+      receipt: false,
+      dishes: currentOrder,
+    };
+
+    await axios.post('/api/print', toPrintServer2).then((response) => {
+      if (response.status == 200) {
+        handleClose();
+        setSuccess(true);
+        setTimeout(handleSuccess, 3000);
+        setCurrentOrder([]);
+        setName('');
+        setRunningTotal(0);
+        setOneCard('');
+        setOptions(false);
       } else {
         setFailure(true);
         setTimeout(handleFailure, 3000);
@@ -613,6 +660,115 @@ export default function App() {
                 size="large"
               >
                 <Typography variant="h5">To Name</Typography>
+              </Button>
+            </Grid>
+          </Grid>
+        </Grid>
+      </>
+    );
+  };
+
+  const MorePayPopUp = () => {
+    const style = {
+      position: 'absolute',
+      top: '50%',
+      left: '50%',
+      transform: 'translate(-50%, -50%)',
+      width: '30vw',
+      bgcolor: 'background.paper',
+      border: '2px solid #000',
+      boxShadow: 24,
+      p: 4,
+    };
+
+    if (paymore) {
+      return (
+        <>
+          <Box
+            sx={{
+              width: '100%',
+              height: '100vh',
+              position: 'absolute',
+              top: '0',
+              left: '0',
+              backgroundColor: 'rgba(0,0,0,0.7)',
+              zIndex: '1',
+            }}
+            onClick={handleClose}
+          ></Box>
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              width: '40vw',
+              bgcolor: 'background.paper',
+              border: '2px solid #000',
+              boxShadow: 24,
+              zIndex: '2',
+              p: 4,
+            }}
+          >
+            <Typography id="transition-modal-title" variant="h3" align="center">
+              ${currentOrder.total - 7} Remaning
+            </Typography>
+            <MorePayPopUpInput />
+          </Box>
+        </>
+      );
+    }
+    return <></>;
+  };
+  const MorePayPopUpInput = () => {
+    return (
+      <>
+        <Grid container direction="column" justifyContent="space-evenly">
+          <Grid container direction="row" justifyContent="center" sx={{ marginTop: '7%' }}>
+            <Box
+              sx={{
+                borderRadius: 10,
+                width: '30vw',
+                height: '10vh',
+                outlineColor: 'white',
+                outlineStyle: 'solid',
+              }}
+            >
+              {' '}
+              <InputBase
+                autoFocus
+                autoComplete="off"
+                inputProps={{ style: { textAlign: 'center' } }}
+                id="filled-basic"
+                placeholder="Name"
+                value={name}
+                onChange={handleNameChange}
+                sx={{ fontSize: '250%', padding: 1, ml: 1, flex: 1 }}
+              />
+            </Box>
+          </Grid>
+          <Grid container justifyContent="center" alignItems="center" direction="row" spacing={2}>
+            <Grid item xs={8}>
+              <Button
+                fullWidth
+                sx={{ marginTop: 2 }}
+                onClick={() => pay2(name, 'dining')}
+                size="large"
+              >
+                <Typography variant="h5">Dining Dollars</Typography>
+              </Button>
+              <Button
+                fullWidth
+                sx={{ marginTop: 2 }}
+                onClick={() => pay2(name, 'swat')}
+                size="large"
+              >
+                <Typography variant="h5">Swat Points</Typography>
+              </Button>
+            </Grid>
+            <Grid item xs={6}>
+              <Button fullWidth onClick={handleClose} color="secondary" size="large">
+                <Typography variant="h5"> Close</Typography>
               </Button>
             </Grid>
           </Grid>
@@ -1131,6 +1287,7 @@ export default function App() {
     <Box>
       <OneCardPopUp></OneCardPopUp>
       <NamePopUp></NamePopUp>
+      <MorePayPopUp></MorePayPopUp>
       <Box
         sx={{ position: 'absolute', bottom: '0', right: '0', mb: '5%', mr: '-5%', width: '35%' }}
       >
