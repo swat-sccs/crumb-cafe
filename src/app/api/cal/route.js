@@ -27,7 +27,9 @@ export async function GET(request) {
     let dotw = [];
     if (thing.dotw) {
       for (const dow of thing.dotw) {
-        dotw.push(days.indexOf(dow));
+        if (days.includes(dow)) {
+          dotw.push(days.indexOf(dow));
+        }
       }
     }
 
