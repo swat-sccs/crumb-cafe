@@ -1,44 +1,31 @@
 'use client';
+import Printer from '@/app/components/printer';
+import DeleteIcon from '@mui/icons-material/Delete';
 import {
+  Alert,
   Box,
+  Button,
   Card,
   CardContent,
-  Container,
-  Typography,
-  Button,
-  Grid,
-  List,
-  ListItemButton,
   CircularProgress,
-  ListItemText,
+  Container,
   Divider,
-  ListItem,
-  Tabs,
-  Tab,
-  IconButton,
-  Alert,
-  InputBase,
-  TextField,
   Fade,
+  Grid,
+  IconButton,
+  InputBase,
+  List,
+  ListItem,
+  ListItemButton,
+  ListItemText,
+  Tab,
+  Tabs,
+  Typography,
 } from '@mui/material';
-import DeleteIcon from '@mui/icons-material/Delete';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { orange, cyan, blueGrey } from '@mui/material/colors';
-import React, { useState, useEffect, useRef } from 'react';
-import {
-  BreakfastDiningOutlined,
-  FmdGoodSharp,
-  LegendToggle,
-  NoFoodSharp,
-} from '@mui/icons-material';
-import { AnyKeys, ConnectionStates } from 'mongoose';
-import { Rock_3D } from 'next/font/google';
 import axios from 'axios';
-import useSWR from 'swr';
 import moment from 'moment';
-import { Dictionary } from '@fullcalendar/core/internal';
-import Printer from '@/app/components/printer';
-import { setIPCookie, getIPCookie } from './action';
+import React, { useEffect, useRef, useState } from 'react';
+import useSWR from 'swr';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
@@ -95,7 +82,7 @@ export default function App() {
     //const ip = await getIPCookie();
     // Set_PRINTERIP(ip);
     setConnectionStatus('Connecting ...');
-    let ePosDev = new window.epson.ePOSDevice();
+    const ePosDev = new window.epson.ePOSDevice();
 
     ePosDevice.current = ePosDev;
     await ePosDev.connect(PRINTER_IP, printerPort, (data: any) => {
@@ -261,7 +248,7 @@ export default function App() {
     __v: 0,
   }, */
     //let temp = Object.assign({}, item);
-    let temp = {
+    const temp = {
       _uuid: index,
       _id: item._id,
       friendlyName: item.friendlyName,
@@ -273,7 +260,7 @@ export default function App() {
 
     setIndex(index + 1);
 
-    let editedOrder = Array.from(currentOrder);
+    const editedOrder = Array.from(currentOrder);
     editedOrder.push(temp);
     //console.log('EDITED ORDER', editedOrder);
     setCurrentOrder(editedOrder);
@@ -287,12 +274,12 @@ export default function App() {
     //setOptions(false);
     //console.log('props to follow');
     //console.log(props);
-    let temp = Object.assign([], currentOrder);
+    const temp = Object.assign([], currentOrder);
     //this finds the first match, but we want it to delete current item!
     //fix later by making sure ALL fields match
     for (const thing of currentOrder) {
       if (thing == props) {
-        let index = temp.indexOf(thing);
+        const index = temp.indexOf(thing);
         temp.splice(index, 1);
         //setOptions(false);
         //console.log('options set to false');
@@ -305,10 +292,10 @@ export default function App() {
   };
 
   const removeOption = async (itemToRemoveFrom: any, optionToRemove: any) => {
-    let temp = Object.assign([], currentOrder);
+    const temp = Object.assign([], currentOrder);
     const index = currentOrder.findIndex((item: any) => item._uuid == itemToRemoveFrom._uuid);
 
-    let optionIndex = currentOrder[index].options.findIndex(
+    const optionIndex = currentOrder[index].options.findIndex(
       (item: any) => item._id == optionToRemove._id,
     );
 
@@ -340,7 +327,7 @@ export default function App() {
     //handleClose();
     //Current order should just be a mirror of the dishes array You will attach below each order is simply a dish object.
 
-    let thing1 = {
+    const thing1 = {
       customerName: name,
       total: runningTotal,
       hidden: false,
@@ -348,7 +335,7 @@ export default function App() {
       dishes: currentOrder,
     };
 
-    let toPrintServer = {
+    const toPrintServer = {
       customerName: name,
       total: runningTotal,
       hidden: false,
@@ -361,14 +348,14 @@ export default function App() {
 
     //break food and drinks into seperate lists so that they can each be on their own recipts.
 
-    let foodies = {
+    const foodies = {
       customerName: name,
       total: runningTotal,
       hidden: false,
       notes: '',
       dishes: currentOrder.filter((item: any) => item.tag == 'food'),
     };
-    let drinkies = {
+    const drinkies = {
       customerName: name,
       total: runningTotal,
       hidden: false,
@@ -390,45 +377,17 @@ export default function App() {
 
     //console.log(thing1);
 
+    //Send order to db
     await axios.post('/api/orders', thing1).then((response) => {
       if (response.status == 200) {
-        console.log('order confirmed!: ' + name);
-        /*
-        handleClose();
-        setSuccess(true);
-        setTimeout(handleSuccess, 3000);
-        setCurrentOrder([]);
-        setName('');
-        setRunningTotal(0);
-        setOneCard('');
-        setOptions(false);
-
-        */
-        /*
-        if (foodies.dishes.length > 0) {
-          PRINT2(foodies);
-        }
-        if (drinkies.dishes.length > 0) {
-          PRINT2(drinkies);
-        }*/
       } else {
-        console.log('failed');
-
+        console.log('failed to send order to backend');
         setFailure(true);
         setTimeout(handleFailure, 3000);
       }
     });
 
-    await axios.post('/api/print', toPrintServer).then((response) => {
-      if (response.status == 200) {
-        setSuccess(true);
-        setTimeout(handleSuccess, 3000);
-      } else {
-        setFailure(true);
-        setTimeout(handleFailure, 3000);
-      }
-    });
-
+    //Check if there is still more to pay
     if (currentOrder.total - 7 > 0 && paymentType == 'swipe') {
       setPayMore(true);
     } else {
@@ -441,10 +400,21 @@ export default function App() {
       setOneCard('');
       setOptions(false);
     }
+
+    //Send order to print server/tablet
+    await axios.post('/api/print', toPrintServer).then((response) => {
+      if (response.status == 200) {
+        setSuccess(true);
+        setTimeout(handleSuccess, 3000);
+      } else {
+        setFailure(true);
+        setTimeout(handleFailure, 3000);
+      }
+    });
   };
 
   const pay2 = async (name: string, paymentType: string) => {
-    let toPrintServer2 = {
+    const toPrintServer2 = {
       customerName: name,
       total: runningTotal,
       hidden: false,
@@ -536,10 +506,10 @@ export default function App() {
   const OptionsComponent = (props: any) => {
     const specific = [];
 
-    let item = data.dishes.filter((item: any) => item.friendlyName == props.friendlyName);
+    const item = data.dishes.filter((item: any) => item.friendlyName == props.friendlyName);
 
     for (const option of item) {
-      let temp: any = option.options;
+      const temp: any = option.options;
 
       for (const subOption of temp) {
         const multi = subOption.allowQuantity;
@@ -562,9 +532,9 @@ export default function App() {
     const index = currentOrder.findIndex((item: any) => item._uuid == _uuid);
     setCurrentDish(currentOrder[index]);
 
-    let theOptions: any = Array.from(currentOrder[index].options);
+    const theOptions: any = Array.from(currentOrder[index].options);
     theOptions.push(option);
-    let editedOrder: any = Array.from(currentOrder);
+    const editedOrder: any = Array.from(currentOrder);
     editedOrder[index].options = theOptions;
     //editedOrder[currentOrder.length - 1] = editedDish;
     setCurrentOrder(editedOrder);

@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Grid, AppBar, Toolbar, IconButton, Typography, Button, Container } from '@mui/material';
+import { Grid, AppBar, Toolbar, Typography, Button, Container } from '@mui/material';
 //import Navigation from './navBarPOS.js';
 import Navigation from '@/app/components/topBar';
 

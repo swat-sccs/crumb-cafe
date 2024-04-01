@@ -1,21 +1,16 @@
 // Admin Analytics
 'use client';
-import { Grid, Container, Box, Fade } from '@mui/material';
-import styles from './page.module.css';
-import { LineChart } from '@mui/x-charts/LineChart';
-import BasicCard from './card.js';
-import LabelAvatar from '@/app/components/labelAvatar.js';
+import { Box, Container, Grid } from '@mui/material';
 import { BarChart } from '@mui/x-charts/BarChart';
-import { axisClasses } from '@mui/x-charts';
 import dayjs, { Dayjs } from 'dayjs';
+import BasicCard from './card.js';
+import styles from './page.module.css';
 
-import { PieChart, pieArcLabelClasses, pieArcClasses } from '@mui/x-charts/PieChart';
 import { useTheme } from '@mui/material/styles';
-import React, { useState, useEffect, useRef } from 'react';
-import moment from 'moment';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
-import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
+import React, { useEffect } from 'react';
 
 import useSWR from 'swr';
 
@@ -39,8 +34,8 @@ export default function Analytics() {
       let tempTotal = 0;
       let tempDaily = 0;
       let tempDailyOrders = 0;
-      let labels: any = {};
-      let values: any = [];
+      const labels: any = {};
+      const values: any = [];
 
       for (const order of data.orders) {
         //(order);
@@ -59,11 +54,11 @@ export default function Analytics() {
   };
 
   const pieChart = async () => {
-    let labels: any = {};
+    const labels: any = {};
 
     if (isLoading == false && !error) {
       data2 = [];
-      let filteredOrders = data.orders.filter((a: any) => {
+      const filteredOrders = data.orders.filter((a: any) => {
         return dayjs(currentDaySelected).isSame(dayjs(a.createdAt), 'day');
       });
 
@@ -102,7 +97,7 @@ export default function Analytics() {
   });
 
   return (
-    <Container>
+    <Container sx={{ mt: '2%' }}>
       <Box sx={{ position: 'absolute', top: 10, right: '30%' }}>
         <LocalizationProvider dateAdapter={AdapterDayjs}>
           <DatePicker

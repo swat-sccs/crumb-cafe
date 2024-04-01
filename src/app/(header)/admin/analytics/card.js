@@ -1,7 +1,6 @@
 // Admin Analytics
 import { Typography, CardContent, Card, CardActions } from '@mui/material';
 import styles from './page.module.css';
-import { TrendingUp, TrendingDown } from '@mui/icons-material';
 import { useTheme } from '@mui/material/styles';
 
 export default function BasicCard({ title, data, up }) {

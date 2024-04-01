@@ -9,25 +9,16 @@ import {
   Typography,
   Drawer,
   ListItemButton,
-  Card,
   IconButton,
   Container,
 } from '@mui/material';
 
 import { useTheme } from '@mui/material/styles';
 
-import {
-  Menu,
-  Insights,
-  Settings,
-  CalendarMonth,
-  Home,
-  Person,
-  ArrowBackIos,
-} from '@mui/icons-material';
+import { Insights, Settings, CalendarMonth, Home, Person, ArrowBackIos } from '@mui/icons-material';
 import MenuIcon from '@mui/icons-material/Menu';
 
-import { useRouter, usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 
 /*
 New box in the sub global on click fly out card with 3 sub links

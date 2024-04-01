@@ -1,32 +1,12 @@
 'use client';
 import React from 'react';
-import { Box, Card, CardHeader, Container, Typography, useTheme, Slide } from '@mui/material';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-  ButtonGroup,
-  Button,
-  Chip,
-  Grid,
-  List,
-  ListItem,
-  ListItemAvatar,
-  Divider,
-  ListItemText,
-  Drawer,
-} from '@mui/material';
+import { Card, Container, Typography } from '@mui/material';
+import { ButtonGroup, Button, Chip, Grid } from '@mui/material';
 import { Close, Update } from '@mui/icons-material';
 import CardContent from '@mui/material/CardContent';
-import styles from '../page.module.css';
 import axios from 'axios';
 
 import useSWR from 'swr';
-import { gridColumnGroupsLookupSelector } from '@mui/x-data-grid';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
@@ -120,7 +100,7 @@ export default function Home() {
   const Options = (props: any) => {
     const options = [];
     const specific = [];
-    for (let item of props.options) {
+    for (const item of props.options) {
       options.push(
         <>
           <Grid item sx={{ m: 1 }}>
@@ -143,7 +123,7 @@ export default function Home() {
 
   const completeOrder = async (item: any) => {
     const url = '/api/orders/' + item._id;
-    let theitem = Object.assign({}, item);
+    const theitem = Object.assign({}, item);
 
     theitem['updates'].push({
       _id: theitem['_id'],
@@ -160,7 +140,7 @@ export default function Home() {
 
   const updateOrder = async (item: any) => {
     const url = '/api/orders/' + item._id;
-    let theitem = Object.assign({}, item);
+    const theitem = Object.assign({}, item);
 
     if (theitem['status'] == 'new') {
       theitem['updates'].push({

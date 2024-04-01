@@ -1,20 +1,12 @@
 'use client';
-import { Box, Card, Container, Grid } from '@mui/material';
-import useSWR from 'swr';
-import FullCalendar from '@fullcalendar/react';
 import dayGridPlugin from '@fullcalendar/daygrid'; // a plugin!
 import listPlugin from '@fullcalendar/list';
-import dayjs, { Dayjs } from 'dayjs';
-
-import moment from 'moment';
-
-import React, { useState, useEffect, useRef } from 'react';
-import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import FullCalendar from '@fullcalendar/react';
+import { Box, Container } from '@mui/material';
+import useSWR from 'swr';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
-import LabelAvatar from '@/app/components/labelAvatar';
-import { AnyARecord } from 'dns';
 export default function Home() {
   const { data, error, isLoading } = useSWR('/api/cal', fetcher, { refreshInterval: 1000 });
 
@@ -29,7 +21,7 @@ export default function Home() {
   }
 
   return (
-    <Box>
+    <Box sx={{ mt: '2%' }}>
       <Container sx={{ height: '80vh' }}>
         <FullCalendar
           height="100%"

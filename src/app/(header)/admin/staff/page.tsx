@@ -1,5 +1,5 @@
 'use client';
-import { Grid, Avatar, Container, Typography, Chip } from '@mui/material';
+import { Grid, Avatar, Container, Chip } from '@mui/material';
 import styles from './page.module.css';
 import LabelAvatar from '@/app/components/labelAvatar';
 import {
@@ -7,11 +7,9 @@ import {
   GridRowsProp,
   GridColDef,
   gridClasses,
-  GridToolbar,
   GridToolbarColumnsButton,
   GridToolbarContainer,
   GridToolbarExport,
-  GridCsvExportOptions,
   GridToolbarDensitySelector,
 } from '@mui/x-data-grid';
 

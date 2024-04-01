@@ -1,71 +1,48 @@
 'use client';
 import {
-  Grid,
+  Alert,
   Avatar,
-  Container,
-  Typography,
-  IconButton,
-  Card,
-  CardHeader,
-  CardContent,
-  TextField,
-  Checkbox,
-  ListItemText,
-  ListItemIcon,
-  FormControlLabel,
-  List,
-  ListItem,
-  Divider,
-  InputAdornment,
   Box,
+  Button,
+  Card,
+  CardContent,
+  CardHeader,
+  Checkbox,
+  Chip,
+  CircularProgress,
+  Container,
   Fab,
   FormControl,
+  FormControlLabel,
   FormGroup,
-  Switch,
-  OutlinedInput,
-  Chip,
+  Grid,
+  IconButton,
+  InputAdornment,
   InputLabel,
-  Select,
-  MenuItem,
+  List,
+  ListItem,
   ListItemAvatar,
-  CircularProgress,
-  Button,
+  ListItemIcon,
+  ListItemText,
+  MenuItem,
+  OutlinedInput,
+  Select,
   SelectChangeEvent,
-  Alert,
+  Switch,
+  TextField,
+  Typography,
 } from '@mui/material';
-import { Masonry } from '@mui/lab';
-import ImageList from '@mui/material/ImageList';
-import ImageListItem from '@mui/material/ImageListItem';
 
-import styles from './page.module.css';
-import React, { useState, useEffect, useRef } from 'react';
-import EditIcon from '@mui/icons-material/Edit';
-import DeleteIcon from '@mui/icons-material/DeleteOutlined';
-import SaveIcon from '@mui/icons-material/Save';
-import CancelIcon from '@mui/icons-material/Close';
-import { Folder, Delete, Add } from '@mui/icons-material';
-import LabelAvatar from '@/app/components/labelAvatar';
+import { Add, Delete } from '@mui/icons-material';
 import SearchIcon from '@mui/icons-material/Search';
+import React, { useEffect, useRef, useState } from 'react';
 
-import useSWR from 'swr';
-import axios from 'axios';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
-import {
-  GridRowsProp,
-  GridRowModesModel,
-  GridRowModes,
-  DataGrid,
-  GridColDef,
-  GridRenderCellParams,
-  GridToolbarContainer,
-  GridActionsCellItem,
-  GridEventListener,
-  GridRowId,
-  GridRowModel,
-  GridRowEditStopReasons,
-} from '@mui/x-data-grid';
 import { useTheme } from '@mui/material/styles';
+import { DataGrid, GridColDef } from '@mui/x-data-grid';
+import axios from 'axios';
 import moment from 'moment';
+import useSWR from 'swr';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
@@ -207,7 +184,7 @@ export default function Home() {
         }
       });
     } else if (windowTitle == 'New Item') {
-      let temp = Object.assign({}, SelectedItem);
+      const temp = Object.assign({}, SelectedItem);
       temp._id = temp.friendlyName.replace(/\s+/g, '-').toLowerCase();
 
       await axios.post('/api/dishes', temp).then((response) => {
@@ -224,7 +201,7 @@ export default function Home() {
   };
 
   const newOption = () => {
-    let temp = Object.assign([], SelectedItem.options);
+    const temp = Object.assign([], SelectedItem.options);
 
     temp.push(blankOption);
 
@@ -399,8 +376,8 @@ export default function Home() {
   };
 
   const handleSpecificOptionUpdate = (option_id: any, value: any, text: any) => {
-    let theItem = Object.assign({}, SelectedItem);
-    let index = theItem.options.findIndex((option: any) => option._id == option_id);
+    const theItem = Object.assign({}, SelectedItem);
+    const index = theItem.options.findIndex((option: any) => option._id == option_id);
 
     for (const option of theItem.options) {
       if (index != -1) {
@@ -524,7 +501,7 @@ export default function Home() {
   };
 
   return (
-    <Box>
+    <Box sx={{ mt: '2%' }}>
       <Box sx={{ position: 'absolute', top: '0', right: '0', mt: ' 6%', mr: '15%', zIndex: '10' }}>
         <AlertComponent></AlertComponent>
       </Box>
@@ -565,7 +542,7 @@ export default function Home() {
         </Grid>
       </Grid>
 
-      <Grid container direction="row" sx={{ height: '78vh', overflowY: 'scroll' }} spacing={3}>
+      <Grid container direction="row" sx={{ height: '82vh', overflowY: 'scroll' }} spacing={3}>
         <RenderCards></RenderCards>
 
         {!open ? (

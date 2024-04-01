@@ -2,15 +2,13 @@
 //You're importing a component that needs useEffect. It only works in a Client Component but none of its parents are marked with "use client", so they're Server Components by default.
 //Learn more: https://nextjs.org/docs/getting-started/react-essentials
 
-import { Box, Card, CardHeader, Container, Typography, Button, Grid, AppBar } from '@mui/material';
-import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { orange, cyan, blueGrey } from '@mui/material/colors';
-import React, { useState, useEffect } from 'react';
-import { LegendToggle } from '@mui/icons-material';
-import { AnyKeys } from 'mongoose';
+import { AppBar, Box, Button, Card, Container, Grid, Typography } from '@mui/material';
+import { blueGrey, cyan, orange } from '@mui/material/colors';
+import IconButton from '@mui/material/IconButton';
+import { createTheme } from '@mui/material/styles';
+import Toolbar from '@mui/material/Toolbar';
+import React, { useEffect, useState } from 'react';
 
 export default function App() {
   const [user, setUser] = useState('izzy');
@@ -54,9 +52,9 @@ export default function App() {
   };
 
   const renderFoodButtons = () => {
-    let buttons = [];
-    for (var prop in dict) {
-      let currentDish = prop;
+    const buttons = [];
+    for (const prop in dict) {
+      const currentDish = prop;
       buttons.push(
         <Button sx={{ m: 1 }} size="large" onClick={() => addItems(currentDish)}>
           {dict[prop].name}
@@ -188,7 +186,7 @@ export default function App() {
   };
 
   const renderCurrentItems = () => {
-    let selectedItems = [];
+    const selectedItems = [];
     for (const prop of items) {
       if (prop.qty > 0) {
         selectedItems.push(prop);
@@ -207,7 +205,7 @@ export default function App() {
   };
 
   const renderCurrentQty = () => {
-    let selectedItems = [];
+    const selectedItems = [];
     for (const prop of items) {
       if (prop.qty > 0) {
         selectedItems.push(prop);
@@ -226,7 +224,7 @@ export default function App() {
   };
 
   const renderCurrentPrice = () => {
-    let selectedItems = [];
+    const selectedItems = [];
     for (const prop of items) {
       if (prop.qty > 0) {
         selectedItems.push(prop);

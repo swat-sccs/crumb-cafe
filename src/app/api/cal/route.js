@@ -1,7 +1,6 @@
 // app/api/cal/route.js
 import { NextResponse } from 'next/server';
 import axios from 'axios';
-import moment from 'moment';
 
 //const icsToJson = require('ics-to-json');
 
@@ -10,7 +9,7 @@ import moment from 'moment';
 export async function GET(request) {
   console.log(request);
   let data;
-  let output = [];
+  const output = [];
   const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
   /*
 
@@ -24,7 +23,7 @@ export async function GET(request) {
   });
 
   for (const thing of data.dishes) {
-    let dotw = [];
+    const dotw = [];
     if (thing.dotw) {
       for (const dow of thing.dotw) {
         if (days.includes(dow)) {
@@ -33,10 +32,10 @@ export async function GET(request) {
       }
     }
 
-    let x = Math.floor(Math.random() * 255);
-    let y = Math.floor(Math.random() * 255);
+    const x = Math.floor(Math.random() * 255);
+    const y = Math.floor(Math.random() * 255);
 
-    let color = 'rgb(0,' + y + ',' + x + ')';
+    const color = 'rgb(0,' + y + ',' + x + ')';
 
     output.push({
       title: thing.friendlyName,

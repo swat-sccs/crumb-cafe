@@ -1,22 +1,17 @@
 'use client';
-import React, { useState, useEffect, useRef } from 'react';
+import React from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
-import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import Menu from '@mui/material/Menu';
-import MenuIcon from '@mui/icons-material/Menu';
 import Container from '@mui/material/Container';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
-import Tooltip from '@mui/material/Tooltip';
 import MenuItem from '@mui/material/MenuItem';
 import CookieIcon from '@mui/icons-material/Cookie';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { useSession } from 'next-auth/react';
-import { useLayoutEffect } from 'react';
 
 const pages = [
   { name: 'POS', link: '/point_of_sale' },
@@ -28,6 +23,8 @@ const pages = [
 const settings: any = [];
 
 function ResponsiveAppBar(props: any) {
+  const [windowSize, setWindowSize]: any[] = React.useState([]);
+
   const { data: session, status } = useSession();
 
   const handleCloseUserMenu = () => {
@@ -64,6 +61,11 @@ function ResponsiveAppBar(props: any) {
   const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(null);
   const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(null);
   const pathname = usePathname();
+  const [value, setValue] = React.useState('recents');
+
+  const handleChange = (event: React.SyntheticEvent, newValue: string) => {
+    setValue(newValue);
+  };
 
   const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
     setAnchorElNav(event.currentTarget);
@@ -78,89 +80,65 @@ function ResponsiveAppBar(props: any) {
   const handleCloseNavMenu = (page: any) => {
     setAnchorElNav(null);
   };
+  React.useEffect(() => {
+    setWindowSize([window.innerWidth, window.innerHeight]);
+  }, []);
 
   return (
-    <AppBar
-      position="static"
-      style={{
-        background: 'rgba(234, 71, 133, 0.8)',
-        backdropFilter: 'blur(10px)',
-        WebkitBackdropFilter: 'blur(6.8px)',
-      }}
-    >
-      <Container maxWidth="xl">
-        <Toolbar disableGutters>
-          <CookieIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
-          <Typography
-            variant="h6"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'none', md: 'flex' },
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            CRUMB CAFE{' '}
-          </Typography>
+    <>
+      <AppBar
+        position="static"
+        style={{
+          background: 'rgba(234, 71, 133, 0.8)',
+          backdropFilter: 'blur(10px)',
+          WebkitBackdropFilter: 'blur(6.8px)',
+        }}
+      >
+        <Container maxWidth="xl">
+          <Toolbar disableGutters>
+            <CookieIcon sx={{ display: { xs: 'none', md: 'flex' }, mr: 1 }} />
+            <Typography
+              variant="h6"
+              noWrap
+              component="a"
+              href="/"
+              sx={{
+                mr: 2,
+                display: { xs: 'none', md: 'flex' },
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              CRUMB CAFE
+            </Typography>
 
-          <CookieIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
-          <Typography
-            variant="h5"
-            noWrap
-            component="a"
-            href="/"
-            sx={{
-              mr: 2,
-              display: { xs: 'flex', md: 'none' },
-              flexGrow: 1,
-              fontFamily: 'monospace',
-              fontWeight: 700,
-              letterSpacing: '.3rem',
-              color: 'inherit',
-              textDecoration: 'none',
-            }}
-          >
-            CRUMB CAFE
-          </Typography>
+            <CookieIcon sx={{ display: { xs: 'flex', md: 'none' }, mr: 1 }} />
+            <Typography
+              variant="h5"
+              noWrap
+              component="a"
+              href="/"
+              sx={{
+                mr: 2,
+                display: { xs: 'flex', md: 'none' },
+                flexGrow: 1,
+                fontFamily: 'monospace',
+                fontWeight: 700,
+                letterSpacing: '.3rem',
+                color: 'inherit',
+                textDecoration: 'none',
+              }}
+            >
+              CRUMB CAFE
+            </Typography>
 
-          <Box sx={{ flexGrow: 0 }}>
-            {authenticated ? (
-              <>
-                <Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
-                  <IconButton
-                    size="large"
-                    aria-label="account of current user"
-                    aria-controls="menu-appbar"
-                    aria-haspopup="true"
-                    onClick={handleOpenNavMenu}
-                    color="inherit"
-                  >
-                    <MenuIcon />
-                  </IconButton>
-                  <Menu
-                    id="menu-appbar"
-                    anchorEl={anchorElNav}
-                    anchorOrigin={{
-                      vertical: 'bottom',
-                      horizontal: 'left',
-                    }}
-                    keepMounted
-                    transformOrigin={{
-                      vertical: 'top',
-                      horizontal: 'left',
-                    }}
-                    open={Boolean(anchorElNav)}
-                    onClose={handleCloseNavMenu}
-                    sx={{
-                      display: { xs: 'block', md: 'none' },
-                    }}
-                  >
+            <Box sx={{ flexGrow: 0 }}>
+              {authenticated ? (
+                <>
+                  <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
                     {pages.map((page) => (
                       <Link
                         href={page.link}
@@ -168,99 +146,72 @@ function ResponsiveAppBar(props: any) {
                         passHref
                         style={{ textDecoration: 'none' }}
                       >
-                        <Button
-                          variant="text"
-                          onClick={handleCloseNavMenu}
-                          sx={{ my: 2, color: 'white', display: 'block' }}
-                        >
-                          {page.name}
-                        </Button>
+                        {pathname == page.link ? (
+                          <Button
+                            variant="outlined"
+                            color="white"
+                            onClick={handleCloseNavMenu}
+                            sx={{ my: 2, color: 'white', display: 'block' }}
+                          >
+                            {page.name}
+                          </Button>
+                        ) : (
+                          <Button
+                            variant="text"
+                            color="white"
+                            onClick={handleCloseNavMenu}
+                            sx={{ my: 2, color: 'white', display: 'block' }}
+                          >
+                            {page.name}
+                          </Button>
+                        )}
                       </Link>
                     ))}
-                  </Menu>
-                </Box>
-                <Box sx={{ flexGrow: 1, display: { xs: 'none', md: 'flex' } }}>
-                  {pages.map((page) => (
-                    <Link
-                      href={page.link}
-                      key={page.name}
-                      passHref
-                      style={{ textDecoration: 'none' }}
-                    >
-                      {pathname == page.link ? (
-                        <Button
-                          variant="outlined"
-                          color="white"
-                          onClick={handleCloseNavMenu}
-                          sx={{ my: 2, color: 'white', display: 'block' }}
-                        >
-                          {page.name}
-                        </Button>
-                      ) : (
-                        <Button
-                          variant="text"
-                          color="white"
-                          onClick={handleCloseNavMenu}
-                          sx={{ my: 2, color: 'white', display: 'block' }}
-                        >
-                          {page.name}
-                        </Button>
-                      )}
-                    </Link>
-                  ))}
-                </Box>
-              </>
-            ) : (
-              <></>
-            )}
-          </Box>
+                  </Box>
+                </>
+              ) : (
+                <></>
+              )}
+            </Box>
 
-          <Box sx={{ flexGrow: 0, position: 'absolute', right: 0 }}>
-            <Link
-              href={authenticated ? '' : '/api/auth/signin'}
-              onClick={handleOpenUserMenu}
-              passHref
-              style={{ textDecoration: 'none' }}
-              className="text-white transition-colors duration-200 ease-in-out hover:text-accent"
-            >
-              <Button variant="contained">
-                <Typography variant="body1" color="black">
-                  {nameButton}
-                </Typography>
-              </Button>
-            </Link>
+            <Box sx={{ flexGrow: 0, position: 'absolute', right: 0 }}>
+              <Link
+                href={authenticated ? '' : '/api/auth/signin'}
+                onClick={handleOpenUserMenu}
+                passHref
+                style={{ textDecoration: 'none' }}
+                className="text-white transition-colors duration-200 ease-in-out hover:text-accent"
+              >
+                <Button variant="contained">
+                  <Typography variant="body1" color="black">
+                    {nameButton}
+                  </Typography>
+                </Button>
+              </Link>
 
-            <Menu
-              sx={{ mt: '45px' }}
-              id="menu-appbar"
-              anchorEl={anchorElUser}
-              anchorOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              keepMounted
-              transformOrigin={{
-                vertical: 'top',
-                horizontal: 'right',
-              }}
-              open={Boolean(anchorElUser)}
-              onClose={handleCloseUserMenu}
-            >
-              {/*
-               {settings.map((setting: any) => (
-                <MenuItem key={setting} onClick={handleCloseUserMenu}>
-                  <Typography textAlign="center">{setting}</Typography>
-                </MenuItem>
-              ))}
-            
-            */}
-
-              {loginLink}
-            </Menu>
-          </Box>
-        </Toolbar>
-      </Container>
-    </AppBar>
+              <Menu
+                sx={{ mt: '45px' }}
+                id="menu-appbar"
+                anchorEl={anchorElUser}
+                anchorOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                keepMounted
+                transformOrigin={{
+                  vertical: 'top',
+                  horizontal: 'right',
+                }}
+                open={Boolean(anchorElUser)}
+                onClose={handleCloseUserMenu}
+              >
+                {loginLink}
+              </Menu>
+            </Box>
+          </Toolbar>
+        </Container>
+      </AppBar>
+    </>
   );
 }
 export default ResponsiveAppBar;

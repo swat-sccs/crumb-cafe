@@ -1,6 +1,6 @@
 //Top Bar
 'use client';
-import { Avatar, Grid, Typography } from '@mui/material';
+import { Typography } from '@mui/material';
 import { useTheme } from '@mui/material/styles';
 
 export default function LabelAvatar({ title }) {

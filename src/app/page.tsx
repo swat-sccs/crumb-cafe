@@ -1,13 +1,7 @@
 'use client';
-import { Container, Typography, Grid, Card, CardContent, CardActionArea } from '@mui/material';
-import CrumbParticles from './components/particles';
-import { useRouter } from 'next/navigation';
+import { Typography, Grid, Card } from '@mui/material';
 import styles from './page.module.css';
-import { getServerSession } from 'next-auth/next';
-import { redirect } from 'next/navigation';
 import Link from 'next/link';
-import { useTheme } from '@mui/material';
-import Navigation from '@/app/components/topBar';
 
 //<Link href={page.link} key={page.name} passHref style={{ textDecoration: 'none' }}>
 Home.displayName = 'Home';

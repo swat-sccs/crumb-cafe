@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 import { NextRequest } from 'next/server';
 
 import axios from 'axios';
-import { ContactlessOutlined } from '@mui/icons-material';
 
 export async function GET(request: NextRequest) {
   await axios.get(process.env.DOMAIN + '/api/dishes').then((res) => {

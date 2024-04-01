@@ -1,6 +1,5 @@
 'use server';
 
-import { Any } from '@react-spring/web';
 export const connect = async (ePosDev: any, ePosDevice: any, PRINTER_IP: any, printerPort: any) => {
   //setConnectionStatus('Connecting ...');
   console.log(ePosDev);

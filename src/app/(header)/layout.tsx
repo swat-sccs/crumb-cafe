@@ -1,7 +1,7 @@
-import { Grid, Toolbar, Typography, Button, Container } from '@mui/material';
-import { useSession } from 'next-auth/react';
+import { Container } from '@mui/material';
 import { redirect } from 'next/navigation';
 import { config } from '@/app/lib/auth';
+import BottomNavigation from '@/app/components/bottomBar';
 import { getServerSession } from 'next-auth/next';
 
 export default async function SideBar({ children }: { children: React.ReactNode }) {
@@ -12,7 +12,8 @@ export default async function SideBar({ children }: { children: React.ReactNode 
   if (session) {
     return (
       <section>
-        <Container sx={{ width: '85vw', height: '85vh', mt: '2%' }}>{children}</Container>
+        <BottomNavigation></BottomNavigation>
+        <Container>{children}</Container>
       </section>
     );
   }

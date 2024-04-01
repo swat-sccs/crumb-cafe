@@ -4,12 +4,9 @@ THEN... In the backend change around the api to accept a list of the already for
 THEN... CRY
 */
 'use client';
-import React, { useRef, useState } from 'react';
-import { Box, Card, CardHeader, Container, Typography, useTheme, Slide } from '@mui/material';
+import React, { useRef } from 'react';
+import { Box, Card, CardHeader, Container, Typography, useTheme } from '@mui/material';
 import {
-  Table,
-  TableBody,
-  TableContainer,
   FormGroup,
   FormControlLabel,
   Switch,
@@ -18,27 +15,20 @@ import {
   Chip,
   Grid,
   Badge,
-  TextField,
   Divider,
-  ImageListItem,
-  ImageList,
 } from '@mui/material';
-import { Sensors, Print, Update } from '@mui/icons-material';
+import { Print, Update } from '@mui/icons-material';
 import { Masonry } from '@mui/lab';
-import CardContent from '@mui/material/CardContent';
-import styles from '../page.module.css';
 import axios from 'axios';
 import Script from 'next/script';
 import moment from 'moment';
 import useSWR from 'swr';
-import { gridColumnGroupsLookupSelector } from '@mui/x-data-grid';
-import { disposeEmitNodes } from 'typescript';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function Home() {
   const theme = useTheme();
-
+  const [windowSize, setWindowSize]: any[] = React.useState([]);
   const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 1000 });
   //axios.get('/api/dishes').then((reponse) => console.log(reponse));
   const ePosDevice = useRef();
@@ -67,7 +57,7 @@ export default function Home() {
 
   const connect = async () => {
     setConnectionStatus('Connecting ...');
-    let ePosDev = new window.epson.ePOSDevice();
+    const ePosDev = new window.epson.ePOSDevice();
 
     ePosDevice.current = ePosDev;
     await ePosDev.connect(PRINTER_IP, printerPort, (data: any) => {
@@ -91,8 +81,7 @@ export default function Home() {
     });
   };
   React.useEffect(() => {
-    //
-    //console.log(window.epson.ePOSDevice());
+    setWindowSize([window.innerWidth, window.innerHeight]);
   }, []);
 
   function queueDelete(item: any) {
@@ -113,9 +102,13 @@ export default function Home() {
       }
       const orders = [];
       filteredOrders = filteredOrders.sort((a: any, b: any) => {
-        let a2 = moment(a.createdAt);
-        let b2 = moment(b.createdAt);
+        const a2 = moment(a.createdAt);
+        const b2 = moment(b.createdAt);
         return b2.diff(a2);
+      });
+
+      filteredOrders = filteredOrders.filter((a: any) => {
+        return moment().isSame(moment(a.createdAt), 'day');
       });
 
       for (const item of filteredOrders) {
@@ -131,73 +124,65 @@ export default function Home() {
         }
 
         orders.push(
-          <>
-            <Grid item key={item._id} sx={{}}>
-              <Badge badgeContent={item.dishes.length} color="primary">
-                <Card
-                  style={{
-                    background: 'rgba(0,0,0,0.37)',
-                    backdropFilter: 'blur(10px)',
-                    boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
-                    WebkitBackdropFilter: 'blur(6.8px)',
-                  }}
-                  sx={{
-                    borderRadius: '10px',
-                    borderColor: 'black',
-                    minHeight: '100px',
-                    //border: 1,
-                    width: 200,
-                  }}
-                  key={item.customerName}
+          <Grid item key={item._id}>
+            <Badge badgeContent={item.dishes.length} color="primary">
+              <Card
+                style={{
+                  background: 'rgba(0,0,0,0.37)',
+                  backdropFilter: 'blur(10px)',
+                  boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+                  WebkitBackdropFilter: 'blur(6.8px)',
+                }}
+                sx={{
+                  borderRadius: '10px',
+                  borderColor: 'black',
+                  //border: 1,
+                }}
+                key={item.customerName}
+              >
+                <Typography
+                  variant="h5"
+                  bgcolor={statusColor}
+                  color={'white'}
+                  sx={{ width: '100%', borderStartEndRadius: '10px', p: 0.5 }}
+                  textAlign={'center'}
                 >
-                  <Typography
-                    variant="h5"
-                    bgcolor={statusColor}
-                    color={'white'}
-                    sx={{ width: '100%', borderStartEndRadius: '10px', p: 0.5 }}
-                    textAlign={'center'}
-                  >
-                    {item.customerName}
-                  </Typography>
+                  {item.customerName}
+                </Typography>
 
-                  <Grid
-                    container
-                    direction="column"
-                    justifyContent="space-between"
-                    alignItems="center"
-                    //sx={{ height: '100%' }}
-                  >
-                    <Grid item>
-                      <Grid container justifyContent="flex-start" direction="column">
-                        <Container>
-                          <DishAndOptions dishes={item.dishes}></DishAndOptions>
-                        </Container>
-                      </Grid>
-                    </Grid>
-
-                    <Grid item container direction="row" sx={{ mt: '15%' }}>
-                      <ButtonGroup fullWidth variant="contained">
-                        {deleteSwitch ? (
-                          <Box sx={{ backgroundColor: theme.palette.error.light }}>
-                            <Button fullWidth onClick={() => queueDelete(item)} color="inherit">
-                              X
-                            </Button>
-                          </Box>
-                        ) : null}
-
-                        <Button fullWidth onClick={() => updateOrder(item)}>
-                          <Update></Update>
-                        </Button>
-                        <Button fullWidth onClick={() => completeOrder(item)}>
-                          <Print></Print>
-                        </Button>
-                      </ButtonGroup>
+                <Grid
+                  container
+                  direction="column"
+                  justifyContent="space-between"
+                  alignItems="center"
+                  //sx={{ height: '100%' }}
+                >
+                  <Grid item>
+                    <Grid container justifyContent="flex-start" direction="column">
+                      <DishAndOptions dishes={item.dishes}></DishAndOptions>
                     </Grid>
                   </Grid>
-                </Card>
-              </Badge>
-            </Grid>
-          </>,
+
+                  <Grid item container direction="row" sx={{ mt: '15%' }}>
+                    <ButtonGroup fullWidth variant="contained">
+                      {deleteSwitch ? (
+                        <Button fullWidth onClick={() => queueDelete(item)} color="inherit">
+                          X
+                        </Button>
+                      ) : null}
+
+                      <Button fullWidth onClick={() => updateOrder(item)}>
+                        Change Status
+                      </Button>
+                      <Button fullWidth onClick={() => completeOrder(item)}>
+                        <Print></Print>
+                      </Button>
+                    </ButtonGroup>
+                  </Grid>
+                </Grid>
+              </Card>
+            </Badge>
+          </Grid>,
         );
       }
 
@@ -207,10 +192,10 @@ export default function Home() {
 
   const DishAndOptions = (props: any) => {
     let options = [];
-    let DishAndOptions = [];
+    const DishAndOptions = [];
 
-    for (let item of props.dishes) {
-      for (let option of item.options) {
+    for (const item of props.dishes) {
+      for (const option of item.options) {
         options.push(
           <>
             <Grid item sx={{ m: 1 }} key={option._id}>
@@ -286,10 +271,10 @@ export default function Home() {
   const completeOrder = async (item: any) => {
     //PRINT2(item);
     const url = '/api/orders/' + item._id;
-    let theitem = Object.assign({}, item);
+    const theitem = Object.assign({}, item);
 
-    let foodies = Object.assign({}, theitem);
-    let drinkies = Object.assign({}, theitem);
+    const foodies = Object.assign({}, theitem);
+    const drinkies = Object.assign({}, theitem);
     foodies['dishes'] = theitem.dishes.filter((item: any) => item.tag == 'food');
     drinkies['dishes'] = theitem.dishes.filter((item: any) => item.tag == 'drink');
     if (foodies.dishes.length > 0) {
@@ -311,7 +296,7 @@ export default function Home() {
     //PRINT2(item);
 
     const url = '/api/orders/' + SelectedOrder._id;
-    let theitem = Object.assign({}, SelectedOrder);
+    const theitem = Object.assign({}, SelectedOrder);
 
     await axios.delete(url, theitem).then((response) => {
       console.log(response);
@@ -321,10 +306,16 @@ export default function Home() {
 
   const updateOrder = async (item: any) => {
     const url = '/api/orders/' + item._id;
-    let theitem = Object.assign({}, item);
+    const theitem = Object.assign({}, item);
 
     if (theitem.status == 'new') {
       theitem.status = 'in_progress';
+      await axios.put(url, theitem).then((response) => {
+        console.log(response);
+      });
+    }
+    if (theitem.status == 'in_progress') {
+      theitem.status = 'completed';
       await axios.put(url, theitem).then((response) => {
         console.log(response);
       });
@@ -343,7 +334,7 @@ export default function Home() {
   };
 
   return (
-    <div>
+    <Box sx={{ mt: '2%' }}>
       <Script src="./epos-2.27.0.js"></Script>
       {deleteMe ? (
         <>
@@ -408,11 +399,14 @@ export default function Home() {
         </Grid>
       </Grid>
 
-      <Box sx={{ mt: 2, width: '100%', overflowY: 'scroll', height: '81vh' }}>
-        <Masonry columns={5} spacing={2} sx={{ p: 1.2 }}>
-          <OrderCard></OrderCard>
-        </Masonry>
-      </Box>
-    </div>
+      <Grid
+        container
+        sx={{ mt: 2, width: '100%', overflowY: 'scroll', height: '82vh' }}
+        justifyContent="space-evenly"
+        spacing={1}
+      >
+        <OrderCard></OrderCard>
+      </Grid>
+    </Box>
   );
 }

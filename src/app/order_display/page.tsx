@@ -2,28 +2,16 @@
 import {
   Box,
   Card,
-  CardHeader,
   Container,
   Typography,
   List,
   ListItem,
   Divider,
   ListItemAvatar,
-  Avatar,
   ListItemText,
 } from '@mui/material';
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableHead,
-  TableRow,
-  Paper,
-} from '@mui/material';
+
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
-import CardContent from '@mui/material/CardContent';
-import styles from '../page.module.css';
 
 import useSWR from 'swr';
 

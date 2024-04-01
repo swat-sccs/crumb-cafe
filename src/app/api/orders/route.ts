@@ -1,8 +1,6 @@
 import dbConnect from '@/app/lib/mongodb';
 //import * as mongoose from 'mongoose'; //for Schema and model
 import OrderModel from '@/models/order.model';
-import DishModel from '@/models/dish.model';
-import Counter2 from '@/models/dish.model';
 
 import { NextRequest, NextResponse } from 'next/server';
 import { z } from 'zod';
