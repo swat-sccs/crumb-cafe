@@ -36,7 +36,7 @@ export default function App() {
   const [open, setOpen] = React.useState(false);
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
-    setOpen(false), setoneopen(false);
+    setOpen(false);
   };
   const [Success, setSuccess] = React.useState(false);
   const handleSuccess = () => setSuccess(false);
@@ -325,7 +325,6 @@ export default function App() {
 
   const confirmOrder = async (name: string, paymentType: string) => {
     //handleClose();
-    //Current order should just be a mirror of the dishes array You will attach below each order is simply a dish object.
 
     const thing1 = {
       customerName: name,
@@ -348,27 +347,6 @@ export default function App() {
 
     //break food and drinks into seperate lists so that they can each be on their own recipts.
 
-    const foodies = {
-      customerName: name,
-      total: runningTotal,
-      hidden: false,
-      notes: '',
-      oc: oneCard,
-      payment: paymentType,
-      receipt: true,
-      dishes: currentOrder.filter((item: any) => item.tag == 'food'),
-    };
-    const drinkies = {
-      customerName: name,
-      total: runningTotal,
-      hidden: false,
-      notes: '',
-      oc: oneCard,
-      payment: paymentType,
-      receipt: true,
-      dishes: currentOrder.filter((item: any) => item.tag == 'drink'),
-    };
-
     //PRINT2(foodies);
 
     /*
@@ -381,8 +359,6 @@ export default function App() {
     pay 183, 1169
     */
 
-    //console.log(thing1);
-
     //Send order to db
     await axios.post('/api/orders', thing1).then((response) => {
       if (response.status == 200) {
@@ -393,35 +369,23 @@ export default function App() {
       }
     });
 
-    //Check if there is still more to pay
-    if (currentOrder.total - 7 > 0 && paymentType == 'swipe') {
-      setPayMore(true);
-    } else {
-      handleClose();
-      setSuccess(true);
-      setTimeout(handleSuccess, 3000);
-      setCurrentOrder([]);
-      setName('');
-      setRunningTotal(0);
-      setOneCard('');
-      setOptions(false);
-    }
+    //Check if there is still more to pay open up that window
 
     //Send order to print server/tablet
-    await axios.post('/api/print', foodies).then((response) => {
+    await axios.post('/api/print', toPrintServer).then((response) => {
       if (response.status == 200) {
-        setSuccess(true);
-        setTimeout(handleSuccess, 3000);
-      } else {
-        setFailure(true);
-        setTimeout(handleFailure, 3000);
-      }
-    });
-
-    await axios.post('/api/print', drinkies).then((response) => {
-      if (response.status == 200) {
-        setSuccess(true);
-        setTimeout(handleSuccess, 3000);
+        if (currentOrder.total - 7 > 0 && paymentType == 'swipe') {
+          setPayMore(true);
+        } else {
+          handleClose();
+          setSuccess(true);
+          setTimeout(handleSuccess, 3000);
+          setCurrentOrder([]);
+          setName('');
+          setRunningTotal(0);
+          setOneCard('');
+          setOptions(false);
+        }
       } else {
         setFailure(true);
         setTimeout(handleFailure, 3000);
@@ -443,7 +407,7 @@ export default function App() {
 
     await axios.post('/api/print', toPrintServer2).then((response) => {
       if (response.status == 200) {
-        handleClose();
+        setPayMore(false);
         setSuccess(true);
         setTimeout(handleSuccess, 3000);
         setCurrentOrder([]);
@@ -459,10 +423,9 @@ export default function App() {
   };
   /*
   RenderOptions
-
-  When a {dish} is added or selected from list a new set of options will appear. 
-  These options replace the menu items and give the user the oppourtunity to make additions
-  or add and subtract the number of items being added. 
+    When a {dish} is added or selected from list a new set of options will appear. 
+    These options replace the menu items and give the user the oppourtunity to make additions
+    or add and subtract the number of items being added. 
   */
   const RenderOptions = () => {
     //console.log(currentDish);
@@ -525,7 +488,9 @@ export default function App() {
     const item = data.dishes.filter((item: any) => item.friendlyName == props.friendlyName);
 
     for (const option of item) {
-      const temp: any = option.options;
+      const temp: any = option.options.sort((a: any, b: any) =>
+        a.friendlyName.localeCompare(b.friendlyName),
+      );
 
       for (const subOption of temp) {
         const multi = subOption.allowQuantity;
@@ -895,12 +860,14 @@ export default function App() {
         </Grid>
       );
     } else {
-      const drinks = data.dishes.filter(
-        (drink: any) =>
-          drink.dotw.includes(moment().format('dddd').toString()) &&
-          drink.isOrderable == true &&
-          drink.tags.includes('drink'),
-      );
+      const drinks = data.dishes
+        .filter(
+          (drink: any) =>
+            drink.dotw.includes(moment().format('dddd').toString()) &&
+            drink.isOrderable == true &&
+            drink.tags.includes('drink'),
+        )
+        .sort((a: any, b: any) => a.friendlyName.localeCompare(b.friendlyName));
 
       return drinks.map((item: any) => (
         <>
@@ -972,12 +939,14 @@ export default function App() {
         </Grid>
       );
     } else {
-      const food = data.dishes.filter(
-        (dish: any) =>
-          dish.isOrderable == true &&
-          dish.tags.includes('food') &&
-          dish.dotw.includes(moment().format('dddd').toString()),
-      );
+      const food = data.dishes
+        .filter(
+          (dish: any) =>
+            dish.isOrderable == true &&
+            dish.tags.includes('food') &&
+            dish.dotw.includes(moment().format('dddd').toString()),
+        )
+        .sort((a: any, b: any) => a.friendlyName.localeCompare(b.friendlyName));
       //(food);
 
       return food.map((item: any) => (

@@ -174,7 +174,7 @@ export default function Home() {
                       <Button fullWidth onClick={() => updateOrder(item)}>
                         Change Status
                       </Button>
-                      <Button fullWidth onClick={() => completeOrder(item)}>
+                      <Button fullWidth onClick={() => REPRINT(item)}>
                         <Print></Print>
                       </Button>
                     </ButtonGroup>
@@ -277,18 +277,36 @@ export default function Home() {
     const drinkies = Object.assign({}, theitem);
     foodies['dishes'] = theitem.dishes.filter((item: any) => item.tag == 'food');
     drinkies['dishes'] = theitem.dishes.filter((item: any) => item.tag == 'drink');
-    if (foodies.dishes.length > 0) {
-      PRINT2(foodies);
-    }
-    if (drinkies.dishes.length > 0) {
-      PRINT2(drinkies);
-    }
+    //RePrintOrder(theitem);
 
     theitem['status'] = 'completed';
-    theitem['hidden'] = 'true';
+    //theitem['hidden'] = 'true';
 
     await axios.put(url, theitem).then((response) => {
       console.log(response);
+    });
+  };
+
+  const REPRINT = async (item: any) => {
+    const order = Object.assign({}, item);
+
+    const toPrintServer = {
+      customerName: order.customerName,
+      total: order.total,
+      hidden: false,
+      notes: '',
+      payment: 'none',
+      receipt: true,
+      dishes: order.dishes,
+    };
+
+    //Send order to print server/tablet
+    await axios.post('/api/print', toPrintServer).then((response) => {
+      if (response.status == 200) {
+        console.log(response);
+      } else {
+        console.log(response);
+      }
     });
   };
 
@@ -313,8 +331,7 @@ export default function Home() {
       await axios.put(url, theitem).then((response) => {
         console.log(response);
       });
-    }
-    if (theitem.status == 'in_progress') {
+    } else if (theitem.status == 'in_progress') {
       theitem.status = 'completed';
       await axios.put(url, theitem).then((response) => {
         console.log(response);
