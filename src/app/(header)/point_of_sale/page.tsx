@@ -353,6 +353,9 @@ export default function App() {
       total: runningTotal,
       hidden: false,
       notes: '',
+      oc: oneCard,
+      payment: paymentType,
+      receipt: true,
       dishes: currentOrder.filter((item: any) => item.tag == 'food'),
     };
     const drinkies = {
@@ -360,6 +363,9 @@ export default function App() {
       total: runningTotal,
       hidden: false,
       notes: '',
+      oc: oneCard,
+      payment: paymentType,
+      receipt: true,
       dishes: currentOrder.filter((item: any) => item.tag == 'drink'),
     };
 
@@ -402,7 +408,17 @@ export default function App() {
     }
 
     //Send order to print server/tablet
-    await axios.post('/api/print', toPrintServer).then((response) => {
+    await axios.post('/api/print', foodies).then((response) => {
+      if (response.status == 200) {
+        setSuccess(true);
+        setTimeout(handleSuccess, 3000);
+      } else {
+        setFailure(true);
+        setTimeout(handleFailure, 3000);
+      }
+    });
+
+    await axios.post('/api/print', drinkies).then((response) => {
       if (response.status == 200) {
         setSuccess(true);
         setTimeout(handleSuccess, 3000);
