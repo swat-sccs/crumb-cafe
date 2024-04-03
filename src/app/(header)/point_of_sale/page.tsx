@@ -41,7 +41,6 @@ export default function App() {
   const [index, setIndex] = React.useState(0);
   //Name PopUp Open and Close
   const [open, setOpen] = React.useState(false);
-  const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false);
   };
@@ -57,15 +56,7 @@ export default function App() {
   const scrollRef = useRef<any>(null);
 
   //Printer Things
-  const ePosDevice = useRef();
-  const printer = useRef<any>();
-  const printerPort = '8008';
-  const [PRINTERIP, SETPrinterIP] = React.useState('130.58.110.55');
-  const [PRINTER_IP, Set_PRINTERIP] = React.useState('192.168.192.168');
-  const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
-
-  const [editing, setEditing] = React.useState(false);
-  const days = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+  const [PRINTERIP, SETPrinterIP] = React.useState(process.env.NEXT_PUBLIC_PRINTERIP);
 
   const scrollToElement = (id: any) => {
     const current = document.getElementById(id);
@@ -74,88 +65,11 @@ export default function App() {
     }
   };
 
-  const handleIpEdit = (event: any) => {
-    Set_PRINTERIP(event.target.value);
-  };
-
   function handleNameChange(e: any) {
     setName(e.target.value);
   }
   function handleOneCardChange(e: any) {
     setOneCard(e.target.value);
-  }
-
-  const connect = async () => {
-    //const ip = await getIPCookie();
-    // Set_PRINTERIP(ip);
-    setConnectionStatus('Connecting ...');
-    const ePosDev = new window.epson.ePOSDevice();
-
-    ePosDevice.current = ePosDev;
-    await ePosDev.connect(PRINTER_IP, printerPort, (data: any) => {
-      if (data === 'OK') {
-        ePosDev.createDevice(
-          'local_printer',
-          ePosDev.DEVICE_TYPE_PRINTER,
-          { crypto: false, buffer: false },
-          (devobj: any, retcode: any) => {
-            if (retcode === 'OK') {
-              printer.current = devobj;
-              setConnectionStatus('CONNECTED');
-              //setIPCookie(PRINTER_IP);
-            } else {
-              setConnectionStatus('Connection Failed');
-            }
-          },
-        );
-      } else {
-        setConnectionStatus('Connection Failed');
-      }
-    });
-    //setIPCookie(PRINTER_IP);
-    //setIPCookie(PRINTER_IP);
-  };
-  React.useEffect(() => {
-    //
-    //console.log(window.epson.ePOSDevice());
-  }, []);
-
-  async function PRINT2(item: any) {
-    //console.log('PRINTING', item);
-    const prn: any = printer.current;
-
-    prn.addTextAlign(prn.ALIGN_CENTER);
-    prn.addTextSmooth(true);
-    prn.addTextDouble(true, true);
-    prn.addText('CRUMB CAFE\n');
-    prn.addTextDouble(false, false);
-    prn.addText('Sale Ticket\n\n');
-
-    prn.addText('------------------------------------------');
-    prn.addText(moment().format('h:mm:ss a') + '\n');
-    prn.addText('-----------------------------------------\n');
-
-    prn.addTextAlign(prn.ALIGN_LEFT);
-    for (const thing of item.dishes) {
-      prn.addText(
-        thing.friendlyName.substring(0, 15) +
-          ' ................... $' +
-          thing.price.toFixed(2) +
-          '\n',
-      );
-      for (const item of thing.options) {
-        prn.addText('\t + ' + item.friendlyName + '\n');
-      }
-    }
-
-    prn.addFeedLine(3);
-    prn.addTextAlign(prn.ALIGN_CENTER);
-    prn.addTextStyle(false, true, true, prn.COLOR_2);
-    prn.addTextDouble(true, true);
-    prn.addText(item.customerName + '\n');
-    //prn.addBarcode('12345', prn.BARCODE_CODE39, prn.HRI_NONE, prn.FONT_A, 2, 32);
-    prn.addCut(prn.CUT_FEED);
-    prn.send();
   }
 
   const [currentDish, setCurrentDish] = useState<any>(null); //when selected CurrentDish is updated to display correct options.

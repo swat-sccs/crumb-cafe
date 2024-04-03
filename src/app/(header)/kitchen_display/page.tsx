@@ -31,21 +31,14 @@ export default function Home() {
   const [windowSize, setWindowSize]: any[] = React.useState([]);
   const { data, error, isLoading } = useSWR('/api/orders', fetcher, { refreshInterval: 1000 });
   //axios.get('/api/dishes').then((reponse) => console.log(reponse));
-  const ePosDevice = useRef();
   const printer = useRef<any>();
-  const printerIPAddress = process.env.NEXT_PUBLIC_PRINTERIP;
-  const printerPort = '8008';
-  const [PRINTERIP, SETPrinterIP] = React.useState('130.58.110.55');
+  const [PRINTERIP, SETPrinterIP] = React.useState(process.env.NEXT_PUBLIC_PRINTERIP);
 
   const [PRINTER_IP, Set_PRINTERIP] = React.useState('192.168.192.168');
   const [showCompleted, setShowCompleted] = React.useState(false);
   const [deleteSwitch, setdeleteSwitch] = React.useState(false);
   const [SelectedOrder, setSelectedOrder] = React.useState<any>();
   const [deleteMe, setdeleteMe] = React.useState(false);
-  const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
-  const handleIpEdit = (event: any) => {
-    Set_PRINTERIP(event.target.value);
-  };
 
   const handleCompleteSwitch = (event: any) => {
     //console.log(event.target.checked);
@@ -57,31 +50,6 @@ export default function Home() {
     setdeleteSwitch(event.target.checked);
   };
 
-  const connect = async () => {
-    setConnectionStatus('Connecting ...');
-    const ePosDev = new window.epson.ePOSDevice();
-
-    ePosDevice.current = ePosDev;
-    await ePosDev.connect(PRINTER_IP, printerPort, (data: any) => {
-      if (data === 'OK') {
-        ePosDev.createDevice(
-          'local_printer',
-          ePosDev.DEVICE_TYPE_PRINTER,
-          { crypto: false, buffer: false },
-          (devobj: any, retcode: any) => {
-            if (retcode === 'OK') {
-              printer.current = devobj;
-              setConnectionStatus('CONNECTED');
-            } else {
-              setConnectionStatus('Connection Failed');
-            }
-          },
-        );
-      } else {
-        setConnectionStatus('Connection Failed');
-      }
-    });
-  };
   React.useEffect(() => {
     setWindowSize([window.innerWidth, window.innerHeight]);
   }, []);

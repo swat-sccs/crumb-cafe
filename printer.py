@@ -11,8 +11,10 @@ import concurrent.futures
 import time
 
 executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
-subprocess.run(['adb', 'start-server'])
-
+try:
+    subprocess.run(['adb', 'start-server'])
+except subprocess.CalledProcessError as e:
+    print("no tablet!")
 '''
     text 500,500
     clear 1048, 628
@@ -29,59 +31,71 @@ subprocess.run(['adb', 'start-server'])
 def tablet(thing):
     print("tablet run")
     if thing['payment'] == 'swipe':
-        subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "726", "250"])
-        time.sleep(0.025)
-        subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "500", "500"])
-        time.sleep(0.025)
-        subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['oc']])
-        time.sleep(0.025)
-        subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "125", "630"])
+        try:
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "726", "250"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "500", "500"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['oc']])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "125", "630"])
+        except subprocess.CalledProcessError as e:
+            print (e.output)
+            return
 
     elif thing['payment'] == 'dining':
-        subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "400", "250"])
-        time.sleep(0.05)
-        subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "590", "720"])
-        time.sleep(0.025)
-        subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "480", "1120"])
-        time.sleep(0.025)
-        subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "500", "500"])
-        time.sleep(0.025)
-        subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['oc']])
-        time.sleep(0.025)
-        subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "125", "630"])
-        time.sleep(0.025)
-        subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['total']*100])
+        try:
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "400", "250"])
+            time.sleep(0.05)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "590", "720"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "480", "1120"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "500", "500"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['oc']])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "125", "630"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['total']*100])
+        except subprocess.CalledProcessError as e:
+            print (e.output)
+            return
 
 
 
 
-def PRINT(thing, style):
+
+def PRINT(thing):
     current_time = datetime.now().strftime("%H:%M:%S")
-    kitchen = Network("192.168.192.168", profile="TM-T88V") #Printer IP Address
-    kitchen.profile("TM-T88V")
-    kitchen.set(align="center", custom_size=True, height=3, width=3)
-    kitchen.textln("CrumbCafe")
-    kitchen.textln(style)
-    kitchen.set(align="center", custom_size=True, width=1, height=1)
-    kitchen.textln("Sale Ticket\n")
+    try:
+        kitchen = Network("192.168.192.168",profile="TM-T88V") #Printer IP Address
+        kitchen.profile("TM-T88V")
+        kitchen.set(align="center",  height=2, width=2)
+        kitchen.textln("CrumbCafe")
+        kitchen.set(align="center", width=1, height=1, double_height=False, double_width=False)
+        kitchen.textln("Sale Ticket\n")
 
-    kitchen.textln("------------------------------------------")
-    kitchen.textln(current_time)
-    kitchen.textln("------------------------------------------")
-    kitchen.print_and_feed(n=1)
+        kitchen.textln("------------------------------------------")
+        kitchen.textln(current_time)
+        kitchen.textln("------------------------------------------")
+        kitchen.print_and_feed(n=1)
 
-    #for something in something
-    for item in thing['dishes']:
-        print(item)
-        kitchen.textln(item["friendlyName"][0:15] + ' ................... $' + str(item["price"]) )
-        for option in item["options"]:
-            kitchen.textln('\t + ' + option["friendlyName"])
-            
-    kitchen.print_and_feed(n=3)
-    kitchen.set(align="center", custom_size=True, height=3, width=3)
-    kitchen.textln(thing["customerName"])
-    kitchen.cut()
-    kitchen.close()
+        #for something in something
+        for item in thing['dishes']:
+            print(item)
+            kitchen.textln(item["friendlyName"][0:15] + ' ................... $' + str(item["price"]) )
+            for option in item["options"]:
+                kitchen.textln('\t + ' + option["friendlyName"])
+                
+        #kitchen.print_and_feed(n=3)
+        #kitchen.set(align="center", double_height=True, double_width=True)
+        kitchen.textln(thing["customerName"])
+        kitchen.cut()
+        kitchen.close()
+    except:
+        print("error connecting to printer")
+        return
 
 
 
@@ -108,15 +122,17 @@ def test():
             copy = data 
             copy['dishes'] = food
             print(copy)
-            executor.submit(PRINT,copy, "FOOD")
+            #PRINT(copy)
+            executor.submit(PRINT,copy)
         if(len(drink)>0):
             copy2 = data
             copy2['dishes'] = drink
             print(copy2)
-            executor.submit(PRINT,copy2, "DRINK")
+            #PRINT(copy2)
+            executor.submit(PRINT,copy2)
 
     #print(data)
-    return "Hello, World!"
+    return "200"
 
  
   
