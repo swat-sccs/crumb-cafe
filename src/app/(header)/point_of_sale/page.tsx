@@ -60,7 +60,7 @@ export default function App() {
   const ePosDevice = useRef();
   const printer = useRef<any>();
   const printerPort = '8008';
-
+  const [PRINTERIP, SETPrinterIP] = React.useState('130.58.110.55');
   const [PRINTER_IP, Set_PRINTERIP] = React.useState('192.168.192.168');
   const [STATUS_CONNECTED, setConnectionStatus] = React.useState('Not Connected');
 
@@ -348,9 +348,12 @@ export default function App() {
       notes: '',
       oc: oneCard,
       payment: paymentType,
+      ip: PRINTERIP,
       receipt: true,
       dishes: currentOrder,
     };
+
+    //130.58.110.55
 
     //break food and drinks into seperate lists so that they can each be on their own recipts.
 
@@ -407,6 +410,7 @@ export default function App() {
       hidden: false,
       notes: '',
       oc: oneCard,
+      ip: PRINTERIP,
       payment: paymentType,
       receipt: false,
       dishes: currentOrder,
@@ -1245,6 +1249,13 @@ export default function App() {
 
   return (
     <Box sx={{ mt: 1.2 }}>
+      <TextField
+        sx={{ position: 'absolute', top: 10, right: 200 }}
+        label="Printer IP"
+        variant="outlined"
+        value={PRINTERIP}
+        onChange={(e: any) => SETPrinterIP(e.target.value)}
+      ></TextField>
       <OneCardPopUp></OneCardPopUp>
       <NamePopUp></NamePopUp>
       <MorePayPopUp></MorePayPopUp>

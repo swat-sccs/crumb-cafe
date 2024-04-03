@@ -24,7 +24,6 @@ import Script from 'next/script';
 import moment from 'moment';
 import useSWR from 'swr';
 
-
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function Home() {
@@ -36,6 +35,8 @@ export default function Home() {
   const printer = useRef<any>();
   const printerIPAddress = process.env.NEXT_PUBLIC_PRINTERIP;
   const printerPort = '8008';
+  const [PRINTERIP, SETPrinterIP] = React.useState('130.58.110.55');
+
   const [PRINTER_IP, Set_PRINTERIP] = React.useState('192.168.192.168');
   const [showCompleted, setShowCompleted] = React.useState(false);
   const [deleteSwitch, setdeleteSwitch] = React.useState(false);
@@ -288,24 +289,20 @@ export default function Home() {
   };
 
   const REPRINT = async (item: any) => {
-    const order = Object.assign({}, item);
-
     const toPrintServer = {
-      customerName: order.customerName,
-      total: order.total,
+      customerName: item.customerName,
+      total: item.total,
       hidden: false,
       notes: '',
       payment: 'none',
+      ip: PRINTERIP,
       receipt: true,
-      dishes: order.dishes,
+      dishes: item.dishes,
     };
 
-    //Send order to print server/tablet
     await axios.post('/api/print', toPrintServer).then((response) => {
       if (response.status == 200) {
-        console.log(response);
-      } else {
-        console.log(response);
+        console.log('Reprinted!');
       }
     });
   };

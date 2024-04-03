@@ -55,13 +55,14 @@ def tablet(thing):
 
 
 
-def PRINT(thing):
+def PRINT(thing, style):
     current_time = datetime.now().strftime("%H:%M:%S")
-    kitchen = Network("192.168.192.168") #Printer IP Address
-
-    kitchen.set(align="center", double_height=True, double_width=True)
+    kitchen = Network("192.168.192.168", profile="TM-T88V") #Printer IP Address
+    kitchen.profile("TM-T88V")
+    kitchen.set(align="center", custom_size=True, height=3, width=3)
     kitchen.textln("CrumbCafe")
-    kitchen.set(align="center", double_height=False, double_width=False)
+    kitchen.textln(style)
+    kitchen.set(align="center", custom_size=True, width=1, height=1)
     kitchen.textln("Sale Ticket\n")
 
     kitchen.textln("------------------------------------------")
@@ -71,15 +72,14 @@ def PRINT(thing):
 
     #for something in something
     for item in thing['dishes']:
-        kitchen.println(item["friendlyName"][0:15] + ' ................... $' +
-                item["price"].round(2) )
-    #for item.option
+        print(item)
+        kitchen.textln(item["friendlyName"][0:15] + ' ................... $' + str(item["price"]) )
         for option in item["options"]:
-            kitchen.println( '\t + ' + option["friendlyName"] )
+            kitchen.textln('\t + ' + option["friendlyName"])
             
     kitchen.print_and_feed(n=3)
-    kitchen.set(align="center", double_height=True, double_width=True)
-    kitchen.textln(item["customerName"])
+    kitchen.set(align="center", custom_size=True, height=3, width=3)
+    kitchen.textln(thing["customerName"])
     kitchen.cut()
     kitchen.close()
 
@@ -107,11 +107,13 @@ def test():
         if(len(food)>0):
             copy = data 
             copy['dishes'] = food
-            executor.submit(PRINT,copy )
+            print(copy)
+            executor.submit(PRINT,copy, "FOOD")
         if(len(drink)>0):
             copy2 = data
             copy2['dishes'] = drink
-            executor.submit(PRINT,copy2 )
+            print(copy2)
+            executor.submit(PRINT,copy2, "DRINK")
 
     #print(data)
     return "Hello, World!"

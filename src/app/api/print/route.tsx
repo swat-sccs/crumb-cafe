@@ -18,7 +18,7 @@ export async function POST(request: NextRequest) {
   const data = await request.json();
   let output;
   await axios
-    .post('http://130.58.111.188:5001', data, {
+    .post('http://' + data.ip + ':5001', data, {
       headers: {
         'Content-Type': 'application/json',
       },
