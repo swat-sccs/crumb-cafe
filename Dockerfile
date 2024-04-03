@@ -4,6 +4,6 @@ RUN mkdir /app && chown -R node:node /app
 WORKDIR /app
 USER node
 COPY --chown=node:node . .
-RUN npm ci --only=production && npm cache clean --force
+RUN npm ci --only=production
 ENV HOSTNAME "0.0.0.0"
 RUN npm run build

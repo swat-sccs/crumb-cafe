@@ -53,7 +53,7 @@ function ResponsiveAppBar(props: any) {
       nameButton = session.user?.name;
     } else {
       authenticated = false;
-      loginLink = <></>;
+      loginLink = <div></div>;
       nameButton = 'Log In';
     }
   }

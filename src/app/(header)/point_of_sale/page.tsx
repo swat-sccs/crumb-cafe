@@ -21,11 +21,18 @@ import {
   Tab,
   Tabs,
   Typography,
+  TextField,
 } from '@mui/material';
 import axios from 'axios';
 import moment from 'moment';
 import React, { useEffect, useRef, useState } from 'react';
 import useSWR from 'swr';
+
+import Dialog from '@mui/material/Dialog';
+import DialogActions from '@mui/material/DialogActions';
+import DialogContent from '@mui/material/DialogContent';
+import DialogContentText from '@mui/material/DialogContentText';
+import DialogTitle from '@mui/material/DialogTitle';
 
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
@@ -428,6 +435,8 @@ export default function App() {
     or add and subtract the number of items being added. 
   */
   const RenderOptions = () => {
+    console.log(currentOrder);
+
     //console.log(currentDish);
     return (
       <Grid
@@ -498,7 +507,9 @@ export default function App() {
           <>
             <Grid item sx={{ m: 1 }} key={props._uuid}>
               <Button onClick={() => addOption(subOption, multi, props._uuid)} size="large">
-                {subOption.friendlyName}
+                <Typography variant="body1" textTransform="uppercase" fontWeight="bold">
+                  {subOption.friendlyName}
+                </Typography>
               </Button>
             </Grid>
           </>,
@@ -522,56 +533,45 @@ export default function App() {
   };
 
   const OneCardPopUp = () => {
-    const style = {
-      position: 'absolute',
-      top: '50%',
-      left: '50%',
-      transform: 'translate(-50%, -50%)',
-      width: '30vw',
-      bgcolor: 'background.paper',
-      border: '2px solid #000',
-      boxShadow: 24,
-      p: 4,
-    };
-
-    if (oneopen) {
-      return (
-        <>
-          <Box
-            onClick={handleClose}
-            sx={{
-              width: '100%',
-              height: '100vh',
-              position: 'absolute',
-              top: '0',
-              left: '0',
-              backgroundColor: 'rgba(0,0,0,0.7)',
-              zIndex: '1',
-            }}
-          ></Box>
-          <Box
-            sx={{
-              zIndex: '2',
-              position: 'absolute',
-              top: '50%',
-              left: '50%',
-              transform: 'translate(-50%, -50%)',
-              width: '40vw',
-              bgcolor: 'background.paper',
-              border: '2px solid #000',
-              boxShadow: 24,
-              p: 4,
-            }}
-          >
-            <Typography id="transition-modal-title" variant="h3" align="center">
-              Scan One Card
-            </Typography>
-            <OneCardInputComponent />
-          </Box>
-        </>
-      );
-    }
-    return <></>;
+    return (
+      <Dialog
+        fullWidth
+        open={oneopen}
+        onClose={() => setoneopen(false)}
+        PaperProps={{
+          component: 'form',
+          onSubmit: (event: React.FormEvent<HTMLFormElement>) => {
+            event.preventDefault();
+            const formData = new FormData(event.currentTarget);
+            const formJson = Object.fromEntries((formData as any).entries());
+            const oneCard = formJson.oneCard;
+            console.log(oneCard);
+            setOneCard(oneCard);
+            setoneopen(false);
+            setOpen(true);
+          },
+        }}
+      >
+        <DialogTitle>
+          <Typography variant="h3">Scan OneCard</Typography>
+        </DialogTitle>
+        <DialogContent>
+          <TextField
+            autoFocus
+            required
+            margin="dense"
+            id="oneCard"
+            name="oneCard"
+            label="OneCard"
+            fullWidth
+            variant="outlined"
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setoneopen(false)}>Cancel</Button>
+        </DialogActions>
+      </Dialog>
+    );
   };
 
   const OneCardInputComponent = () => {
@@ -596,6 +596,11 @@ export default function App() {
                 placeholder="One Card"
                 value={oneCard}
                 onChange={handleOneCardChange}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter' && oneCard.length > 3) {
+                    setoneopen(false), setOpen(true);
+                  }
+                }}
                 sx={{ fontSize: '250%', padding: 1, ml: 1, flex: 1 }}
               />
             </Box>
@@ -1239,7 +1244,7 @@ export default function App() {
   */
 
   return (
-    <Box>
+    <Box sx={{ mt: 1.2 }}>
       <OneCardPopUp></OneCardPopUp>
       <NamePopUp></NamePopUp>
       <MorePayPopUp></MorePayPopUp>
@@ -1254,84 +1259,83 @@ export default function App() {
           }
         </Fade>
       </Box>
-      <Container sx={{ backgroundColor: 'white', height: '100%', mt: '2%' }}>
-        <Grid container spacing={10} direction="row">
-          <Grid item sm={6} md={6}>
-            <Card
-              style={{
-                background: 'rgba(0,0,0,0.37)',
-                backdropFilter: 'blur(10px)',
-                WebkitBackdropFilter: 'blur(6.8px)',
-              }}
-              sx={{ height: '82vh', boxShadow: 10 }}
+      <Grid container spacing={10} direction="row">
+        <Grid item sm={6} md={6}>
+          <Card
+            style={{
+              background: 'rgba(0,0,0,0.37)',
+              backdropFilter: 'blur(10px)',
+              WebkitBackdropFilter: 'blur(6.8px)',
+            }}
+            sx={{ boxShadow: 10 }}
+          >
+            <Grid
+              container
+              direction="row"
+              alignContent="center"
+              justifyContent="space-between"
+              sx={{ p: 2 }}
             >
-              <Grid
-                container
-                direction="row"
-                alignContent="center"
-                justifyContent="space-between"
-                sx={{ p: 2 }}
-              >
-                <Typography variant="h6" textAlign="left">
-                  Item
-                </Typography>
+              <Typography variant="h6" textAlign="left">
+                Item
+              </Typography>
 
-                <Typography variant="h6" textAlign="right">
-                  Price
-                </Typography>
-              </Grid>
-
-              <Grid item container direction="column">
-                <Grid item>
-                  <List sx={{ overflow: 'auto', height: '59vh' }}>
-                    <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
-                  </List>
-                </Grid>
-                <Grid item>
-                  <Card
-                    sx={{ height: '15vh' }}
-                    style={{
-                      background: 'rgba(231, 255, 255,0.3)',
-                    }}
-                  >
-                    <Grid container item alignContent="center" justifyContent="center" mt="2%">
-                      <OrderTotalComponent></OrderTotalComponent>
-                    </Grid>
-                    <Grid
-                      container
-                      item
-                      spacing={3}
-                      alignContent="center"
-                      justifyContent="center"
-                      sx={{}}
-                    >
-                      <Grid item md={5} lg={5}>
-                        <CancelOrderComponent></CancelOrderComponent>
-                      </Grid>
-                      <Grid item md={5} lg={5}>
-                        <ConfirmOrderComponent></ConfirmOrderComponent>
-                      </Grid>
-                    </Grid>
-                  </Card>
-                </Grid>
-              </Grid>
-            </Card>
-          </Grid>
-
-          <Grid item container xs={6} md={6} lg={6} alignContent="flex-start" direction="column">
-            <Grid item container spacing={1} alignContent="space-around" justifyContent="center">
-              <ToggleComponent></ToggleComponent>
+              <Typography variant="h6" textAlign="right">
+                Price
+              </Typography>
             </Grid>
 
-            <Grid item container sx={{ maxHeight: '70vh' }}>
-              <Grid item container xs={12} spacing={2}>
-                <OrderComponent></OrderComponent>
-                <DeleteConfirmCustomComponent></DeleteConfirmCustomComponent>
+            <Grid item container direction="column">
+              <Grid item>
+                <List sx={{ overflow: 'auto', height: '59vh' }}>
+                  <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
+                </List>
               </Grid>
+              <Grid item>
+                <Card
+                  sx={{ height: '15vh' }}
+                  style={{
+                    background: 'rgba(231, 255, 255,0.3)',
+                  }}
+                >
+                  <Grid container item alignContent="center" justifyContent="center" mt="2%">
+                    <OrderTotalComponent></OrderTotalComponent>
+                  </Grid>
+                  <Grid
+                    container
+                    item
+                    spacing={3}
+                    alignContent="center"
+                    justifyContent="center"
+                    sx={{}}
+                  >
+                    <Grid item md={5} lg={5}>
+                      <CancelOrderComponent></CancelOrderComponent>
+                    </Grid>
+                    <Grid item md={5} lg={5}>
+                      <ConfirmOrderComponent></ConfirmOrderComponent>
+                    </Grid>
+                  </Grid>
+                </Card>
+              </Grid>
+            </Grid>
+          </Card>
+        </Grid>
+
+        <Grid item container xs={6} md={6} lg={6} alignContent="flex-start" direction="column">
+          <Grid item container spacing={1} alignContent="space-around" justifyContent="center">
+            <ToggleComponent></ToggleComponent>
+          </Grid>
+
+          <Grid item container>
+            <Grid item container xs={12} spacing={2}>
+              <OrderComponent></OrderComponent>
+
+              <DeleteConfirmCustomComponent></DeleteConfirmCustomComponent>
             </Grid>
           </Grid>
         </Grid>
-      </Container>
+      </Grid>
     </Box>
   );
 }

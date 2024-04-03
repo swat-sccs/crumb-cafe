@@ -1,4 +1,4 @@
-import { models, model, Schema, Model, InferSchemaType } from 'mongoose';
+import { models, model, Schema, InferSchemaType } from 'mongoose';
 
 const DishOptionItemSchema = new Schema({
   _id: {

@@ -24,6 +24,7 @@ import Script from 'next/script';
 import moment from 'moment';
 import useSWR from 'swr';
 
+
 const fetcher = (url: any) => fetch(url).then((res) => res.json());
 
 export default function Home() {
@@ -86,7 +87,6 @@ export default function Home() {
 
   function queueDelete(item: any) {
     setSelectedOrder(item);
-    console.log(item);
     setdeleteMe(true);
   }
 

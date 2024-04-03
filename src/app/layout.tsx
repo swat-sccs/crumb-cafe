@@ -2,6 +2,7 @@
 import ThemeRegistry from './ThemeRegistry';
 import { NextAuthProvider } from './NextAuthProvider';
 import Script from 'next/script';
+import Container from '@mui/material/Container';
 import Navigation from '@/app/components/topBar';
 import BottomNavigation from '@/app/components/bottomBar';
 
@@ -28,8 +29,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             <Script src="./epos-2.27.0.js"></Script>
 
             {pathname != '/order_display' && <Navigation />}
-            <BottomNavigation />
             {children}
+
+            <BottomNavigation />
           </ThemeRegistry>
         </body>
       </html>

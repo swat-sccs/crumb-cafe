@@ -501,7 +501,7 @@ export default function Home() {
   };
 
   return (
-    <Box sx={{ mt: '2%' }}>
+    <Container sx={{ mt: 2 }}>
       <Box sx={{ position: 'absolute', top: '0', right: '0', mt: ' 6%', mr: '15%', zIndex: '10' }}>
         <AlertComponent></AlertComponent>
       </Box>
@@ -831,6 +831,6 @@ export default function Home() {
           </Card>
         </>
       ) : null}
-    </Box>
+    </Container>
   );
 }

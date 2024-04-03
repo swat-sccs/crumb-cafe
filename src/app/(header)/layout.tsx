@@ -13,7 +13,8 @@ export default async function SideBar({ children }: { children: React.ReactNode 
     return (
       <section>
         <BottomNavigation></BottomNavigation>
-        <Container>{children}</Container>
+
+        <Container sx={{}}>{children}</Container>
       </section>
     );
   }
