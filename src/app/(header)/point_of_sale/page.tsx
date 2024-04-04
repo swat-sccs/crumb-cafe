@@ -298,7 +298,7 @@ export default function App() {
     //Send order to print server/tablet
     await axios.post('/api/print', toPrintServer).then((response) => {
       if (response.status == 200) {
-        if (currentOrder.total - 7 > 0 && paymentType == 'swipe') {
+        if (runningTotal - 7 > 0 && paymentType == 'swipe') {
           setPayMore(true);
         } else {
           handleClose();
@@ -320,7 +320,7 @@ export default function App() {
   const pay2 = async (name: string, paymentType: string) => {
     const toPrintServer2 = {
       customerName: name,
-      total: runningTotal,
+      total: runningTotal - 7,
       hidden: false,
       notes: '',
       oc: oneCard,

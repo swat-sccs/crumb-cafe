@@ -10,7 +10,7 @@ import subprocess
 import concurrent.futures
 import time
 
-executor = concurrent.futures.ThreadPoolExecutor(max_workers=3)
+executor = concurrent.futures.ThreadPoolExecutor(max_workers=4)
 try:
     subprocess.run(['adb', 'start-server'])
 except subprocess.CalledProcessError as e:
@@ -56,8 +56,8 @@ def tablet(thing):
             subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['oc']])
             time.sleep(0.025)
             subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "125", "630"])
-            time.sleep(0.025)
-            subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['total']*100])
+            time.sleep(0.1)
+            subprocess.run(["adb", "shell", "input", "keyboard", "text", str(int(thing['total'])*100)])
         except subprocess.CalledProcessError as e:
             print (e.output)
             return
@@ -68,34 +68,33 @@ def tablet(thing):
 
 def PRINT(thing):
     current_time = datetime.now().strftime("%H:%M:%S")
-    try:
-        kitchen = Network("192.168.192.168",profile="TM-T88V") #Printer IP Address
-        kitchen.profile("TM-T88V")
-        kitchen.set(align="center",  height=2, width=2)
-        kitchen.textln("CrumbCafe")
-        kitchen.set(align="center", width=1, height=1, double_height=False, double_width=False)
-        kitchen.textln("Sale Ticket\n")
 
-        kitchen.textln("------------------------------------------")
-        kitchen.textln(current_time)
-        kitchen.textln("------------------------------------------")
-        kitchen.print_and_feed(n=1)
+    kitchen = Network("192.168.192.168",profile="TM-T88V") #Printer IP Address
+    kitchen.set(align="center",custom_size=True ,height=2, width=2)
+    kitchen.textln("CrumbCafe")
+    kitchen.set(align="center",custom_size=True ,height=1, width=1)
+    kitchen.textln(thing['type'] + " Sale Ticket\n")
 
-        #for something in something
-        for item in thing['dishes']:
-            print(item)
-            kitchen.textln(item["friendlyName"][0:15] + ' ................... $' + str(item["price"]) )
-            for option in item["options"]:
-                kitchen.textln('\t + ' + option["friendlyName"])
-                
-        #kitchen.print_and_feed(n=3)
-        #kitchen.set(align="center", double_height=True, double_width=True)
-        kitchen.textln(thing["customerName"])
-        kitchen.cut()
-        kitchen.close()
-    except:
-        print("error connecting to printer")
-        return
+    kitchen.textln("------------------------------------------")
+    kitchen.textln(current_time)
+    kitchen.textln("------------------------------------------")
+    kitchen.print_and_feed(n=1)
+
+    #for something in something
+    kitchen.set(align="center",custom_size=True ,height=1, width=1)
+    for item in thing['dishes']:
+        print(item)
+        kitchen.textln(item["friendlyName"][0:15] + ' ................... $' + str(item["price"]) )
+        for option in item["options"]:
+            kitchen.textln('\t + ' + option["friendlyName"])
+            
+
+    kitchen.set(align="center",custom_size=True ,height=2, width=2)
+    kitchen.print_and_feed(n=3)
+    kitchen.textln(thing["customerName"])
+    kitchen.cut()
+    kitchen.close()
+    
 
 
 
@@ -107,31 +106,31 @@ CORS(app)
 @app.route('/', methods =['POST'])
 def test():
     data = request.json
-    executor.submit(tablet, data)
+    
 
     if(data['receipt'] == True):
         food=[]
         drink=[]
-        for i in data['dishes']:
-            if(i['tag'] == 'food'):
-                food.append(i)
-            if(i['tag'] == 'drink'):
-                drink.append(i)
+        print(data['dishes'])
+        for i, val in enumerate(data['dishes']):
+            if(val['tag'] == 'food'):
+                food.append(val)
+            if(val['tag'] == 'drink'):
+                drink.append(val)
         
         if(len(food)>0):
-            copy = data 
+            copy = data.copy()
             copy['dishes'] = food
-            print(copy)
-            #PRINT(copy)
+            copy['type']= "Food"
             executor.submit(PRINT,copy)
         if(len(drink)>0):
-            copy2 = data
+            copy2 = data.copy()
+            copy2['type']= "Drink"
             copy2['dishes'] = drink
-            print(copy2)
-            #PRINT(copy2)
             executor.submit(PRINT,copy2)
 
-    #print(data)
+    executor.submit(tablet, data)
+
     return "200"
 
  
