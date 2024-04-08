@@ -17,8 +17,12 @@ import {
   Badge,
   Divider,
 } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers/DatePicker';
+import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { Print, Update } from '@mui/icons-material';
 import { Masonry } from '@mui/lab';
+import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import dayjs, { Dayjs } from 'dayjs';
 import axios from 'axios';
 import Script from 'next/script';
 import moment from 'moment';
@@ -39,6 +43,7 @@ export default function Home() {
   const [deleteSwitch, setdeleteSwitch] = React.useState(false);
   const [SelectedOrder, setSelectedOrder] = React.useState<any>();
   const [deleteMe, setdeleteMe] = React.useState(false);
+  const [currentDaySelected, setCurrentDay] = React.useState<Dayjs | null>(dayjs());
 
   const handleCompleteSwitch = (event: any) => {
     //console.log(event.target.checked);
@@ -77,7 +82,7 @@ export default function Home() {
       });
 
       filteredOrders = filteredOrders.filter((a: any) => {
-        return moment().isSame(moment(a.createdAt), 'day');
+        return dayjs(currentDaySelected).isSame(dayjs(a.createdAt), 'day');
       });
 
       for (const item of filteredOrders) {
@@ -318,6 +323,16 @@ export default function Home() {
   return (
     <Box sx={{ mt: '2%' }}>
       <Script src="./epos-2.27.0.js"></Script>
+      <Box sx={{ position: 'absolute', top: 10, right: '30%' }}>
+        <LocalizationProvider dateAdapter={AdapterDayjs}>
+          <DatePicker
+            formatDensity="dense"
+            label="Controlled picker"
+            value={currentDaySelected}
+            onChange={(newValue) => setCurrentDay(newValue)}
+          />
+        </LocalizationProvider>
+      </Box>
       {deleteMe ? (
         <>
           <Box

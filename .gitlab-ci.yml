@@ -1,0 +1,29 @@
+default:
+  image: docker:24.0.9
+  services:
+    - name: docker:24.0.9-dind
+  before_script:
+    - apk add bash curl
+    - curl --silent
+      "https://gitlab.com/gitlab-org/incubation-engineering/mobile-devops/download-secure-files/-/raw/main/installer"
+      | bash
+    - mv .secure_files/.env .env
+    - docker info
+    - docker login -u $SCCS_REGISTRY_USER -p $SCCS_REGISTRY_TOKEN $SCCS_REGISTRY
+
+variables:
+  DOCKER_TLS_CERTDIR: ''
+
+build:
+  stage: build
+  script:
+    - docker compose build --build-arg DATABASE_URL=$DATABASE_URL
+    - docker push $SCCS_REGISTRY/sccs/rsd/rsd:latest
+    - docker push $SCCS_REGISTRY/sccs/rsd/rsd-cron:latest
+
+deploy_docker_stage:
+  stage: deploy
+  variables:
+    DOCKER_HOST: 'tcp://130.58.218.21:2376'
+  script:
+    - docker stack deploy --with-registry-auth -c ./docker-compose.yml rsd

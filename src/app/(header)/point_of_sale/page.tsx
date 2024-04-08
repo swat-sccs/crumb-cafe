@@ -9,6 +9,7 @@ import {
   CardContent,
   CircularProgress,
   Container,
+  ButtonGroup,
   Divider,
   Fade,
   Grid,
@@ -54,6 +55,8 @@ export default function App() {
   const [oneCard, setOneCard] = React.useState('');
   const [oneopen, setoneopen] = React.useState(false);
   const scrollRef = useRef<any>(null);
+
+  const [numberOfItems, setNumberOfItems] = React.useState(1);
 
   //Printer Things
   const [PRINTERIP, SETPrinterIP] = React.useState(process.env.NEXT_PUBLIC_PRINTERIP);
@@ -121,9 +124,30 @@ export default function App() {
     }
   };
 
-  const addItems = () => {
+  const addItems = (dish: any) => {
     setOptions(false);
-    //console.log(currentOrder);
+    if (numberOfItems > 1) {
+      let editedOrder = Array.from(currentOrder);
+      let temp: any = Object.assign({}, dish);
+      let tempIndex = index;
+      for (let x = 1; x < numberOfItems; x++) {
+        temp._uuid = tempIndex;
+        //temp['_uuid'] = index;
+
+        tempIndex += 1;
+        editedOrder.push(temp);
+
+        scrollToElement(temp._id);
+
+        //editedOrder.push(duplicate);
+        //console.log('EDITED ORDER', editedOrder);
+        //setCurrentOrder(editedOrder);
+        //scrollToElement(duplicate._id);
+      }
+      setNumberOfItems(1);
+      setCurrentOrder(editedOrder);
+      setIndex(tempIndex);
+    }
   };
 
   const calcTotal = () => {
@@ -140,6 +164,7 @@ export default function App() {
   };
   useEffect(() => {
     calcTotal();
+    //console.log('CURRENT', currentOrder);
     //do operation on state change
   }, [currentOrder]);
 
@@ -220,7 +245,9 @@ export default function App() {
       (item: any) => item._id == optionToRemove._id,
     );
 
+    // console.log(temp[index]);
     temp[index].options.splice(optionIndex, 1);
+    //console.log('NEWNEW', temp);
     setCurrentOrder(temp);
   };
 
@@ -245,8 +272,6 @@ export default function App() {
   };
 
   const confirmOrder = async (name: string, paymentType: string) => {
-    //handleClose();
-
     const thing1 = {
       customerName: name,
       total: runningTotal,
@@ -267,12 +292,6 @@ export default function App() {
       dishes: currentOrder,
     };
 
-    //130.58.110.55
-
-    //break food and drinks into seperate lists so that they can each be on their own recipts.
-
-    //PRINT2(foodies);
-
     /*
     text 500,500
     clear 1048, 628
@@ -286,6 +305,8 @@ export default function App() {
     //Send order to db
     await axios.post('/api/orders', thing1).then((response) => {
       if (response.status == 200) {
+        setSuccess(true);
+        setTimeout(handleSuccess, 3000);
       } else {
         console.log('failed to send order to backend');
         setFailure(true);
@@ -293,28 +314,47 @@ export default function App() {
       }
     });
 
-    //Check if there is still more to pay open up that window
-
     //Send order to print server/tablet
-    await axios.post('/api/print', toPrintServer).then((response) => {
-      if (response.status == 200) {
-        if (runningTotal - 7 > 0 && paymentType == 'swipe') {
-          setPayMore(true);
+    // *ignore is the magic keyword
+    if (name != '*ignore') {
+      await axios.post('/api/print', toPrintServer).then((response) => {
+        if (response.status == 200) {
+          if (runningTotal - 7 > 0 && paymentType == 'swipe') {
+            handleClose();
+            setOpen(false);
+            setPayMore(true);
+          } else {
+            handleClose();
+            setSuccess(true);
+            setTimeout(handleSuccess, 3000);
+            setCurrentOrder([]);
+            setName('');
+            setRunningTotal(0);
+            setOneCard('');
+            setOptions(false);
+          }
         } else {
-          handleClose();
-          setSuccess(true);
-          setTimeout(handleSuccess, 3000);
-          setCurrentOrder([]);
-          setName('');
-          setRunningTotal(0);
-          setOneCard('');
-          setOptions(false);
+          setFailure(true);
+          setTimeout(handleFailure, 3000);
         }
+      });
+    }
+    if (name == '*ignore') {
+      if (runningTotal - 7 > 0 && paymentType == 'swipe') {
+        handleClose();
+        setOpen(false);
+        setPayMore(true);
       } else {
-        setFailure(true);
-        setTimeout(handleFailure, 3000);
+        handleClose();
+        setSuccess(true);
+        setTimeout(handleSuccess, 3000);
+        setCurrentOrder([]);
+        setName('');
+        setRunningTotal(0);
+        setOneCard('');
+        setOptions(false);
       }
-    });
+    }
   };
 
   const pay2 = async (name: string, paymentType: string) => {
@@ -332,6 +372,7 @@ export default function App() {
 
     await axios.post('/api/print', toPrintServer2).then((response) => {
       if (response.status == 200) {
+        handleClose();
         setPayMore(false);
         setSuccess(true);
         setTimeout(handleSuccess, 3000);
@@ -353,15 +394,13 @@ export default function App() {
     or add and subtract the number of items being added. 
   */
   const RenderOptions = () => {
-    console.log(currentOrder);
-
     //console.log(currentDish);
     return (
       <Grid
         container
         direction="column"
         justifyContent="flex-start"
-        sx={{ height: '69vh' /*hah*/ }}
+        sx={{ height: '67vh' /*hah*/ }}
       >
         <Grid item container xs={2} sx={{ mt: '5%' }}>
           <Grid container direction="row" justifyContent="center">
@@ -453,6 +492,14 @@ export default function App() {
   const OneCardPopUp = () => {
     return (
       <Dialog
+        slotProps={{
+          backdrop: {
+            sx: {
+              //Your style here....
+              height: '100vh',
+            },
+          },
+        }}
         fullWidth
         open={oneopen}
         onClose={() => setoneopen(false)}
@@ -585,7 +632,7 @@ export default function App() {
             }}
           >
             <Typography id="transition-modal-title" variant="h3" align="center">
-              ${currentOrder.total - 7} Remaning
+              ${runningTotal - 7} Remaning
             </Typography>
             <MorePayPopUpInput />
           </Box>
@@ -641,7 +688,7 @@ export default function App() {
               </Button>
             </Grid>
             <Grid item xs={6}>
-              <Button fullWidth onClick={handleClose} color="secondary" size="large">
+              <Button fullWidth onClick={() => setPayMore(false)} color="secondary" size="large">
                 <Typography variant="h5"> Close</Typography>
               </Button>
             </Grid>
@@ -1057,6 +1104,32 @@ export default function App() {
     if (options) {
       return (
         <>
+          <Grid item container justifyContent="center">
+            <Button
+              variant="outlined"
+              size="large"
+              //come back here IZZY
+              onClick={() => {
+                if (numberOfItems - 1 >= 0) {
+                  setNumberOfItems(numberOfItems - 1);
+                }
+              }}
+            >
+              <Typography variant="body1">-</Typography>
+            </Button>
+            <Typography sx={{ ml: 2, mr: 2 }} variant="h5">
+              {numberOfItems}
+            </Typography>
+            <Button
+              variant="outlined"
+              size="large"
+              //come back here IZZY
+              onClick={() => setNumberOfItems(numberOfItems + 1)}
+            >
+              <Typography variant="body1">+</Typography>
+            </Button>
+          </Grid>
+
           <Grid item container justifyContent="space-evenly">
             {' '}
             <Button
@@ -1080,7 +1153,7 @@ export default function App() {
                 height: 60,
               }}
               size="large"
-              onClick={() => addItems()}
+              onClick={() => addItems(currentDish)}
             >
               <Typography variant="body1">Confirm</Typography>
             </Button>
@@ -1094,7 +1167,7 @@ export default function App() {
   const RenderSelectedOptions = (props: any) => {
     return props.selectedOptions.map((option: any) => (
       <>
-        <ListItem id={props.item._id}>
+        <ListItem key={props.item._id}>
           <ListItemButton sx={{ pl: 2 }} onClick={() => removeOption(props.item, option)}>
             <Grid container direction="row" justifyContent="space-between" alignItems="center">
               <Grid item>
@@ -1162,7 +1235,7 @@ export default function App() {
   */
 
   return (
-    <Box sx={{ mt: 1.2 }}>
+    <Box sx={{ mt: 5 }}>
       <TextField
         sx={{ position: 'absolute', top: 10, right: 200 }}
         label="Printer IP"
@@ -1184,83 +1257,90 @@ export default function App() {
           }
         </Fade>
       </Box>
-      <Grid container spacing={10} direction="row">
-        <Grid item sm={6} md={6}>
-          <Card
-            style={{
-              background: 'rgba(0,0,0,0.37)',
-              backdropFilter: 'blur(10px)',
-              WebkitBackdropFilter: 'blur(6.8px)',
-            }}
-            sx={{ boxShadow: 10 }}
-          >
-            <Grid
-              container
-              direction="row"
-              alignContent="center"
-              justifyContent="space-between"
-              sx={{ p: 2 }}
+      <Box>
+        <Grid container spacing={10} direction="row">
+          <Grid item sm={6} md={6}>
+            <Card
+              style={{
+                background: 'rgba(0,0,0,0.37)',
+                backdropFilter: 'blur(10px)',
+                WebkitBackdropFilter: 'blur(6.8px)',
+              }}
+              sx={{ boxShadow: 10 }}
             >
-              <Typography variant="h6" textAlign="left">
-                Item
-              </Typography>
+              <Grid
+                container
+                direction="row"
+                alignContent="center"
+                justifyContent="space-between"
+                sx={{ p: 2 }}
+              >
+                <Typography variant="h6" textAlign="left">
+                  Item
+                </Typography>
 
-              <Typography variant="h6" textAlign="right">
-                Price
-              </Typography>
-            </Grid>
-
-            <Grid item container direction="column">
-              <Grid item>
-                <List sx={{ overflow: 'auto', height: '59vh' }}>
-                  <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
-                </List>
+                <Typography variant="h6" textAlign="right">
+                  Price
+                </Typography>
               </Grid>
-              <Grid item>
-                <Card
-                  sx={{ height: '15vh' }}
-                  style={{
-                    background: 'rgba(231, 255, 255,0.3)',
-                  }}
-                >
-                  <Grid container item alignContent="center" justifyContent="center" mt="2%">
-                    <OrderTotalComponent></OrderTotalComponent>
-                  </Grid>
-                  <Grid
-                    container
-                    item
-                    spacing={3}
-                    alignContent="center"
-                    justifyContent="center"
-                    sx={{}}
+
+              <Grid item container direction="column">
+                <Grid item>
+                  <List
+                    sx={{
+                      overflow: 'scroll',
+                      height: '59dvh',
+                    }}
                   >
-                    <Grid item md={5} lg={5}>
-                      <CancelOrderComponent></CancelOrderComponent>
+                    <CurrentOrderItemsComponent></CurrentOrderItemsComponent>
+                  </List>
+                </Grid>
+                <Grid item>
+                  <Card
+                    sx={{ height: '15vh' }}
+                    style={{
+                      background: 'rgba(231, 255, 255,0.3)',
+                    }}
+                  >
+                    <Grid container item alignContent="center" justifyContent="center" mt="2%">
+                      <OrderTotalComponent></OrderTotalComponent>
                     </Grid>
-                    <Grid item md={5} lg={5}>
-                      <ConfirmOrderComponent></ConfirmOrderComponent>
+                    <Grid
+                      container
+                      item
+                      spacing={3}
+                      alignContent="center"
+                      justifyContent="center"
+                      sx={{}}
+                    >
+                      <Grid item md={5} lg={5}>
+                        <CancelOrderComponent></CancelOrderComponent>
+                      </Grid>
+                      <Grid item md={5} lg={5}>
+                        <ConfirmOrderComponent></ConfirmOrderComponent>
+                      </Grid>
                     </Grid>
-                  </Grid>
-                </Card>
+                  </Card>
+                </Grid>
+              </Grid>
+            </Card>
+          </Grid>
+
+          <Grid item container xs={6} md={6} lg={6} alignContent="flex-start" direction="column">
+            <Grid item container spacing={1} alignContent="space-around" justifyContent="center">
+              <ToggleComponent></ToggleComponent>
+            </Grid>
+
+            <Grid item container>
+              <Grid item container xs={12} spacing={2}>
+                <OrderComponent></OrderComponent>
+
+                <DeleteConfirmCustomComponent></DeleteConfirmCustomComponent>
               </Grid>
             </Grid>
-          </Card>
-        </Grid>
-
-        <Grid item container xs={6} md={6} lg={6} alignContent="flex-start" direction="column">
-          <Grid item container spacing={1} alignContent="space-around" justifyContent="center">
-            <ToggleComponent></ToggleComponent>
-          </Grid>
-
-          <Grid item container>
-            <Grid item container xs={12} spacing={2}>
-              <OrderComponent></OrderComponent>
-
-              <DeleteConfirmCustomComponent></DeleteConfirmCustomComponent>
-            </Grid>
           </Grid>
         </Grid>
-      </Grid>
+      </Box>
     </Box>
   );
 }

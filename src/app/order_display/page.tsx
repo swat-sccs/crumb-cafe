@@ -10,6 +10,7 @@ import {
   ListItemAvatar,
   ListItemText,
 } from '@mui/material';
+import moment from 'moment';
 
 import Grid from '@mui/material/Unstable_Grid2'; // Grid version 2
 
@@ -35,7 +36,10 @@ export default function Home() {
       return <></>;
     } else {
       const filteredOrders = data.orders.filter(
-        (dish: any) => dish.hidden == false && dish.status == 'in_progress',
+        (dish: any) =>
+          dish.hidden == false &&
+          dish.status == 'in_progress' &&
+          moment().isSame(moment(dish.createdAt), 'day'),
       );
       console.log(filteredOrders);
       const orders = [];
@@ -75,7 +79,10 @@ export default function Home() {
     } else {
       console.log(data.orders);
       const filteredOrders = data.orders
-        .filter((dish: any) => dish.status == 'completed')
+        .filter(
+          (dish: any) =>
+            dish.status == 'completed' && moment().isSame(moment(dish.createdAt), 'day'),
+        )
         .reverse();
       const orders = [];
       for (const item of filteredOrders) {
@@ -89,7 +96,7 @@ export default function Home() {
                 </ListItemAvatar>
                 <ListItemText>
                   <Typography
-                    variant="h5"
+                    variant="h4"
                     color={'white'}
                     sx={{ width: '100%' }}
                     textAlign={'center'}
@@ -108,62 +115,66 @@ export default function Home() {
     }
   };
   return (
-    <Container>
-      <Box>
-        <Grid container justifyContent="center" alignContent="center">
-          <Card elevation={10} sx={{ m: 2, p: 2, backgroundColor: '#93CBF3', width: '50%' }}>
-            <Typography textAlign="center" variant="h3" color="white">
-              Orders
-            </Typography>
+    <Box>
+      <Grid
+        container
+        direction="row"
+        alignItems="center"
+        justifyContent="space-evenly"
+        sx={{ width: '100%' }}
+      >
+        <Grid container direction="column" spacing={2} justifyContent="center" lg={5}>
+          <Grid>
+            <Card sx={{ p: 1, width: 300, ml: 'auto', mr: 'auto', mb: 2, mt: 2 }}>
+              <Typography variant="h3" textAlign="center">
+                In Progress
+              </Typography>
+            </Card>
+          </Grid>
+          <Card
+            elevation={2}
+            sx={{
+              height: '85dvh',
+              overflowY: 'hidden',
+              '&::-webkit-scrollbar': { display: 'none' },
+            }}
+            style={{
+              background: 'rgba(0,0,0,0.37)',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+              WebkitBackdropFilter: 'blur(6.8px)',
+            }}
+          >
+            <Progress_List></Progress_List>
           </Card>
         </Grid>
 
-        <Grid container direction="row" alignItems="center" justifyContent="space-between">
-          <Grid container direction="column" spacing={2} justifyContent="center">
-            <Grid sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Card sx={{ m: 2, p: 1, width: 300 }}>
-                <Typography variant="h4" textAlign="center">
-                  In Progress
-                </Typography>
-              </Card>
-            </Grid>
-            <Card
-              elevation={2}
-              sx={{ m: 2, p: 2, width: 350, height: '65vh', overflowY: 'scroll' }}
-              style={{
-                background: 'rgba(0,0,0,0.37)',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
-                WebkitBackdropFilter: 'blur(6.8px)',
-              }}
-            >
-              <Progress_List></Progress_List>
+        <Grid container direction="column" spacing={2} justifyContent="center" lg={5}>
+          <Grid>
+            <Card sx={{ p: 1, width: 300, ml: 'auto', mr: 'auto', mb: 2, mt: 2 }}>
+              <Typography variant="h3" textAlign="center">
+                Ready
+              </Typography>
             </Card>
           </Grid>
-
-          <Grid container direction="column" spacing={2} justifyContent="center">
-            <Grid sx={{ display: 'flex', justifyContent: 'center' }}>
-              <Card sx={{ m: 2, p: 1, width: 300 }}>
-                <Typography variant="h4" textAlign="center">
-                  Ready
-                </Typography>
-              </Card>
-            </Grid>
-            <Card
-              elevation={2}
-              sx={{ m: 2, p: 2, width: 350, height: '65vh', overflowY: 'scroll' }}
-              style={{
-                background: 'rgba(0,0,0,0.37)',
-                backdropFilter: 'blur(10px)',
-                boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
-                WebkitBackdropFilter: 'blur(6.8px)',
-              }}
-            >
-              <Completed_List></Completed_List>
-            </Card>
-          </Grid>
+          <Card
+            elevation={2}
+            sx={{
+              height: '85dvh',
+              overflowY: 'hidden',
+              '&::-webkit-scrollbar': { display: 'none' },
+            }}
+            style={{
+              background: 'rgba(0,0,0,0.37)',
+              backdropFilter: 'blur(10px)',
+              boxShadow: '10px 10px 10px rgba(30,30,30,0.5)',
+              WebkitBackdropFilter: 'blur(6.8px)',
+            }}
+          >
+            <Completed_List></Completed_List>
+          </Card>
         </Grid>
-      </Box>
-    </Container>
+      </Grid>
+    </Box>
   );
 }

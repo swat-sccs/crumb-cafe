@@ -136,7 +136,7 @@ export async function POST(request: NextRequest) {
   const augmentedData = {
     ...data,
     customerNumber: currentCustomerNumber,
-    status: 'new',
+    status: 'in_progress',
   };
 
   /* To many checks in my opinion -dcrepublic
