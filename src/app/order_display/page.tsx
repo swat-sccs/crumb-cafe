@@ -35,12 +35,14 @@ export default function Home() {
     if (isLoading) {
       return <></>;
     } else {
-      const filteredOrders = data.orders.filter(
-        (dish: any) =>
-          dish.hidden == false &&
-          dish.status == 'in_progress' &&
-          moment().isSame(moment(dish.createdAt), 'day'),
-      );
+      const filteredOrders = data.orders
+        .filter(
+          (dish: any) =>
+            dish.hidden == false &&
+            dish.status == 'in_progress' &&
+            moment().isSame(moment(dish.createdAt), 'day'),
+        )
+        .reverse();
       console.log(filteredOrders);
       const orders = [];
       for (const item of filteredOrders) {
