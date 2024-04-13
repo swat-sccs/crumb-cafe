@@ -1,5 +1,7 @@
 # Crumb Cafe
 
+## NOTE: Development and deployment are currently halted at the request of the Swarthmore College Office of Student Engagement.
+
 This is a WIP point-of-sale system for the Crumb Cafe.
 
 ## Getting Started
