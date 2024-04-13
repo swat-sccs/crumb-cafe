@@ -272,23 +272,12 @@ export default function App() {
   };
 
   const confirmOrder = async (name: string, paymentType: string) => {
+    let order_id = 0;
     const thing1 = {
       customerName: name,
       total: runningTotal,
       hidden: false,
       notes: '',
-      dishes: currentOrder,
-    };
-
-    const toPrintServer = {
-      customerName: name,
-      total: runningTotal,
-      hidden: false,
-      notes: '',
-      oc: oneCard,
-      payment: paymentType,
-      ip: PRINTERIP,
-      receipt: true,
       dishes: currentOrder,
     };
 
@@ -306,6 +295,7 @@ export default function App() {
     await axios.post('/api/orders', thing1).then((response) => {
       if (response.status == 200) {
         setSuccess(true);
+        order_id = response.data.order._id;
         setTimeout(handleSuccess, 3000);
       } else {
         console.log('failed to send order to backend');
@@ -313,6 +303,19 @@ export default function App() {
         setTimeout(handleFailure, 3000);
       }
     });
+
+    const toPrintServer = {
+      id: order_id,
+      customerName: name,
+      total: runningTotal,
+      hidden: false,
+      notes: '',
+      oc: oneCard,
+      payment: paymentType,
+      //ip: PRINTERIP,
+      receipt: true,
+      dishes: currentOrder,
+    };
 
     //Send order to print server/tablet
     // *ignore is the magic keyword
@@ -364,7 +367,7 @@ export default function App() {
       hidden: false,
       notes: '',
       oc: oneCard,
-      ip: PRINTERIP,
+      //ip: PRINTERIP,
       payment: paymentType,
       receipt: false,
       dishes: currentOrder,
@@ -1236,13 +1239,14 @@ export default function App() {
 
   return (
     <Box sx={{ mt: 5 }}>
+      {/*
       <TextField
         sx={{ position: 'absolute', top: 10, right: 200 }}
         label="Printer IP"
         variant="outlined"
         value={PRINTERIP}
         onChange={(e: any) => SETPrinterIP(e.target.value)}
-      ></TextField>
+  ></TextField>*/}
       <OneCardPopUp></OneCardPopUp>
       <NamePopUp></NamePopUp>
       <MorePayPopUp></MorePayPopUp>

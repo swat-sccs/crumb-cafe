@@ -1,74 +1,72 @@
-
 #pip install python-escpos fastapi uvicorn 
+#0a281ecc
 from escpos.printer import Network
 from datetime import datetime
 from flask import Flask
-from flask import request, jsonify
+from flask import request, jsonify, abort, redirect
 from flask_cors import CORS
 import subprocess
 import time
 from concurrent.futures import ProcessPoolExecutor
-import logging
-import os
-import json
 
 #Testing only
 #log = logging.getLogger('werkzeug')
 #log.disabled = True
 
-print("Running Version 1.0")
-printerServer = ProcessPoolExecutor(5)
+print("Running Version 2.0")
+printerServer = ProcessPoolExecutor(2)
 tabletServer = ProcessPoolExecutor(1)
 
 
 def tablet(thing):
-    result = subprocess.run(['adb', 'shell'], capture_output=True, text=True, shell=False).stderr
+    connected = subprocess.run(['adb', 'devices'], capture_output=True, text=True, shell=False).stdout.split()[-1]
+    if thing['payment'] == 'swipe':
+        try:
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "726", "250"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "500", "500"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['oc']])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "125", "630"])
+            time.sleep(0.2)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "745", "1752"])
+            time.sleep(0.1)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "745", "1752"])
+        except subprocess.CalledProcessError as e:
+            print (e.output)
+            return
 
-    if "adb: no devices/emulators found" in result:
-        print("No Tablet... Caching for later")
-        f = open("process_later.txt", "a")
-        json_object = json.dumps(thing)
-        f.write(json_object)
-        f.write('\n')
-        f.close()
-    else:
-        if thing['payment'] == 'swipe':
-            try:
-                subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "726", "250"])
-                time.sleep(0.025)
-                subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "500", "500"])
-                time.sleep(0.025)
-                subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['oc']])
-                time.sleep(0.025)
-                subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "125", "630"])
-            except subprocess.CalledProcessError as e:
-                print (e.output)
-                return
+    elif thing['payment'] == 'dining':
+        try:
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "400", "250"])
+            time.sleep(0.05)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "590", "720"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "480", "1120"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "500", "500"])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['oc']])
+            time.sleep(0.025)
+            subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "125", "630"])
+            time.sleep(0.1)
+            subprocess.run(["adb", "shell", "input", "keyboard", "text", str(float(thing['total'])*100)])
+            #time.sleep(0.2)
+            #subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "184", "1169"])
+            #time.sleep(0.2)
+            #subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "745", "1752"])
 
-        elif thing['payment'] == 'dining':
-            try:
-                subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "400", "250"])
-                time.sleep(0.05)
-                subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "590", "720"])
-                time.sleep(0.025)
-                subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "480", "1120"])
-                time.sleep(0.025)
-                subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "500", "500"])
-                time.sleep(0.025)
-                subprocess.run(["adb", "shell", "input", "keyboard", "text", thing['oc']])
-                time.sleep(0.025)
-                subprocess.run(["adb", "shell", "input", "touchscreen", "tap", "125", "630"])
-                time.sleep(0.1)
-                subprocess.run(["adb", "shell", "input", "keyboard", "text", str(int(thing['total'])*100)])
-            except subprocess.CalledProcessError as e:
-                print (e.output)
-                return
-
+        except subprocess.CalledProcessError as e:
+            print (e.output)
+            return
+   
 
 
 def PRINT(thing):
     current_time = datetime.now().strftime("%H:%M:%S")
 
+    #Local ether network
     kitchen = Network("192.168.192.168",profile="TM-T88V") 
     #Printer IP Address, dont forget the profile!
     kitchen.set(align="center",custom_size=True ,height=2, width=2)
@@ -93,6 +91,8 @@ def PRINT(thing):
     kitchen.set(align="center",custom_size=True ,height=2, width=2)
     kitchen.print_and_feed(n=3)
     kitchen.textln(thing["customerName"])
+    kitchen.print_and_feed(n=2)
+    kitchen.barcode(code=str(item['id']), bc="EAN13")
     kitchen.cut()
     kitchen.close()
 
@@ -102,11 +102,16 @@ CORS(app)
 
 
 
-
+trusted = ['130.58.218.21', '127.0.0.1']
+@app.before_request
+def limit_remote_addr():
+    if request.remote_addr not in trusted:
+        abort(403)
 
 
 @app.route('/', methods =['POST'])
 def test():
+    print("hello")
     data = request.json
     
     # If recipt true, split into food and drinks and print if their lists are greater than 0
@@ -160,3 +165,7 @@ if __name__ == '__main__':
     Choose swat dining or garnet cash 590 720
     dining 480 1120
 '''
+
+
+
+

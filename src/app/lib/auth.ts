@@ -13,8 +13,7 @@ export const config = {
           id: profile.sub,
           name: profile.name,
           email: profile.email,
-
-          //role: profile.groups.find((group: string) => group === 'admin') || 'user',
+          //role: profile.groups.find((group: string) => group === 'manager') || '',
         };
       },
       clientId: process.env.KEYCLOAK_ID || '',
@@ -39,8 +38,8 @@ export const config = {
       }
       return session;
     },
-    
-  },*/
+  },
+  */
 } satisfies NextAuthOptions;
 
 // Use it in server contexts
